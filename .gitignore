@@ -14,3 +14,6 @@ Debug
 **/Result.log
 
 **/*.launch
+/tools/Java_Configurator_Source/build/
+/tools/Java_Configurator_Source/dist/
+/tools/Java_Configurator_Source/nbproject/private/
