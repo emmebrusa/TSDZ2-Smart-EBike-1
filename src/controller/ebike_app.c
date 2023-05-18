@@ -733,10 +733,44 @@ static void ebike_control_motor(void)
 	}
 }
 
+// calculate motor torque rates up/down depending on speed and cadence
+static void set_assist_torque_rates(void){
+	uint8_t ui8_tmp;
+	if (ui16_wheel_speed_x10 >= 200) {
+        ui8_duty_cycle_ramp_up_inverse_step = PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_MIN;
+        ui8_duty_cycle_ramp_down_inverse_step = PWM_DUTY_CYCLE_RAMP_DOWN_INVERSE_STEP_MIN;
+    } else {
+        ui8_duty_cycle_ramp_up_inverse_step = map_ui8((uint8_t)(ui16_wheel_speed_x10>>2),
+                (uint8_t)10, // 10*4 = 40 -> 4 kph
+                (uint8_t)50, // 50*4 = 200 -> 20 kph
+                (uint8_t)ui8_duty_cycle_ramp_up_inverse_step_default,
+                (uint8_t)PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_MIN);
+        ui8_tmp = map_ui8(ui8_pedal_cadence_RPM,
+                (uint8_t)20, // 20 rpm
+                (uint8_t)70, // 70 rpm
+                (uint8_t)ui8_duty_cycle_ramp_up_inverse_step_default,
+                (uint8_t)PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_MIN);
+        if (ui8_tmp < ui8_duty_cycle_ramp_up_inverse_step)
+            ui8_duty_cycle_ramp_up_inverse_step = ui8_tmp;
+
+        ui8_duty_cycle_ramp_down_inverse_step = map_ui8((uint8_t)(ui16_wheel_speed_x10>>2),
+                (uint8_t)10, // 10*4 = 40 -> 4 kph
+                (uint8_t)50, // 50*4 = 200 -> 20 kph
+                (uint8_t)ui8_duty_cycle_ramp_down_inverse_step_default,
+                (uint8_t)PWM_DUTY_CYCLE_RAMP_DOWN_INVERSE_STEP_MIN);
+        ui8_tmp = map_ui8(ui8_pedal_cadence_RPM,
+                (uint8_t)20, // 20 rpm
+                (uint8_t)70, // 70 rpm
+                (uint8_t)ui8_duty_cycle_ramp_down_inverse_step_default,
+                (uint8_t)PWM_DUTY_CYCLE_RAMP_DOWN_INVERSE_STEP_MIN);
+        if (ui8_tmp < ui8_duty_cycle_ramp_down_inverse_step)
+            ui8_duty_cycle_ramp_down_inverse_step = ui8_tmp;
+    }
+}
+
 
 static void apply_power_assist(void)
 {
-	uint8_t ui8_tmp;
     uint8_t ui8_power_assist_multiplier_x50 = ui8_riding_mode_parameter;
 	
 	// check for assist without pedal rotation when there is no pedal rotation
@@ -776,38 +810,9 @@ static void apply_power_assist(void)
 	
     // set battery current target in ADC steps
     uint16_t ui16_adc_battery_current_target = (uint16_t)ui32_battery_current_target_x100 / BATTERY_CURRENT_PER_10_BIT_ADC_STEP_X100;
-	
-    // set motor acceleration
-    if (ui16_wheel_speed_x10 >= 200) {
-        ui8_duty_cycle_ramp_up_inverse_step = PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_MIN;
-        ui8_duty_cycle_ramp_down_inverse_step = PWM_DUTY_CYCLE_RAMP_DOWN_INVERSE_STEP_MIN;
-    } else {
-        ui8_duty_cycle_ramp_up_inverse_step = map_ui8((uint8_t)(ui16_wheel_speed_x10>>2),
-                (uint8_t)10, // 10*4 = 40 -> 4 kph
-                (uint8_t)50, // 50*4 = 200 -> 20 kph
-                (uint8_t)ui8_duty_cycle_ramp_up_inverse_step_default,
-                (uint8_t)PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_MIN);
-        ui8_tmp = map_ui8(ui8_pedal_cadence_RPM,
-                (uint8_t)20, // 20 rpm
-                (uint8_t)70, // 70 rpm
-                (uint8_t)ui8_duty_cycle_ramp_up_inverse_step_default,
-                (uint8_t)PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_MIN);
-        if (ui8_tmp < ui8_duty_cycle_ramp_up_inverse_step)
-            ui8_duty_cycle_ramp_up_inverse_step = ui8_tmp;
-
-        ui8_duty_cycle_ramp_down_inverse_step = map_ui8((uint8_t)(ui16_wheel_speed_x10>>2),
-                (uint8_t)10, // 10*4 = 40 -> 4 kph
-                (uint8_t)50, // 50*4 = 200 -> 20 kph
-                (uint8_t)ui8_duty_cycle_ramp_down_inverse_step_default,
-                (uint8_t)PWM_DUTY_CYCLE_RAMP_DOWN_INVERSE_STEP_MIN);
-        ui8_tmp = map_ui8(ui8_pedal_cadence_RPM,
-                (uint8_t)20, // 20 rpm
-                (uint8_t)70, // 70 rpm
-                (uint8_t)ui8_duty_cycle_ramp_down_inverse_step_default,
-                (uint8_t)PWM_DUTY_CYCLE_RAMP_DOWN_INVERSE_STEP_MIN);
-        if (ui8_tmp < ui8_duty_cycle_ramp_down_inverse_step)
-            ui8_duty_cycle_ramp_down_inverse_step = ui8_tmp;
-    }
+	    
+	// set motor torque rate
+	set_assist_torque_rates();
 
     // set battery current target
     if (ui16_adc_battery_current_target > ui8_adc_battery_current_max) {
@@ -838,8 +843,6 @@ static void apply_power_assist(void)
 
 static void apply_torque_assist(void)
 {
-	uint8_t ui8_tmp;
-	
 	// check for assist without pedal rotation when there is no pedal rotation
 	if(m_configuration_variables.ui8_assist_without_pedal_rotation_enabled) {
 		if((!ui8_pedal_cadence_RPM)&&
@@ -861,37 +864,9 @@ static void apply_torque_assist(void)
         uint16_t ui16_adc_battery_current_target_torque_assist = ((uint16_t) ui16_adc_pedal_torque_delta
                 * ui8_torque_assist_factor) / TORQUE_ASSIST_FACTOR_DENOMINATOR;
 
-        // set motor acceleration
-        if (ui16_wheel_speed_x10 >= 200) {
-            ui8_duty_cycle_ramp_up_inverse_step = PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_MIN;
-            ui8_duty_cycle_ramp_down_inverse_step = PWM_DUTY_CYCLE_RAMP_DOWN_INVERSE_STEP_MIN;
-        } else {
-            ui8_duty_cycle_ramp_up_inverse_step = map_ui8((uint8_t)(ui16_wheel_speed_x10>>2),
-                    (uint8_t)10, // 10*4 = 40 -> 4 kph
-                    (uint8_t)50, // 50*4 = 200 -> 20 kph
-                    (uint8_t)ui8_duty_cycle_ramp_up_inverse_step_default,
-                    (uint8_t)PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_MIN);
-            ui8_tmp = map_ui8(ui8_pedal_cadence_RPM,
-                    (uint8_t)20, // 20 rpm
-                    (uint8_t)70, // 70 rpm
-                    (uint8_t)ui8_duty_cycle_ramp_up_inverse_step_default,
-                    (uint8_t)PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_MIN);
-            if (ui8_tmp < ui8_duty_cycle_ramp_up_inverse_step)
-                ui8_duty_cycle_ramp_up_inverse_step = ui8_tmp;
+        // set motor torque rate
+		set_assist_torque_rates();
 
-            ui8_duty_cycle_ramp_down_inverse_step = map_ui8((uint8_t)(ui16_wheel_speed_x10>>2),
-                    (uint8_t)10, // 10*4 = 40 -> 4 kph
-                    (uint8_t)50, // 50*4 = 200 -> 20 kph
-                    (uint8_t)ui8_duty_cycle_ramp_down_inverse_step_default,
-                    (uint8_t)PWM_DUTY_CYCLE_RAMP_DOWN_INVERSE_STEP_MIN);
-            ui8_tmp = map_ui8(ui8_pedal_cadence_RPM,
-                    (uint8_t)20, // 20 rpm
-                    (uint8_t)70, // 70 rpm
-                    (uint8_t)ui8_duty_cycle_ramp_down_inverse_step_default,
-                    (uint8_t)PWM_DUTY_CYCLE_RAMP_DOWN_INVERSE_STEP_MIN);
-            if (ui8_tmp < ui8_duty_cycle_ramp_down_inverse_step)
-                ui8_duty_cycle_ramp_down_inverse_step = ui8_tmp;
-        }
         // set battery current target
         if (ui16_adc_battery_current_target_torque_assist > ui8_adc_battery_current_max) {
             ui8_adc_battery_current_target = ui8_adc_battery_current_max;
@@ -921,8 +896,6 @@ static void apply_torque_assist(void)
 
 static void apply_cadence_assist(void)
 {
-	uint8_t ui8_tmp;
-	
     if (ui8_pedal_cadence_RPM) {
 		// get the cadence assist duty cycle increment
 		uint16_t ui16_cadence_assist_duty_cycle_increment = ((PWM_DUTY_CYCLE_MAX - ui8_riding_mode_parameter) * ui8_pedal_cadence_RPM) / 120;
@@ -934,37 +907,9 @@ static void apply_cadence_assist(void)
             ui8_cadence_assist_duty_cycle_target = PWM_DUTY_CYCLE_MAX;
         }
 
-        // set motor acceleration
-        if (ui16_wheel_speed_x10 >= 200) {
-            ui8_duty_cycle_ramp_up_inverse_step = PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_MIN;
-            ui8_duty_cycle_ramp_down_inverse_step = PWM_DUTY_CYCLE_RAMP_DOWN_INVERSE_STEP_MIN;
-        } else {
-            ui8_duty_cycle_ramp_up_inverse_step = map_ui8((uint8_t)(ui16_wheel_speed_x10>>2),
-                    (uint8_t)10, // 10*4 = 40 -> 4 kph
-                    (uint8_t)50, // 50*4 = 200 -> 20 kph
-                    (uint8_t)ui8_duty_cycle_ramp_up_inverse_step_default + PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_CADENCE_OFFSET,
-                    (uint8_t)PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_MIN);
-            ui8_tmp = map_ui8(ui8_pedal_cadence_RPM,
-                    (uint8_t)20, // 20 rpm
-                    (uint8_t)70, // 70 rpm
-                    (uint8_t)ui8_duty_cycle_ramp_up_inverse_step_default + PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_CADENCE_OFFSET,
-                    (uint8_t)PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_MIN);
-            if (ui8_tmp < ui8_duty_cycle_ramp_up_inverse_step)
-                ui8_duty_cycle_ramp_up_inverse_step = ui8_tmp;
+        // set motor torque rate
+		set_assist_torque_rates();
 
-			ui8_duty_cycle_ramp_down_inverse_step = map_ui8((uint8_t)(ui16_wheel_speed_x10>>2),
-					(uint8_t)10, // 10*4 = 40 -> 4 kph
-					(uint8_t)50, // 50*4 = 200 -> 20 kph
-					(uint8_t)ui8_duty_cycle_ramp_down_inverse_step_default,
-					(uint8_t)PWM_DUTY_CYCLE_RAMP_DOWN_INVERSE_STEP_MIN);
-			ui8_tmp = map_ui8(ui8_pedal_cadence_RPM,
-					(uint8_t)20, // 20 rpm
-					(uint8_t)70, // 70 rpm
-					(uint8_t)ui8_duty_cycle_ramp_down_inverse_step_default,
-					(uint8_t)PWM_DUTY_CYCLE_RAMP_DOWN_INVERSE_STEP_MIN);
-			if (ui8_tmp < ui8_duty_cycle_ramp_down_inverse_step)
-				ui8_duty_cycle_ramp_down_inverse_step = ui8_tmp;
-        }
         // set battery current target
         ui8_adc_battery_current_target = ui8_adc_battery_current_max;
 
@@ -978,7 +923,6 @@ static void apply_emtb_assist(void)
 {
 //#define eMTB_ASSIST_ADC_TORQUE_OFFSET    10
 #define eMTB_ASSIST_ADC_TORQUE_OFFSET    5
-	uint8_t ui8_tmp;
 	
 	// check for assist without pedal rotation when there is no pedal rotation
 	if(m_configuration_variables.ui8_assist_without_pedal_rotation_enabled) {
@@ -1026,37 +970,9 @@ static void apply_emtb_assist(void)
 			case 20: ui8_adc_battery_current_target_eMTB_assist = ui8_eMTB_power_function_255[ui16_adc_pedal_torque_delta + eMTB_ASSIST_ADC_TORQUE_OFFSET]; break;
 		}
 
-        // set motor acceleration
-        if (ui16_wheel_speed_x10 >= 200) {
-            ui8_duty_cycle_ramp_up_inverse_step = PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_MIN;
-            ui8_duty_cycle_ramp_down_inverse_step = PWM_DUTY_CYCLE_RAMP_DOWN_INVERSE_STEP_MIN;
-        } else {
-            ui8_duty_cycle_ramp_up_inverse_step = map_ui8((uint8_t)(ui16_wheel_speed_x10>>2),
-                    (uint8_t)10, // 10*4 = 40 -> 4 kph
-                    (uint8_t)50, // 50*4 = 200 -> 20 kph
-                    (uint8_t)ui8_duty_cycle_ramp_up_inverse_step_default,
-                    (uint8_t)PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_MIN);
-            ui8_tmp = map_ui8(ui8_pedal_cadence_RPM,
-                    (uint8_t)20, // 20 rpm
-                    (uint8_t)70, // 70 rpm
-                    (uint8_t)ui8_duty_cycle_ramp_up_inverse_step_default,
-                    (uint8_t)PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_MIN);
-            if (ui8_tmp < ui8_duty_cycle_ramp_up_inverse_step)
-                ui8_duty_cycle_ramp_up_inverse_step = ui8_tmp;
+        // set motor torque rate
+		set_assist_torque_rates();
 
-            ui8_duty_cycle_ramp_down_inverse_step = map_ui8((uint8_t)(ui16_wheel_speed_x10>>2),
-                    (uint8_t)10, // 10*4 = 40 -> 4 kph
-                    (uint8_t)50, // 50*4 = 200 -> 20 kph
-                    (uint8_t)ui8_duty_cycle_ramp_down_inverse_step_default,
-                    (uint8_t)PWM_DUTY_CYCLE_RAMP_DOWN_INVERSE_STEP_MIN);
-            ui8_tmp = map_ui8(ui8_pedal_cadence_RPM,
-                    (uint8_t)20, // 20 rpm
-                    (uint8_t)70, // 70 rpm
-                    (uint8_t)ui8_duty_cycle_ramp_down_inverse_step_default,
-                    (uint8_t)PWM_DUTY_CYCLE_RAMP_DOWN_INVERSE_STEP_MIN);
-            if (ui8_tmp < ui8_duty_cycle_ramp_down_inverse_step)
-                ui8_duty_cycle_ramp_down_inverse_step = ui8_tmp;
-        }
         // set battery current target
         if (ui8_adc_battery_current_target_eMTB_assist > ui8_adc_battery_current_max) {
             ui8_adc_battery_current_target = ui8_adc_battery_current_max;
@@ -1354,7 +1270,6 @@ static void apply_cruise(void)
 
 static void apply_hybrid_assist(void)
 {
-	uint8_t ui8_tmp;
 	uint16_t ui16_adc_battery_current_target_power_assist;
 	uint16_t ui16_adc_battery_current_target_torque_assist;
 	uint16_t ui16_adc_battery_current_target;
@@ -1402,37 +1317,8 @@ static void apply_hybrid_assist(void)
 	else
 		ui16_adc_battery_current_target = ui16_adc_battery_current_target_torque_assist;
 	
-	// set motor acceleration
-	if (ui16_wheel_speed_x10 >= 200) {
-        ui8_duty_cycle_ramp_up_inverse_step = PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_MIN;
-        ui8_duty_cycle_ramp_down_inverse_step = PWM_DUTY_CYCLE_RAMP_DOWN_INVERSE_STEP_MIN;
-    } else {
-        ui8_duty_cycle_ramp_up_inverse_step = map_ui8((uint8_t)(ui16_wheel_speed_x10>>2),
-                (uint8_t)10, // 10*4 = 40 -> 4 kph
-                (uint8_t)50, // 50*4 = 200 -> 20 kph
-                (uint8_t)ui8_duty_cycle_ramp_up_inverse_step_default,
-                (uint8_t)PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_MIN);
-        ui8_tmp = map_ui8(ui8_pedal_cadence_RPM,
-                (uint8_t)20, // 20 rpm
-                (uint8_t)70, // 70 rpm
-                (uint8_t)ui8_duty_cycle_ramp_up_inverse_step_default,
-                (uint8_t)PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_MIN);
-        if (ui8_tmp < ui8_duty_cycle_ramp_up_inverse_step)
-            ui8_duty_cycle_ramp_up_inverse_step = ui8_tmp;
-
-        ui8_duty_cycle_ramp_down_inverse_step = map_ui8((uint8_t)(ui16_wheel_speed_x10>>2),
-                (uint8_t)10, // 10*4 = 40 -> 4 kph
-                (uint8_t)50, // 50*4 = 200 -> 20 kph
-                (uint8_t)ui8_duty_cycle_ramp_down_inverse_step_default,
-                (uint8_t)PWM_DUTY_CYCLE_RAMP_DOWN_INVERSE_STEP_MIN);
-        ui8_tmp = map_ui8(ui8_pedal_cadence_RPM,
-                (uint8_t)20, // 20 rpm
-                (uint8_t)70, // 70 rpm
-                (uint8_t)ui8_duty_cycle_ramp_down_inverse_step_default,
-                (uint8_t)PWM_DUTY_CYCLE_RAMP_DOWN_INVERSE_STEP_MIN);
-        if (ui8_tmp < ui8_duty_cycle_ramp_down_inverse_step)
-            ui8_duty_cycle_ramp_down_inverse_step = ui8_tmp;
-    }
+	// set motor torque rate
+	set_assist_torque_rates();
 	
 	// set battery current target
 	if (ui16_adc_battery_current_target > ui8_adc_battery_current_max) { ui8_adc_battery_current_target = ui8_adc_battery_current_max; }
