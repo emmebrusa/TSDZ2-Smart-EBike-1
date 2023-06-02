@@ -661,7 +661,7 @@ void TIM1_CAP_COM_IRQHandler(void) __interrupt(TIM1_CAP_COM_IRQHANDLER)
 			}
 			
             // ramp down duty cycle
-            if (++ui8_counter_duty_cycle_ramp_down > ui8_controller_duty_cycle_ramp_down_inverse_step) {
+            if (++ui8_counter_duty_cycle_ramp_down >= ui8_controller_duty_cycle_ramp_down_inverse_step) {
                 ui8_counter_duty_cycle_ramp_down = 0;
                 // decrement field weakening angle if set or duty cycle if not
                 if (ui8_fw_angle > 0)
@@ -674,7 +674,7 @@ void TIM1_CAP_COM_IRQHandler(void) __interrupt(TIM1_CAP_COM_IRQHANDLER)
             ui8_counter_duty_cycle_ramp_down = 0;
 
             // ramp up duty cycle
-            if (++ui8_counter_duty_cycle_ramp_up > ui8_controller_duty_cycle_ramp_up_inverse_step) {
+            if (++ui8_counter_duty_cycle_ramp_up >= ui8_controller_duty_cycle_ramp_up_inverse_step) {
                 ui8_counter_duty_cycle_ramp_up = 0;
 
                 // increment duty cycle
@@ -712,17 +712,17 @@ void TIM1_CAP_COM_IRQHandler(void) __interrupt(TIM1_CAP_COM_IRQHANDLER)
 
         // scale and apply PWM duty_cycle for the 3 phases
         // phase A is advanced 240 degrees over phase B
-        // Max of SVM table is 202 and ui8_tmp goes from 0 to 100 (101*254/256) and
+        // Max of SVM table is 202 and ui8_tmp goes from 0 to 100 (101*255/256) and
         // ui8_phase_x_voltage goes from 0 (MIDDLE_PWM_COUNTER - ui8_temp) to 200 (MIDDLE_PWM_COUNTER + ui8_temp)
 
         ui8_temp = ui8_svm_table[(uint8_t) (ui8_svm_table_index + 171)]; /* +240� */
         if (ui8_temp > MIDDLE_SVM_TABLE) {
             ui16_value = (uint16_t)((uint8_t)(ui8_temp - MIDDLE_SVM_TABLE) * (uint8_t)ui8_g_duty_cycle);
-            ui8_temp = (uint8_t) (ui16_value >> 8);
+            ui8_temp = (uint8_t) (ui16_value >> PWM_DUTY_CYCLE_BITS);
             ui8_phase_a_voltage = MIDDLE_PWM_COUNTER + ui8_temp;
         } else {
             ui16_value = (uint16_t)((uint8_t)(MIDDLE_SVM_TABLE - ui8_temp) * (uint8_t)ui8_g_duty_cycle);
-            ui8_temp = (uint8_t) (ui16_value >> 8);
+            ui8_temp = (uint8_t) (ui16_value >> PWM_DUTY_CYCLE_BITS);
             ui8_phase_a_voltage = MIDDLE_PWM_COUNTER - ui8_temp;
         }
 
@@ -730,11 +730,11 @@ void TIM1_CAP_COM_IRQHandler(void) __interrupt(TIM1_CAP_COM_IRQHANDLER)
         ui8_temp = ui8_svm_table[ui8_svm_table_index];
         if (ui8_temp > MIDDLE_SVM_TABLE) {
             ui16_value = (uint16_t) ((uint8_t)(ui8_temp - MIDDLE_SVM_TABLE) * (uint8_t)ui8_g_duty_cycle);
-            ui8_temp = (uint8_t) (ui16_value >> 8);
+            ui8_temp = (uint8_t) (ui16_value >> PWM_DUTY_CYCLE_BITS);
             ui8_phase_b_voltage = MIDDLE_PWM_COUNTER + ui8_temp;
         } else {
             ui16_value = (uint16_t) ((uint8_t)(MIDDLE_SVM_TABLE - ui8_temp) * (uint8_t)ui8_g_duty_cycle);
-            ui8_temp = (uint8_t) (ui16_value >> 8);
+            ui8_temp = (uint8_t) (ui16_value >> PWM_DUTY_CYCLE_BITS);
             ui8_phase_b_voltage = MIDDLE_PWM_COUNTER - ui8_temp;
         }
 
@@ -742,11 +742,11 @@ void TIM1_CAP_COM_IRQHandler(void) __interrupt(TIM1_CAP_COM_IRQHANDLER)
         ui8_temp = ui8_svm_table[(uint8_t) (ui8_svm_table_index + 85 /* 120º */)];
         if (ui8_temp > MIDDLE_SVM_TABLE) {
             ui16_value = (uint16_t) ((uint8_t)(ui8_temp - MIDDLE_SVM_TABLE) * (uint8_t)ui8_g_duty_cycle);
-            ui8_temp = (uint8_t) (ui16_value >> 8);
+            ui8_temp = (uint8_t) (ui16_value >> PWM_DUTY_CYCLE_BITS);
             ui8_phase_c_voltage = MIDDLE_PWM_COUNTER + ui8_temp;
         } else {
             ui16_value = (uint16_t) ((uint8_t)(MIDDLE_SVM_TABLE - ui8_temp) * (uint8_t)ui8_g_duty_cycle);
-            ui8_temp = (uint8_t) (ui16_value >> 8);
+            ui8_temp = (uint8_t) (ui16_value >> PWM_DUTY_CYCLE_BITS);
             ui8_phase_c_voltage = MIDDLE_PWM_COUNTER - ui8_temp;
         }
 

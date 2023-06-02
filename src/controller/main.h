@@ -29,7 +29,7 @@
 #define PWM_DUTY_CYCLE_RAMP_DOWN_INVERSE_STEP_MIN               10     // 8 -> 8 * 64 us for every duty cycle decrement at 15.625KHz
 #define MOTOR_OVER_SPEED_ERPS                                   650    // motor max speed | 30 points for the sinewave at max speed (less than PWM_CYCLES_SECOND/30)
 #define CRUISE_DUTY_CYCLE_RAMP_UP_INVERSE_STEP                  98    // 80 at 15.625KHz
-#define WALK_ASSIST_DUTY_CYCLE_RAMP_UP_INVERSE_STEP             254    // 200 at 15.625KHz
+#define WALK_ASSIST_DUTY_CYCLE_RAMP_UP_INVERSE_STEP             255    // 200 at 15.625KHz
 #define THROTTLE_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_DEFAULT        98    // 80 at 15.625KHz
 #define THROTTLE_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_MIN            49     // 40 at 15.625KHz
 
@@ -45,7 +45,8 @@
 #define WHEEL_SPEED_SENSOR_TICKS_COUNTER_MIN                    39976 // could be a bigger number but will make for a slow detection of stopped wheel speed
 
 
-#define PWM_DUTY_CYCLE_MAX                                        254
+#define PWM_DUTY_CYCLE_MAX                                        255U
+#define PWM_DUTY_CYCLE_BITS                                       8U
 #define MIDDLE_SVM_TABLE                                          106
 #define MIDDLE_PWM_COUNTER                                        105
 

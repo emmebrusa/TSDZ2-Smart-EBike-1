@@ -695,7 +695,7 @@ static void ebike_control_motor(void)
         }
 
         // limit target duty cycle if higher than max value
-        if (ui8_duty_cycle_target > PWM_DUTY_CYCLE_MAX) {
+        if (ui8_duty_cycle_target >= PWM_DUTY_CYCLE_MAX) {
             ui8_duty_cycle_target = PWM_DUTY_CYCLE_MAX;
         }
 /*		
@@ -902,11 +902,6 @@ static void apply_cadence_assist(void)
         // get the cadence assist duty cycle target
 		uint8_t ui8_cadence_assist_duty_cycle_target = ui8_riding_mode_parameter + (uint8_t)ui16_cadence_assist_duty_cycle_increment;
 		
-        // limit cadence assist duty cycle target
-        if (ui8_cadence_assist_duty_cycle_target > PWM_DUTY_CYCLE_MAX) {
-            ui8_cadence_assist_duty_cycle_target = PWM_DUTY_CYCLE_MAX;
-        }
-
         // set motor torque rate
 		set_assist_torque_rates();
 
@@ -1250,7 +1245,7 @@ static void apply_cruise(void)
 									(uint8_t) 0,                     // minimum control output from PID
 									(uint8_t) 250,                   // maximum control output from PID
 									(uint8_t) 0,                     // minimum duty cycle
-									(uint8_t)(PWM_DUTY_CYCLE_MAX-1)); // maximum duty cycle
+									(uint8_t)(PWM_DUTY_CYCLE_MAX)); // maximum duty cycle
 	}
 	else
 	{
