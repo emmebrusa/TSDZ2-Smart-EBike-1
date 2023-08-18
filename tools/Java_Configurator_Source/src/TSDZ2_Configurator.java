@@ -457,9 +457,9 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
          provSet.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-                            	try {
-                                int selectedIndex = provSet.getSelectedIndex();
-                                provenSettingsList.setSelectedIndex(selectedIndex);
+                try {
+                    int selectedIndex = provSet.getSelectedIndex();
+                    provenSettingsList.setSelectedIndex(selectedIndex);
 					loadSettings(((FileContainer) provenSettingsList.getSelectedValue()).file);
 					provenSettingsList.clearSelection();
 				} catch (IOException ex) {
@@ -474,10 +474,10 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
           jButton1.addActionListener(new ActionListener() {
 
           public void actionPerformed(ActionEvent arg0) {
-          			PrintWriter iWriter = null;
-                                PrintWriter pWriter = null;
+          		PrintWriter iWriter = null;
+                PrintWriter pWriter = null;
 
-                                File newFile = new File(experimentalSettingsDir + File.separator + new SimpleDateFormat("yyyyMMdd-HHmmssz").format(new Date()) + ".ini");
+                File newFile = new File(experimentalSettingsDir + File.separator + new SimpleDateFormat("yyyyMMdd-HHmmssz").format(new Date()) + ".ini");
 				try {
                     AddListItem(newFile);
 
@@ -492,748 +492,748 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
 							+ "\r\n"
 							+ "#ifndef CONFIG_H_\r\n"
 							+ "#define CONFIG_H_\r\n");
-                                        String text_to_save="";
+                    String text_to_save="";
 
-                                        if (RB_MOTOR_36V.isSelected()) {
+                    if (RB_MOTOR_36V.isSelected()) {
 						text_to_save = "#define MOTOR_TYPE 1";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(RB_MOTOR_36V.isSelected());
 
-                                        if (RB_MOTOR_48V.isSelected()) {
+                    if (RB_MOTOR_48V.isSelected()) {
 						text_to_save = "#define MOTOR_TYPE 0";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(RB_MOTOR_48V.isSelected());
 
-                                        if (CB_TORQUE_CALIBRATION.isSelected()) {
+                    if (CB_TORQUE_CALIBRATION.isSelected()) {
 						text_to_save = "#define TORQUE_SENSOR_CALIBRATED 1";
 						pWriter.println(text_to_save);
 					}
-                                        else {
+                    else {
 						text_to_save = "#define TORQUE_SENSOR_CALIBRATED 0";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(CB_TORQUE_CALIBRATION.isSelected());
 
-                                        text_to_save = "#define MOTOR_ACCELERATION  " + TF_MOTOR_ACC.getText();
-                                        iWriter.println(TF_MOTOR_ACC.getText());
+                    text_to_save = "#define MOTOR_ACCELERATION  " + TF_MOTOR_ACC.getText();
+                    iWriter.println(TF_MOTOR_ACC.getText());
 					pWriter.println(text_to_save);
 
-                                        if (CB_ASS_WITHOUT_PED.isSelected()) {
+                    if (CB_ASS_WITHOUT_PED.isSelected()) {
 						text_to_save = "#define MOTOR_ASSISTANCE_WITHOUT_PEDAL_ROTATION 1";
 						pWriter.println(text_to_save);
 					}
-                                        else {
+                    else {
 						text_to_save = "#define MOTOR_ASSISTANCE_WITHOUT_PEDAL_ROTATION 0";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(CB_ASS_WITHOUT_PED.isSelected());
 
-                                        text_to_save = "#define ASSISTANCE_WITHOUT_PEDAL_ROTATION_THRESHOLD " + TF_ASS_WITHOUT_PED_THRES.getText();
-                                        iWriter.println(TF_ASS_WITHOUT_PED_THRES.getText());
+                    text_to_save = "#define ASSISTANCE_WITHOUT_PEDAL_ROTATION_THRESHOLD " + TF_ASS_WITHOUT_PED_THRES.getText();
+                    iWriter.println(TF_ASS_WITHOUT_PED_THRES.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define PEDAL_TORQUE_PER_10_BIT_ADC_STEP_X100 " + TF_TORQ_PER_ADC_STEP.getText();
-                                        iWriter.println(TF_TORQ_PER_ADC_STEP.getText());
+                    text_to_save = "#define PEDAL_TORQUE_PER_10_BIT_ADC_STEP_X100 " + TF_TORQ_PER_ADC_STEP.getText();
+                    iWriter.println(TF_TORQ_PER_ADC_STEP.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define PEDAL_TORQUE_ADC_MAX " + TF_TORQUE_ADC_MAX.getText();
-                                        iWriter.println(TF_TORQUE_ADC_MAX.getText());
+                    text_to_save = "#define PEDAL_TORQUE_ADC_MAX " + TF_TORQUE_ADC_MAX.getText();
+                    iWriter.println(TF_TORQUE_ADC_MAX.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define STARTUP_BOOST_TORQUE_FACTOR " + TF_BOOST_TORQUE_FACTOR.getText();
-                                        iWriter.println(TF_BOOST_TORQUE_FACTOR.getText());
+                    text_to_save = "#define STARTUP_BOOST_TORQUE_FACTOR " + TF_BOOST_TORQUE_FACTOR.getText();
+                    iWriter.println(TF_BOOST_TORQUE_FACTOR.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define MOTOR_BLOCKED_COUNTER_THRESHOLD " + TF_MOTOR_BLOCK_TIME.getText();
-                                        iWriter.println(TF_MOTOR_BLOCK_TIME.getText());
+                    text_to_save = "#define MOTOR_BLOCKED_COUNTER_THRESHOLD " + TF_MOTOR_BLOCK_TIME.getText();
+                    iWriter.println(TF_MOTOR_BLOCK_TIME.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define MOTOR_BLOCKED_BATTERY_CURRENT_THRESHOLD_X10 " + TF_MOTOR_BLOCK_CURR.getText();
-                                        iWriter.println(TF_MOTOR_BLOCK_CURR.getText());
+                    text_to_save = "#define MOTOR_BLOCKED_BATTERY_CURRENT_THRESHOLD_X10 " + TF_MOTOR_BLOCK_CURR.getText();
+                    iWriter.println(TF_MOTOR_BLOCK_CURR.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define MOTOR_BLOCKED_ERPS_THRESHOLD " + TF_MOTOR_BLOCK_ERPS.getText();
-                                        iWriter.println(TF_MOTOR_BLOCK_ERPS.getText());
+                    text_to_save = "#define MOTOR_BLOCKED_ERPS_THRESHOLD " + TF_MOTOR_BLOCK_ERPS.getText();
+                    iWriter.println(TF_MOTOR_BLOCK_ERPS.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define STARTUP_BOOST_CADENCE_STEP " + TF_BOOST_CADENCE_STEP.getText();
-                                        iWriter.println(TF_BOOST_CADENCE_STEP.getText());
+                    text_to_save = "#define STARTUP_BOOST_CADENCE_STEP " + TF_BOOST_CADENCE_STEP.getText();
+                    iWriter.println(TF_BOOST_CADENCE_STEP.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define BATTERY_CURRENT_MAX " + TF_BAT_CUR_MAX.getText();
-                                        iWriter.println(TF_BAT_CUR_MAX.getText());
+                    text_to_save = "#define BATTERY_CURRENT_MAX " + TF_BAT_CUR_MAX.getText();
+                    iWriter.println(TF_BAT_CUR_MAX.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define TARGET_MAX_BATTERY_POWER " + TF_BATT_POW_MAX.getText();
-                                        iWriter.println(TF_BATT_POW_MAX.getText());
+                    text_to_save = "#define TARGET_MAX_BATTERY_POWER " + TF_BATT_POW_MAX.getText();
+                    iWriter.println(TF_BATT_POW_MAX.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define TARGET_MAX_BATTERY_CAPACITY " + TF_BATT_CAPACITY.getText();
-                                        iWriter.println(TF_BATT_CAPACITY.getText());
+                    text_to_save = "#define TARGET_MAX_BATTERY_CAPACITY " + TF_BATT_CAPACITY.getText();
+                    iWriter.println(TF_BATT_CAPACITY.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define BATTERY_CELLS_NUMBER " + TF_BATT_NUM_CELLS.getText();
-                                        iWriter.println(TF_BATT_NUM_CELLS.getText());
+                    text_to_save = "#define BATTERY_CELLS_NUMBER " + TF_BATT_NUM_CELLS.getText();
+                    iWriter.println(TF_BATT_NUM_CELLS.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define MOTOR_DECELERATION " + TF_MOTOR_DEC.getText();
-                                        iWriter.println(TF_MOTOR_DEC.getText());
+                    text_to_save = "#define MOTOR_DECELERATION " + TF_MOTOR_DEC.getText();
+                    iWriter.println(TF_MOTOR_DEC.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define BATTERY_LOW_VOLTAGE_CUT_OFF " + TF_BATT_VOLT_CUT_OFF.getText();
-                                        iWriter.println(TF_BATT_VOLT_CUT_OFF.getText());
+                    text_to_save = "#define BATTERY_LOW_VOLTAGE_CUT_OFF " + TF_BATT_VOLT_CUT_OFF.getText();
+                    iWriter.println(TF_BATT_VOLT_CUT_OFF.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define ACTUAL_BATTERY_VOLTAGE_PERCENT " + TF_BATT_VOLT_CAL.getText();
-                                        iWriter.println(TF_BATT_VOLT_CAL.getText());
+                    text_to_save = "#define ACTUAL_BATTERY_VOLTAGE_PERCENT " + TF_BATT_VOLT_CAL.getText();
+                    iWriter.println(TF_BATT_VOLT_CAL.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define ACTUAL_BATTERY_CAPACITY_PERCENT " + TF_BATT_CAPACITY_CAL.getText();
-                                        iWriter.println(TF_BATT_CAPACITY_CAL.getText());
+                    text_to_save = "#define ACTUAL_BATTERY_CAPACITY_PERCENT " + TF_BATT_CAPACITY_CAL.getText();
+                    iWriter.println(TF_BATT_CAPACITY_CAL.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define LI_ION_CELL_OVERVOLT " + TF_BAT_CELL_OVER.getText();
-                                        iWriter.println(TF_BAT_CELL_OVER.getText());
+                    text_to_save = "#define LI_ION_CELL_OVERVOLT " + TF_BAT_CELL_OVER.getText();
+                    iWriter.println(TF_BAT_CELL_OVER.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define LI_ION_CELL_RESET_SOC_PERCENT " + TF_BAT_CELL_SOC.getText();
-                                        iWriter.println(TF_BAT_CELL_SOC.getText());
+                    text_to_save = "#define LI_ION_CELL_RESET_SOC_PERCENT " + TF_BAT_CELL_SOC.getText();
+                    iWriter.println(TF_BAT_CELL_SOC.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define LI_ION_CELL_VOLTS_FULL " + TF_BAT_CELL_FULL.getText();
-                                        iWriter.println(TF_BAT_CELL_FULL.getText());
+                    text_to_save = "#define LI_ION_CELL_VOLTS_FULL " + TF_BAT_CELL_FULL.getText();
+                    iWriter.println(TF_BAT_CELL_FULL.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define LI_ION_CELL_VOLTS_3_OF_4 " + TF_BAT_CELL_3_4.getText();
-                                        iWriter.println(TF_BAT_CELL_3_4.getText());
+                    text_to_save = "#define LI_ION_CELL_VOLTS_3_OF_4 " + TF_BAT_CELL_3_4.getText();
+                    iWriter.println(TF_BAT_CELL_3_4.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define LI_ION_CELL_VOLTS_2_OF_4 " + TF_BAT_CELL_2_4.getText();
-                                        iWriter.println(TF_BAT_CELL_2_4.getText());
+                    text_to_save = "#define LI_ION_CELL_VOLTS_2_OF_4 " + TF_BAT_CELL_2_4.getText();
+                    iWriter.println(TF_BAT_CELL_2_4.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define LI_ION_CELL_VOLTS_1_OF_4 " + TF_BAT_CELL_1_4.getText();
-                                        iWriter.println(TF_BAT_CELL_1_4.getText());
+                    text_to_save = "#define LI_ION_CELL_VOLTS_1_OF_4 " + TF_BAT_CELL_1_4.getText();
+                    iWriter.println(TF_BAT_CELL_1_4.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define LI_ION_CELL_VOLTS_5_OF_6 " + TF_BAT_CELL_5_6.getText();
-                                        iWriter.println(TF_BAT_CELL_5_6.getText());
+                    text_to_save = "#define LI_ION_CELL_VOLTS_5_OF_6 " + TF_BAT_CELL_5_6.getText();
+                    iWriter.println(TF_BAT_CELL_5_6.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define LI_ION_CELL_VOLTS_4_OF_6 " + TF_BAT_CELL_4_6.getText();
-                                        iWriter.println(TF_BAT_CELL_4_6.getText());
+                    text_to_save = "#define LI_ION_CELL_VOLTS_4_OF_6 " + TF_BAT_CELL_4_6.getText();
+                    iWriter.println(TF_BAT_CELL_4_6.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define LI_ION_CELL_VOLTS_3_OF_6 " + TF_BAT_CELL_3_6.getText();
-                                        iWriter.println(TF_BAT_CELL_3_6.getText());
+                    text_to_save = "#define LI_ION_CELL_VOLTS_3_OF_6 " + TF_BAT_CELL_3_6.getText();
+                    iWriter.println(TF_BAT_CELL_3_6.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define LI_ION_CELL_VOLTS_2_OF_6 " + TF_BAT_CELL_2_6.getText();
-                                        iWriter.println(TF_BAT_CELL_2_6.getText());
+                    text_to_save = "#define LI_ION_CELL_VOLTS_2_OF_6 " + TF_BAT_CELL_2_6.getText();
+                    iWriter.println(TF_BAT_CELL_2_6.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define LI_ION_CELL_VOLTS_1_OF_6 " + TF_BAT_CELL_1_6.getText();
-                                        iWriter.println(TF_BAT_CELL_1_6.getText());
+                    text_to_save = "#define LI_ION_CELL_VOLTS_1_OF_6 " + TF_BAT_CELL_1_6.getText();
+                    iWriter.println(TF_BAT_CELL_1_6.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define LI_ION_CELL_VOLTS_EMPTY " + TF_BAT_CELL_EMPTY.getText();
-                                        iWriter.println(TF_BAT_CELL_EMPTY.getText());
+                    text_to_save = "#define LI_ION_CELL_VOLTS_EMPTY " + TF_BAT_CELL_EMPTY.getText();
+                    iWriter.println(TF_BAT_CELL_EMPTY.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define WHEEL_PERIMETER " + TF_WHEEL_CIRCUMF.getText();
-                                        iWriter.println(TF_WHEEL_CIRCUMF.getText());
+                    text_to_save = "#define WHEEL_PERIMETER " + TF_WHEEL_CIRCUMF.getText();
+                    iWriter.println(TF_WHEEL_CIRCUMF.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define WHEEL_MAX_SPEED " + String.valueOf(intMaxSpeed);
-                                        iWriter.println(String.valueOf(intMaxSpeed));
+                    text_to_save = "#define WHEEL_MAX_SPEED " + String.valueOf(intMaxSpeed);
+                    iWriter.println(String.valueOf(intMaxSpeed));
 					pWriter.println(text_to_save);
 
-                                        if (CB_LIGHTS.isSelected()) {
+                    if (CB_LIGHTS.isSelected()) {
 						text_to_save = "#define ENABLE_LIGHTS 1";
 						pWriter.println(text_to_save);
 					}
-                                        else {
+                    else {
 						text_to_save = "#define ENABLE_LIGHTS 0";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(CB_LIGHTS.isSelected());
 
-                                        if (CB_WALK_ASSIST.isSelected()) {
+                    if (CB_WALK_ASSIST.isSelected()) {
 						text_to_save = "#define ENABLE_WALK_ASSIST 1";
 						pWriter.println(text_to_save);
 					}
-                                        else {
+                    else {
 						text_to_save = "#define ENABLE_WALK_ASSIST 0";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(CB_WALK_ASSIST.isSelected());
 
-                                        if (CB_BRAKE_SENSOR.isSelected()) {
+                    if (CB_BRAKE_SENSOR.isSelected()) {
 						text_to_save = "#define ENABLE_BRAKE_SENSOR 1";
 						pWriter.println(text_to_save);
 					}
-                                        else {
+                    else {
 						text_to_save = "#define ENABLE_BRAKE_SENSOR 0";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(CB_BRAKE_SENSOR.isSelected());
 
-                                        if (RB_ADC_OPTION_DIS.isSelected()) {
+                    if (RB_ADC_OPTION_DIS.isSelected()) {
 						text_to_save = "#define ENABLE_THROTTLE 0"+System.getProperty("line.separator")+"#define ENABLE_TEMPERATURE_LIMIT 0";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(RB_ADC_OPTION_DIS.isSelected());
 
-                                        if (RB_THROTTLE.isSelected()) {
+                    if (RB_THROTTLE.isSelected()) {
 						text_to_save = "#define ENABLE_THROTTLE 1"+System.getProperty("line.separator")+"#define ENABLE_TEMPERATURE_LIMIT 0";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(RB_THROTTLE.isSelected());
 
-                                        if (RB_TEMP_LIMIT.isSelected()) {
+                    if (RB_TEMP_LIMIT.isSelected()) {
 						text_to_save = "#define ENABLE_THROTTLE 0"+System.getProperty("line.separator")+"#define ENABLE_TEMPERATURE_LIMIT 1";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(RB_TEMP_LIMIT.isSelected());
 
-                                        if (CB_STREET_MODE_ON_START.isSelected()) {
+                    if (CB_STREET_MODE_ON_START.isSelected()) {
 						text_to_save = "#define ENABLE_STREET_MODE_ON_STARTUP 1";
 						pWriter.println(text_to_save);
 					}
-                                        else {
+                    else {
 						text_to_save = "#define ENABLE_STREET_MODE_ON_STARTUP 0";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(CB_STREET_MODE_ON_START.isSelected());
 
-                                        if (CB_SET_PARAM_ON_START.isSelected()) {
+                    if (CB_SET_PARAM_ON_START.isSelected()) {
 						text_to_save = "#define ENABLE_SET_PARAMETER_ON_STARTUP 1";
 						pWriter.println(text_to_save);
 					}
-                                        else {
+                    else {
 						text_to_save = "#define ENABLE_SET_PARAMETER_ON_STARTUP 0";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(CB_SET_PARAM_ON_START.isSelected());
 
-                                        if (CB_ODO_COMPENSATION.isSelected()) {
+                    if (CB_ODO_COMPENSATION.isSelected()) {
 						text_to_save = "#define ENABLE_ODOMETER_COMPENSATION 1";
 						pWriter.println(text_to_save);
 					}
-                                        else {
+                    else {
 						text_to_save = "#define ENABLE_ODOMETER_COMPENSATION 0";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(CB_ODO_COMPENSATION.isSelected());
 
-                                        if (CB_STARTUP_BOOST_ON_START.isSelected()) {
+                    if (CB_STARTUP_BOOST_ON_START.isSelected()) {
 						text_to_save = "#define STARTUP_BOOST_ON_STARTUP 1";
 						pWriter.println(text_to_save);
 					}
-                                        else {
+                    else {
 						text_to_save = "#define STARTUP_BOOST_ON_STARTUP 0";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(CB_STARTUP_BOOST_ON_START.isSelected());
 
-                                        if (CB_TOR_SENSOR_ADV.isSelected()) {
+                    if (CB_TOR_SENSOR_ADV.isSelected()) {
 						text_to_save = "#define TORQUE_SENSOR_ADV_ON_STARTUP 1";
 						pWriter.println(text_to_save);
 					}
-                                        else {
+                    else {
 						text_to_save = "#define TORQUE_SENSOR_ADV_ON_STARTUP 0";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(CB_TOR_SENSOR_ADV.isSelected());
 
-                                        text_to_save = "#define LIGHTS_CONFIGURATION_ON_STARTUP " + TF_LIGHT_MODE_ON_START.getText();
-                                        iWriter.println(TF_LIGHT_MODE_ON_START.getText());
+                    text_to_save = "#define LIGHTS_CONFIGURATION_ON_STARTUP " + TF_LIGHT_MODE_ON_START.getText();
+                    iWriter.println(TF_LIGHT_MODE_ON_START.getText());
 					pWriter.println(text_to_save);
 
-                                        if (RB_POWER_ON_START.isSelected()) {
+                    if (RB_POWER_ON_START.isSelected()) {
 						text_to_save = "#define RIDING_MODE_ON_STARTUP 1";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(RB_POWER_ON_START.isSelected());
 
-                                        if (RB_TORQUE_ON_START.isSelected()) {
+                    if (RB_TORQUE_ON_START.isSelected()) {
 						text_to_save = "#define RIDING_MODE_ON_STARTUP 2";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(RB_TORQUE_ON_START.isSelected());
 
-                                        if (RB_CADENCE_ON_START.isSelected()) {
+                    if (RB_CADENCE_ON_START.isSelected()) {
 						text_to_save = "#define RIDING_MODE_ON_STARTUP 3";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(RB_CADENCE_ON_START.isSelected());
 
-                                        if (RB_EMTB_ON_START.isSelected()) {
+                    if (RB_EMTB_ON_START.isSelected()) {
 						text_to_save = "#define RIDING_MODE_ON_STARTUP 4";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(RB_EMTB_ON_START.isSelected());
 
-                                        text_to_save = "#define LIGHTS_CONFIGURATION_1 " + TF_LIGHT_MODE_1.getText();
-                                        iWriter.println(TF_LIGHT_MODE_1.getText());
+                    text_to_save = "#define LIGHTS_CONFIGURATION_1 " + TF_LIGHT_MODE_1.getText();
+                    iWriter.println(TF_LIGHT_MODE_1.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define LIGHTS_CONFIGURATION_2 " + TF_LIGHT_MODE_2.getText();
-                                        iWriter.println(TF_LIGHT_MODE_2.getText());
+                    text_to_save = "#define LIGHTS_CONFIGURATION_2 " + TF_LIGHT_MODE_2.getText();
+                    iWriter.println(TF_LIGHT_MODE_2.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define LIGHTS_CONFIGURATION_3 " + TF_LIGHT_MODE_3.getText();
-                                        iWriter.println(TF_LIGHT_MODE_3.getText());
+                    text_to_save = "#define LIGHTS_CONFIGURATION_3 " + TF_LIGHT_MODE_3.getText();
+                    iWriter.println(TF_LIGHT_MODE_3.getText());
 					pWriter.println(text_to_save);
 
-                                        if (CB_STREET_POWER_LIM.isSelected()) {
+                    if (CB_STREET_POWER_LIM.isSelected()) {
 						text_to_save = "#define STREET_MODE_POWER_LIMIT_ENABLED 1";
 						pWriter.println(text_to_save);
 					}
-                                        else {
+                    else {
 						text_to_save = "#define STREET_MODE_POWER_LIMIT_ENABLED 0";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(CB_STREET_POWER_LIM.isSelected());
 
-                                        text_to_save = "#define STREET_MODE_POWER_LIMIT " + TF_STREET_POWER_LIM.getText();
-                                        iWriter.println(TF_STREET_POWER_LIM.getText());
+                    text_to_save = "#define STREET_MODE_POWER_LIMIT " + TF_STREET_POWER_LIM.getText();
+                    iWriter.println(TF_STREET_POWER_LIM.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define STREET_MODE_SPEED_LIMIT " + String.valueOf(intStreetSpeed);
-                                        iWriter.println(String.valueOf(intStreetSpeed));
+                    text_to_save = "#define STREET_MODE_SPEED_LIMIT " + String.valueOf(intStreetSpeed);
+                    iWriter.println(String.valueOf(intStreetSpeed));
 					pWriter.println(text_to_save);
 
-                                        if (CB_STREET_THROTTLE.isSelected()) {
+                    if (CB_STREET_THROTTLE.isSelected()) {
 						text_to_save = "#define STREET_MODE_THROTTLE_ENABLED 1";
 						pWriter.println(text_to_save);
 					}
-                                        else {
+                    else {
 						text_to_save = "#define STREET_MODE_THROTTLE_ENABLED 0";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(CB_STREET_THROTTLE.isSelected());
 
-                                        if (CB_STREET_CRUISE.isSelected()) {
+                    if (CB_STREET_CRUISE.isSelected()) {
 						text_to_save = "#define STREET_MODE_CRUISE_ENABLED 1";
 						pWriter.println(text_to_save);
 					}
-                                        else {
+                    else {
 						text_to_save = "#define STREET_MODE_CRUISE_ENABLED 0";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(CB_STREET_CRUISE.isSelected());
 
-                                        text_to_save = "#define ADC_THROTTLE_MIN_VALUE " + TF_ADC_THROTTLE_MIN.getText();
-                                        iWriter.println(TF_ADC_THROTTLE_MIN.getText());
+                    text_to_save = "#define ADC_THROTTLE_MIN_VALUE " + TF_ADC_THROTTLE_MIN.getText();
+                    iWriter.println(TF_ADC_THROTTLE_MIN.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define ADC_THROTTLE_MAX_VALUE " + TF_ADC_THROTTLE_MAX.getText();
-                                        iWriter.println(TF_ADC_THROTTLE_MAX.getText());
+                    text_to_save = "#define ADC_THROTTLE_MAX_VALUE " + TF_ADC_THROTTLE_MAX.getText();
+                    iWriter.println(TF_ADC_THROTTLE_MAX.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define MOTOR_TEMPERATURE_MIN_VALUE_LIMIT " + TF_TEMP_MIN_LIM.getText();
-                                        iWriter.println(TF_TEMP_MIN_LIM.getText());
+                    text_to_save = "#define MOTOR_TEMPERATURE_MIN_VALUE_LIMIT " + TF_TEMP_MIN_LIM.getText();
+                    iWriter.println(TF_TEMP_MIN_LIM.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define MOTOR_TEMPERATURE_MAX_VALUE_LIMIT " + TF_TEMP_MAX_LIM.getText();
-                                        iWriter.println(TF_TEMP_MAX_LIM.getText());
+                    text_to_save = "#define MOTOR_TEMPERATURE_MAX_VALUE_LIMIT " + TF_TEMP_MAX_LIM.getText();
+                    iWriter.println(TF_TEMP_MAX_LIM.getText());
 					pWriter.println(text_to_save);
 
-                                        if (CB_TEMP_ERR_MIN_LIM.isSelected()) {
+                    if (CB_TEMP_ERR_MIN_LIM.isSelected()) {
 						text_to_save = "#define ENABLE_TEMPERATURE_ERROR_MIN_LIMIT 1";
 						pWriter.println(text_to_save);
 					}
-                                        else {
+                    else {
 						text_to_save = "#define ENABLE_TEMPERATURE_ERROR_MIN_LIMIT 0";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(CB_TEMP_ERR_MIN_LIM.isSelected());
 
-                                        if (RB_VLCD6.isSelected()) {
+                    if (RB_VLCD6.isSelected()) {
 						text_to_save = "#define ENABLE_VLCD6 1";
 						pWriter.println(text_to_save);
 					}
-                                        else {
+                    else {
 						text_to_save = "#define ENABLE_VLCD6 0";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(RB_VLCD6.isSelected());
 
-                                        if (RB_VLCD5.isSelected()) {
+                    if (RB_VLCD5.isSelected()) {
 						text_to_save = "#define ENABLE_VLCD5 1";
 						pWriter.println(text_to_save);
 					}
-                                        else {
+                    else {
 						text_to_save = "#define ENABLE_VLCD5 0";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(RB_VLCD5.isSelected());
 
-                                        if (RB_XH18.isSelected()) {
+                    if (RB_XH18.isSelected()) {
 						text_to_save = "#define ENABLE_XH18 1";
 						pWriter.println(text_to_save);
 					}
-                                        else {
+                    else {
 						text_to_save = "#define ENABLE_XH18 0";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(RB_XH18.isSelected());
 
-                                        if (RB_DISPLAY_WORK_ON.isSelected()) {
+                    if (RB_DISPLAY_WORK_ON.isSelected()) {
 						text_to_save = "#define ENABLE_DISPLAY_WORKING_FLAG 1";
 						pWriter.println(text_to_save);
-                                        }
-                                        else {
-                                                text_to_save = "#define ENABLE_DISPLAY_WORKING_FLAG 0";
+                    }
+                    else {
+                    text_to_save = "#define ENABLE_DISPLAY_WORKING_FLAG 0";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(RB_DISPLAY_WORK_ON.isSelected());
 
-                                        if (RB_DISPLAY_ALWAY_ON.isSelected()) {
+                    if (RB_DISPLAY_ALWAY_ON.isSelected()) {
 						text_to_save = "#define ENABLE_DISPLAY_ALWAYS_ON 1";
 						pWriter.println(text_to_save);
                                         }
                                         else {
-                                                text_to_save = "#define ENABLE_DISPLAY_ALWAYS_ON 0";
+                    text_to_save = "#define ENABLE_DISPLAY_ALWAYS_ON 0";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(RB_DISPLAY_ALWAY_ON.isSelected());
 
-                                        if (CB_MAX_SPEED_DISPLAY.isSelected()) {
+                    if (CB_MAX_SPEED_DISPLAY.isSelected()) {
 						text_to_save = "#define ENABLE_WHEEL_MAX_SPEED_FROM_DISPLAY 1";
 						pWriter.println(text_to_save);
 					}
-                                        else {
+                    else {
 						text_to_save = "#define ENABLE_WHEEL_MAX_SPEED_FROM_DISPLAY 0";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(CB_MAX_SPEED_DISPLAY.isSelected());
 
-                                        text_to_save = "#define DELAY_MENU_ON " + TF_DELAY_MENU.getText();
-                                        iWriter.println(TF_DELAY_MENU.getText());
+                    text_to_save = "#define DELAY_MENU_ON " + TF_DELAY_MENU.getText();
+                    iWriter.println(TF_DELAY_MENU.getText());
 					pWriter.println(text_to_save);
 
-                                        if (CB_COASTER_BRAKE.isSelected()) {
+                    if (CB_COASTER_BRAKE.isSelected()) {
 						text_to_save = "#define COASTER_BRAKE_ENABLED 1";
 						pWriter.println(text_to_save);
 					}
-                                        else {
+                    else {
 						text_to_save = "#define COASTER_BRAKE_ENABLED 0";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(CB_COASTER_BRAKE.isSelected());
 
-                                        text_to_save = "#define COASTER_BRAKE_TORQUE_THRESHOLD " + TF_COASTER_BRAKE_THRESHOLD.getText();
-                                        iWriter.println(TF_COASTER_BRAKE_THRESHOLD.getText());
+                    text_to_save = "#define COASTER_BRAKE_TORQUE_THRESHOLD " + TF_COASTER_BRAKE_THRESHOLD.getText();
+                    iWriter.println(TF_COASTER_BRAKE_THRESHOLD.getText());
 					pWriter.println(text_to_save);
 
-                                        if (CB_AUTO_DISPLAY_DATA.isSelected()) {
+                    if (CB_AUTO_DISPLAY_DATA.isSelected()) {
 						text_to_save = "#define ENABLE_AUTO_DATA_DISPLAY 1";
 						pWriter.println(text_to_save);
 					}
-                                        else {
+                    else {
 						text_to_save = "#define ENABLE_AUTO_DATA_DISPLAY 0";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(CB_AUTO_DISPLAY_DATA.isSelected());
 
-                                        if (CB_STARTUP_ASSIST_ENABLED.isSelected()) {
+                    if (CB_STARTUP_ASSIST_ENABLED.isSelected()) {
 						text_to_save = "#define STARTUP_ASSIST_ENABLED 1";
 						pWriter.println(text_to_save);
 					}
-                                        else {
+                    else {
 						text_to_save = "#define STARTUP_ASSIST_ENABLED 0";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(CB_STARTUP_ASSIST_ENABLED.isSelected());
 
-                                        text_to_save = "#define DELAY_DISPLAY_DATA_1 " + TF_DELAY_DATA_1.getText();
-                                        iWriter.println(TF_DELAY_DATA_1.getText());
+                    text_to_save = "#define DELAY_DISPLAY_DATA_1 " + TF_DELAY_DATA_1.getText();
+                    iWriter.println(TF_DELAY_DATA_1.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define DELAY_DISPLAY_DATA_2 " + TF_DELAY_DATA_2.getText();
-                                        iWriter.println(TF_DELAY_DATA_2.getText());
+                    text_to_save = "#define DELAY_DISPLAY_DATA_2 " + TF_DELAY_DATA_2.getText();
+                    iWriter.println(TF_DELAY_DATA_2.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define DELAY_DISPLAY_DATA_3 " + TF_DELAY_DATA_3.getText();
-                                        iWriter.println(TF_DELAY_DATA_3.getText());
+                    text_to_save = "#define DELAY_DISPLAY_DATA_3 " + TF_DELAY_DATA_3.getText();
+                    iWriter.println(TF_DELAY_DATA_3.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define DELAY_DISPLAY_DATA_4 " + TF_DELAY_DATA_4.getText();
-                                        iWriter.println(TF_DELAY_DATA_4.getText());
+                    text_to_save = "#define DELAY_DISPLAY_DATA_4 " + TF_DELAY_DATA_4.getText();
+                    iWriter.println(TF_DELAY_DATA_4.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define DELAY_DISPLAY_DATA_5 " + TF_DELAY_DATA_5.getText();
-                                        iWriter.println(TF_DELAY_DATA_5.getText());
+                    text_to_save = "#define DELAY_DISPLAY_DATA_5 " + TF_DELAY_DATA_5.getText();
+                    iWriter.println(TF_DELAY_DATA_5.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define DELAY_DISPLAY_DATA_6 " + TF_DELAY_DATA_6.getText();
-                                        iWriter.println(TF_DELAY_DATA_6.getText());
+                    text_to_save = "#define DELAY_DISPLAY_DATA_6 " + TF_DELAY_DATA_6.getText();
+                    iWriter.println(TF_DELAY_DATA_6.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define DISPLAY_DATA_1 " + TF_DATA_1.getText();
-                                        iWriter.println(TF_DATA_1.getText());
+                    text_to_save = "#define DISPLAY_DATA_1 " + TF_DATA_1.getText();
+                    iWriter.println(TF_DATA_1.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define DISPLAY_DATA_2 " + TF_DATA_2.getText();
-                                        iWriter.println(TF_DATA_2.getText());
+                    text_to_save = "#define DISPLAY_DATA_2 " + TF_DATA_2.getText();
+                    iWriter.println(TF_DATA_2.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define DISPLAY_DATA_3 " + TF_DATA_3.getText();
-                                        iWriter.println(TF_DATA_3.getText());
+                    text_to_save = "#define DISPLAY_DATA_3 " + TF_DATA_3.getText();
+                    iWriter.println(TF_DATA_3.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define DISPLAY_DATA_4 " + TF_DATA_4.getText();
-                                        iWriter.println(TF_DATA_4.getText());
+                    text_to_save = "#define DISPLAY_DATA_4 " + TF_DATA_4.getText();
+                    iWriter.println(TF_DATA_4.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define DISPLAY_DATA_5 " + TF_DATA_5.getText();
-                                        iWriter.println(TF_DATA_5.getText());
+                    text_to_save = "#define DISPLAY_DATA_5 " + TF_DATA_5.getText();
+                    iWriter.println(TF_DATA_5.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define DISPLAY_DATA_6 " + TF_DATA_6.getText();
-                                        iWriter.println(TF_DATA_6.getText());
+                    text_to_save = "#define DISPLAY_DATA_6 " + TF_DATA_6.getText();
+                    iWriter.println(TF_DATA_6.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define POWER_ASSIST_LEVEL_1 " + TF_POWER_ASS_1.getText();
-                                        iWriter.println(TF_POWER_ASS_1.getText());
+                    text_to_save = "#define POWER_ASSIST_LEVEL_1 " + TF_POWER_ASS_1.getText();
+                    iWriter.println(TF_POWER_ASS_1.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define POWER_ASSIST_LEVEL_2 " + TF_POWER_ASS_2.getText();
-                                        iWriter.println(TF_POWER_ASS_2.getText());
+                    text_to_save = "#define POWER_ASSIST_LEVEL_2 " + TF_POWER_ASS_2.getText();
+                    iWriter.println(TF_POWER_ASS_2.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define POWER_ASSIST_LEVEL_3 " + TF_POWER_ASS_3.getText();
-                                        iWriter.println(TF_POWER_ASS_3.getText());
+                    text_to_save = "#define POWER_ASSIST_LEVEL_3 " + TF_POWER_ASS_3.getText();
+                    iWriter.println(TF_POWER_ASS_3.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define POWER_ASSIST_LEVEL_4 " + TF_POWER_ASS_4.getText();
-                                        iWriter.println(TF_POWER_ASS_4.getText());
+                    text_to_save = "#define POWER_ASSIST_LEVEL_4 " + TF_POWER_ASS_4.getText();
+                    iWriter.println(TF_POWER_ASS_4.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define TORQUE_ASSIST_LEVEL_1 " + TF_TORQUE_ASS_1.getText();
-                                        iWriter.println(TF_TORQUE_ASS_1.getText());
+                    text_to_save = "#define TORQUE_ASSIST_LEVEL_1 " + TF_TORQUE_ASS_1.getText();
+                    iWriter.println(TF_TORQUE_ASS_1.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define TORQUE_ASSIST_LEVEL_2 " + TF_TORQUE_ASS_2.getText();
-                                        iWriter.println(TF_TORQUE_ASS_2.getText());
+                    text_to_save = "#define TORQUE_ASSIST_LEVEL_2 " + TF_TORQUE_ASS_2.getText();
+                    iWriter.println(TF_TORQUE_ASS_2.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define TORQUE_ASSIST_LEVEL_3 " + TF_TORQUE_ASS_3.getText();
-                                        iWriter.println(TF_TORQUE_ASS_3.getText());
+                    text_to_save = "#define TORQUE_ASSIST_LEVEL_3 " + TF_TORQUE_ASS_3.getText();
+                    iWriter.println(TF_TORQUE_ASS_3.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define TORQUE_ASSIST_LEVEL_4 " + TF_TORQUE_ASS_4.getText();
-                                        iWriter.println(TF_TORQUE_ASS_4.getText());
+                    text_to_save = "#define TORQUE_ASSIST_LEVEL_4 " + TF_TORQUE_ASS_4.getText();
+                    iWriter.println(TF_TORQUE_ASS_4.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define CADENCE_ASSIST_LEVEL_1 " + TF_CADENCE_ASS_1.getText();
-                                        iWriter.println(TF_CADENCE_ASS_1.getText());
+                    text_to_save = "#define CADENCE_ASSIST_LEVEL_1 " + TF_CADENCE_ASS_1.getText();
+                    iWriter.println(TF_CADENCE_ASS_1.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define CADENCE_ASSIST_LEVEL_2 " + TF_CADENCE_ASS_2.getText();
-                                        iWriter.println(TF_CADENCE_ASS_2.getText());
+                    text_to_save = "#define CADENCE_ASSIST_LEVEL_2 " + TF_CADENCE_ASS_2.getText();
+                    iWriter.println(TF_CADENCE_ASS_2.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define CADENCE_ASSIST_LEVEL_3 " + TF_CADENCE_ASS_3.getText();
-                                        iWriter.println(TF_CADENCE_ASS_3.getText());
+                    text_to_save = "#define CADENCE_ASSIST_LEVEL_3 " + TF_CADENCE_ASS_3.getText();
+                    iWriter.println(TF_CADENCE_ASS_3.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define CADENCE_ASSIST_LEVEL_4 " + TF_CADENCE_ASS_4.getText();
-                                        iWriter.println(TF_CADENCE_ASS_4.getText());
+                    text_to_save = "#define CADENCE_ASSIST_LEVEL_4 " + TF_CADENCE_ASS_4.getText();
+                    iWriter.println(TF_CADENCE_ASS_4.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define EMTB_ASSIST_LEVEL_1 " + TF_EMTB_ASS_1.getText();
-                                        iWriter.println(TF_EMTB_ASS_1.getText());
+                    text_to_save = "#define EMTB_ASSIST_LEVEL_1 " + TF_EMTB_ASS_1.getText();
+                    iWriter.println(TF_EMTB_ASS_1.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define EMTB_ASSIST_LEVEL_2 " + TF_EMTB_ASS_2.getText();
-                                        iWriter.println(TF_EMTB_ASS_2.getText());
+                    text_to_save = "#define EMTB_ASSIST_LEVEL_2 " + TF_EMTB_ASS_2.getText();
+                    iWriter.println(TF_EMTB_ASS_2.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define EMTB_ASSIST_LEVEL_3 " + TF_EMTB_ASS_3.getText();
-                                        iWriter.println(TF_EMTB_ASS_3.getText());
+                    text_to_save = "#define EMTB_ASSIST_LEVEL_3 " + TF_EMTB_ASS_3.getText();
+                    iWriter.println(TF_EMTB_ASS_3.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define EMTB_ASSIST_LEVEL_4 " + TF_EMTB_ASS_4.getText();
-                                        iWriter.println(TF_EMTB_ASS_4.getText());
+                    text_to_save = "#define EMTB_ASSIST_LEVEL_4 " + TF_EMTB_ASS_4.getText();
+                    iWriter.println(TF_EMTB_ASS_4.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define WALK_ASSIST_LEVEL_1 " + String.valueOf(intWalkSpeed1);
-                                        iWriter.println(String.valueOf(intWalkSpeed1));
+                    text_to_save = "#define WALK_ASSIST_LEVEL_1 " + String.valueOf(intWalkSpeed1);
+                    iWriter.println(String.valueOf(intWalkSpeed1));
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define WALK_ASSIST_LEVEL_2 " + String.valueOf(intWalkSpeed2);
-                                        iWriter.println(String.valueOf(intWalkSpeed2));
+                    text_to_save = "#define WALK_ASSIST_LEVEL_2 " + String.valueOf(intWalkSpeed2);
+                    iWriter.println(String.valueOf(intWalkSpeed2));
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define WALK_ASSIST_LEVEL_3 " + String.valueOf(intWalkSpeed3);
-                                        iWriter.println(String.valueOf(intWalkSpeed3));
+                    text_to_save = "#define WALK_ASSIST_LEVEL_3 " + String.valueOf(intWalkSpeed3);
+                    iWriter.println(String.valueOf(intWalkSpeed3));
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define WALK_ASSIST_LEVEL_4 " + String.valueOf(intWalkSpeed4);
-                                        iWriter.println(String.valueOf(intWalkSpeed4));
+                    text_to_save = "#define WALK_ASSIST_LEVEL_4 " + String.valueOf(intWalkSpeed4);
+                    iWriter.println(String.valueOf(intWalkSpeed4));
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define WALK_ASSIST_THRESHOLD_SPEED " + String.valueOf(intWalkSpeedLimit);
-                                        iWriter.println(String.valueOf(intWalkSpeedLimit));
+                    text_to_save = "#define WALK_ASSIST_THRESHOLD_SPEED " + String.valueOf(intWalkSpeedLimit);
+                    iWriter.println(String.valueOf(intWalkSpeedLimit));
 					pWriter.println(text_to_save);
 
-                                        if (CB_WALK_TIME_ENA.isSelected()) {
+                    if (CB_WALK_TIME_ENA.isSelected()) {
 						text_to_save = "#define WALK_ASSIST_DEBOUNCE_ENABLED 1";
 						pWriter.println(text_to_save);
 					}
-                                        else {
+                    else {
 						text_to_save = "#define WALK_ASSIST_DEBOUNCE_ENABLED 0";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(CB_WALK_TIME_ENA.isSelected());
 
-                                        text_to_save = "#define WALK_ASSIST_DEBOUNCE_TIME " + TF_WALK_ASS_TIME.getText();
-                                        iWriter.println(TF_WALK_ASS_TIME.getText());
+                    text_to_save = "#define WALK_ASSIST_DEBOUNCE_TIME " + TF_WALK_ASS_TIME.getText();
+                    iWriter.println(TF_WALK_ASS_TIME.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define CRUISE_TARGET_SPEED_LEVEL_1 " + String.valueOf(intCruiseSpeed1);
-                                        iWriter.println(String.valueOf(intCruiseSpeed1));
+                    text_to_save = "#define CRUISE_TARGET_SPEED_LEVEL_1 " + String.valueOf(intCruiseSpeed1);
+                    iWriter.println(String.valueOf(intCruiseSpeed1));
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define CRUISE_TARGET_SPEED_LEVEL_2 " + String.valueOf(intCruiseSpeed2);
-                                        iWriter.println(String.valueOf(intCruiseSpeed2));
+                    text_to_save = "#define CRUISE_TARGET_SPEED_LEVEL_2 " + String.valueOf(intCruiseSpeed2);
+                    iWriter.println(String.valueOf(intCruiseSpeed2));
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define CRUISE_TARGET_SPEED_LEVEL_3 " + String.valueOf(intCruiseSpeed3);
-                                        iWriter.println(String.valueOf(intCruiseSpeed3));
+                    text_to_save = "#define CRUISE_TARGET_SPEED_LEVEL_3 " + String.valueOf(intCruiseSpeed3);
+                    iWriter.println(String.valueOf(intCruiseSpeed3));
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define CRUISE_TARGET_SPEED_LEVEL_4 " + String.valueOf(intCruiseSpeed4);
-                                        iWriter.println(String.valueOf(intCruiseSpeed4));
+                    text_to_save = "#define CRUISE_TARGET_SPEED_LEVEL_4 " + String.valueOf(intCruiseSpeed4);
+                    iWriter.println(String.valueOf(intCruiseSpeed4));
 					pWriter.println(text_to_save);
 
-                                        if (CB_CRUISE_WHITOUT_PED.isSelected()) {
+                    if (CB_CRUISE_WHITOUT_PED.isSelected()) {
 						text_to_save = "#define CRUISE_MODE_WALK_ENABLED 1";
 						pWriter.println(text_to_save);
 					}
-                                        else {
+                    else {
 						text_to_save = "#define CRUISE_MODE_WALK_ENABLED 0";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(CB_CRUISE_WHITOUT_PED.isSelected());
 
-                                        text_to_save = "#define CRUISE_THRESHOLD_SPEED " + String.valueOf(intCruiseSpeed);
-                                        iWriter.println(String.valueOf(intCruiseSpeed));
+                    text_to_save = "#define CRUISE_THRESHOLD_SPEED " + String.valueOf(intCruiseSpeed);
+                    iWriter.println(String.valueOf(intCruiseSpeed));
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define PEDAL_TORQUE_ADC_OFFSET " + TF_TORQ_ADC_OFFSET.getText();
-                                        iWriter.println(TF_TORQ_ADC_OFFSET.getText());
+                    text_to_save = "#define PEDAL_TORQUE_ADC_OFFSET " + TF_TORQ_ADC_OFFSET.getText();
+                    iWriter.println(TF_TORQ_ADC_OFFSET.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define AUTO_DATA_NUMBER_DISPLAY " + TF_NUM_DATA_AUTO_DISPLAY.getText();
-                                        iWriter.println(TF_NUM_DATA_AUTO_DISPLAY.getText());
+                    text_to_save = "#define AUTO_DATA_NUMBER_DISPLAY " + TF_NUM_DATA_AUTO_DISPLAY.getText();
+                    iWriter.println(TF_NUM_DATA_AUTO_DISPLAY.getText());
 					pWriter.println(text_to_save);
 
-                                        if (RB_UNIT_KILOMETERS.isSelected()) {
+                    if (RB_UNIT_KILOMETERS.isSelected()) {
 						text_to_save = "#define UNITS_TYPE 0";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(RB_UNIT_KILOMETERS.isSelected());
 
-                                        if (RB_UNIT_MILES.isSelected()) {
+                    if (RB_UNIT_MILES.isSelected()) {
 						text_to_save = "#define UNITS_TYPE 1";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(RB_UNIT_MILES.isSelected());
 
-                                        text_to_save = "#define ASSIST_THROTTLE_MIN_VALUE " + TF_ASSIST_THROTTLE_MIN.getText();
-                                        iWriter.println(TF_ASSIST_THROTTLE_MIN.getText());
+                    text_to_save = "#define ASSIST_THROTTLE_MIN_VALUE " + TF_ASSIST_THROTTLE_MIN.getText();
+                    iWriter.println(TF_ASSIST_THROTTLE_MIN.getText());
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define ASSIST_THROTTLE_MAX_VALUE " + TF_ASSIST_THROTTLE_MAX.getText();
-                                        iWriter.println(TF_ASSIST_THROTTLE_MAX.getText());
+                    text_to_save = "#define ASSIST_THROTTLE_MAX_VALUE " + TF_ASSIST_THROTTLE_MAX.getText();
+                    iWriter.println(TF_ASSIST_THROTTLE_MAX.getText());
 					pWriter.println(text_to_save);
 
-                                        if (CB_STREET_WALK.isSelected()) {
+                    if (CB_STREET_WALK.isSelected()) {
 						text_to_save = "#define STREET_MODE_WALK_ENABLED 1";
 						pWriter.println(text_to_save);
 					}
-                                        else {
+                    else {
 						text_to_save = "#define STREET_MODE_WALK_ENABLED 0";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(CB_STREET_WALK.isSelected());
 
-                                        if (RB_HYBRID_ON_START.isSelected()) {
+                    if (RB_HYBRID_ON_START.isSelected()) {
 						text_to_save = "#define RIDING_MODE_ON_STARTUP 5";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(RB_HYBRID_ON_START.isSelected());
 
-                                        if (RB_STARTUP_NONE.isSelected()) {
+                    if (RB_STARTUP_NONE.isSelected()) {
 						text_to_save = "#define DATA_DISPLAY_ON_STARTUP 0";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(RB_STARTUP_NONE.isSelected());
 
-                                        if (RB_STARTUP_SOC.isSelected()) {
+                    if (RB_STARTUP_SOC.isSelected()) {
 						text_to_save = "#define DATA_DISPLAY_ON_STARTUP 1";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(RB_STARTUP_SOC.isSelected());
 
-                                        if (RB_STARTUP_VOLTS.isSelected()) {
+                    if (RB_STARTUP_VOLTS.isSelected()) {
 						text_to_save = "#define DATA_DISPLAY_ON_STARTUP 2";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(RB_STARTUP_VOLTS.isSelected());
 
-                                        if (CB_FIELD_WEAKENING_ENABLED.isSelected()) {
+                    if (CB_FIELD_WEAKENING_ENABLED.isSelected()) {
 						text_to_save = "#define FIELD_WEAKENING_ENABLED 1";
 						pWriter.println(text_to_save);
 					}
-                                        else {
+                    else {
 						text_to_save = "#define FIELD_WEAKENING_ENABLED 0";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(CB_FIELD_WEAKENING_ENABLED.isSelected());
 
-                                        text_to_save = "#define PEDAL_TORQUE_ADC_OFFSET_ADJ " + String.valueOf(intTorqueOffsetAdj);
-                                        iWriter.println(String.valueOf(intTorqueOffsetAdj));
+                    text_to_save = "#define PEDAL_TORQUE_ADC_OFFSET_ADJ " + String.valueOf(intTorqueOffsetAdj);
+                    iWriter.println(String.valueOf(intTorqueOffsetAdj));
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define PEDAL_TORQUE_ADC_RANGE_ADJ " + String.valueOf(intTorqueRangeAdj);
-                                        iWriter.println(String.valueOf(intTorqueRangeAdj));
+                    text_to_save = "#define PEDAL_TORQUE_ADC_RANGE_ADJ " + String.valueOf(intTorqueRangeAdj);
+                    iWriter.println(String.valueOf(intTorqueRangeAdj));
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define PEDAL_TORQUE_ADC_ANGLE_ADJ " + String.valueOf(intAdcPedalTorqueAngleAdjArray[intTorqueAngleAdj]);
-                                        iWriter.println(String.valueOf(intTorqueAngleAdj));
+                    text_to_save = "#define PEDAL_TORQUE_ADC_ANGLE_ADJ " + String.valueOf(intAdcPedalTorqueAngleAdjArray[intTorqueAngleAdj]);
+                    iWriter.println(String.valueOf(intTorqueAngleAdj));
 					pWriter.println(text_to_save);
 
-                                        text_to_save = "#define PEDAL_TORQUE_PER_10_BIT_ADC_STEP_ADV_X100 " + TF_TORQ_PER_ADC_STEP_ADV.getText();
-                                        iWriter.println(TF_TORQ_PER_ADC_STEP_ADV.getText());
+                    text_to_save = "#define PEDAL_TORQUE_PER_10_BIT_ADC_STEP_ADV_X100 " + TF_TORQ_PER_ADC_STEP_ADV.getText();
+                    iWriter.println(TF_TORQ_PER_ADC_STEP_ADV.getText());
 					pWriter.println(text_to_save);
 
-                                        if (RB_SOC_AUTO.isSelected()) {
+                    if (RB_SOC_AUTO.isSelected()) {
 						text_to_save = "#define SOC_PERCENT_CALC 0";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(RB_SOC_AUTO.isSelected());
 
-                                        if (RB_SOC_WH.isSelected()) {
+                    if (RB_SOC_WH.isSelected()) {
 						text_to_save = "#define SOC_PERCENT_CALC 1";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(RB_SOC_WH.isSelected());
 
-                                        if (RB_SOC_VOLTS.isSelected()) {
+                    if (RB_SOC_VOLTS.isSelected()) {
 						text_to_save = "#define SOC_PERCENT_CALC 2";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(RB_SOC_VOLTS.isSelected());
 
-                                        /*
-                                        if (CB_ADC_STEP_CALC.isSelected()) {
+                    /*
+                    if (CB_ADC_STEP_CALC.isSelected()) {
 						text_to_save = "#define TORQUE_ADC_STEP_EXTIMATED 1";
 						pWriter.println(text_to_save);
 					}
@@ -1241,42 +1241,42 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
 						text_to_save = "#define TORQUE_ADC_STEP_EXTIMATED 0";
 						pWriter.println(text_to_save);
 					}
-                                        */
+                    */
 					iWriter.println(CB_ADC_STEP_ESTIM.isSelected());
 
-                                        if (RB_BOOST_AT_ZERO_CADENCE.isSelected()) {
+                    if (RB_BOOST_AT_ZERO_CADENCE.isSelected()) {
 						text_to_save = "#define STARTUP_BOOST_AT_ZERO 0";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(RB_BOOST_AT_ZERO_CADENCE.isSelected());
 
-                                        if (RB_BOOST_AT_ZERO_SPEED.isSelected()) {
+                    if (RB_BOOST_AT_ZERO_SPEED.isSelected()) {
 						text_to_save = "#define STARTUP_BOOST_AT_ZERO 1";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(RB_BOOST_AT_ZERO_SPEED.isSelected());
 
-                                        if (RB_850C.isSelected()) {
+                    if (RB_850C.isSelected()) {
 						text_to_save = "#define ENABLE_850C 1";
 						pWriter.println(text_to_save);
 					}
-                                        else {
+                    else {
 						text_to_save = "#define ENABLE_850C 0";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(RB_850C.isSelected());
 
-                                        if (CB_THROTTLE_LEGAL.isSelected()) {
+                    if (CB_THROTTLE_LEGAL.isSelected()) {
 						text_to_save = "#define STREET_MODE_THROTTLE_LEGAL 1";
 						pWriter.println(text_to_save);
 					}
-                                        else {
+                    else {
 						text_to_save = "#define STREET_MODE_THROTTLE_LEGAL 0";
 						pWriter.println(text_to_save);
 					}
 					iWriter.println(CB_THROTTLE_LEGAL.isSelected());
 
-                                        pWriter.println("\r\n#endif /* CONFIG_H_ */");
+                    pWriter.println("\r\n#endif /* CONFIG_H_ */");
 
 					iWriter.close();
  				} catch (IOException ioe) {
@@ -1288,26 +1288,26 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
 
 					}
 				}
-                                try {
-                                    String backup_name = newFile.getName();
-                                    backup_name = backup_name.substring(0, backup_name.lastIndexOf('.')); //remove ini extension
+                try {
+                    String backup_name = newFile.getName();
+                    backup_name = backup_name.substring(0, backup_name.lastIndexOf('.')); //remove ini extension
 
-                                    // Detect OS
-                                    OSType os = getOperatingSystem();
-                                    Process process;
-                                    switch(os) {
-                                        case Windows:
-                                            process = Runtime.getRuntime().exec("cmd /c start compile_and_flash_20 " + backup_name);
-                                            break;
-                                        case MacOS:
-                                        case Linux:
-                                            process = Runtime.getRuntime().exec(new String[] { "/bin/bash", "-c", "'sh compile_and_flash_20.sh " + backup_name + "'" });
-                                            break;
-                                        case Other:
-                                        default:
-                                            JOptionPane.showMessageDialog(null, " Unknown OS.\n Please run:\ncd src/controller && make && make clear_eeprom && make flash\nto compile and flash your TSDZ2.");
-                                            break;
-                                    }
+                    // Detect OS
+                    OSType os = getOperatingSystem();
+                    Process process;
+                    switch(os) {
+                        case Windows:
+                            process = Runtime.getRuntime().exec("cmd /c start compile_and_flash_20 " + backup_name);
+                            break;
+                        case MacOS:
+                        case Linux:
+                            process = Runtime.getRuntime().exec(new String[] { "/bin/bash", "-c", "'sh compile_and_flash_20.sh " + backup_name + "'" });
+                            break;
+                        case Other:
+                        default:
+                            JOptionPane.showMessageDialog(null, " Unknown OS.\n Please run:\ncd src/controller && make && make clear_eeprom && make flash\nto compile and flash your TSDZ2.");
+                            break;
+                    }
 				} catch (IOException e1) {
 					e1.printStackTrace(System.err);
 				}
