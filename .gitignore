@@ -5,7 +5,7 @@ Debug
 **/*.launch
 .vscode
 releases
-tools/Java_Configurator_Source/
+tools/Java_Configurator_Source/*
 !tools/Java_Configurator_Source/src
 src/controller/main.ihx
 src/controller/Result.log
