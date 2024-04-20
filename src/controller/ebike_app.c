@@ -888,7 +888,7 @@ static void apply_power_assist(void)
     uint32_t ui32_battery_current_target_x100 = (ui32_power_assist_x100 * 1000) / ui16_battery_voltage_filtered_x1000;
 	
     // set battery current target in ADC steps
-    uint16_t ui16_adc_battery_current_target = (uint16_t)ui32_battery_current_target_x100 / BATTERY_CURRENT_PER_10_BIT_ADC_STEP_X100;
+    uint16_t ui16_adc_battery_current_target = (uint16_t)(ui32_battery_current_target_x100 + (BATTERY_CURRENT_PER_10_BIT_ADC_STEP_X100 - 1U)) / BATTERY_CURRENT_PER_10_BIT_ADC_STEP_X100;
 	    
 	// set motor torque rate
 	set_assist_torque_rates();
