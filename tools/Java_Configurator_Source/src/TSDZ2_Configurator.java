@@ -21,20 +21,22 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingWorker;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+
 import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
 import javax.swing.JList;
-import java.io.File;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
@@ -42,17 +44,6 @@ import java.util.Locale;
 
 public class TSDZ2_Configurator extends javax.swing.JFrame {
 
-    /**
-     * Creates new form TSDZ2_Configurator
-     */
-
-    private File experimentalSettingsDir;
-    private File lastSettingsFile = null;
-
-    DefaultListModel provenSettingsFilesModel = new DefaultListModel();
-    DefaultListModel experimentalSettingsFilesModel = new DefaultListModel();
-    JList experimentalSettingsList = new JList(experimentalSettingsFilesModel);
-        
     public class FileContainer {
 
 		public FileContainer(File file) {
@@ -69,6 +60,175 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
             return file;
         }
 	}
+
+    enum ResultType { SUCCESS, ERROR, CANCEL };
+
+    /**
+     * This worker handles compiling and flashing the TSDZ2 firmware, while appending all console output
+     * to a text area without hanging the main thread.
+     * On completion, it will show a dialog with a success or error message.
+     * It also handles canceling the process if needed.
+     */
+    // Generics:
+    // - ResultType is returned by the doInBackground and get methods.
+    // - String is for the log lines passed to publish() and consumed by process() to update the text area.
+    private class CompileWorker extends SwingWorker<ResultType, String> {
+        public static final String COMPILE_SCRIPT_BAT = "compile_and_flash_20.bat";
+        public static final String COMPILE_SCRIPT_SH = "compile_and_flash_20.sh";
+
+        private JTextArea textArea;
+        private String fileName;
+        private String rootDir;
+        // Store the message and result type here for more convenient use in done()
+        private String message;
+        private ResultType resultType;
+
+        public CompileWorker(JTextArea textArea, String fileName, String rootDir) {
+            this.textArea = textArea;
+            this.fileName = fileName.substring(0, fileName.lastIndexOf('.')); //remove ini extension
+            this.rootDir = rootDir;
+        }
+
+        @Override
+        public ResultType doInBackground() {
+            ProcessBuilder processBuilder = getProcessBuilder();
+            if (processBuilder == null) {
+                resultType = ResultType.ERROR;
+                message = "Unknown OS.\n Please run:\ncd src/controller && make && make clear_eeprom && make flash\n" +
+                        "to compile and flash your TSDZ2.";
+                return resultType;
+            }
+
+            textArea.append("\nRunning: " + String.join(" ", processBuilder.command()) + "\n");
+
+            // Ensure the correct working directory
+            processBuilder.directory(new File(rootDir));
+            // Redirect stderr to stdout so that it can be read in the same stream
+            processBuilder.redirectErrorStream(true);
+
+            try (AutoCloseProcess process = new AutoCloseProcess(processBuilder);
+                    InputStreamReader isr = new InputStreamReader(process.getInputStream());
+                    BufferedReader br = new BufferedReader(isr)) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    System.out.println(line);
+                    publish(line);
+                    if (isCancelled()) {
+                        resultType = ResultType.CANCEL;
+                        return resultType;
+                    }
+                }
+                int exitCode = process.waitFor();
+                resultType = exitCode == 0 ? ResultType.SUCCESS : ResultType.ERROR;
+            } catch (IOException | InterruptedException e1) {
+                e1.printStackTrace(System.err);
+                resultType = ResultType.ERROR;
+                message = e1.getMessage();
+            }
+
+            return resultType;
+        }
+
+        @Override
+        protected void process(java.util.List<String> chunks) {
+            for (String line : chunks) {
+                appendText(line);
+            }
+        }
+
+        @Override
+        protected void done() {
+            String genericMessage = "Check output pane for details";
+            switch (resultType) {
+                case SUCCESS:
+                    JOptionPane.showMessageDialog(null, genericMessage, "Success", JOptionPane.PLAIN_MESSAGE);
+                    break;
+                case ERROR:
+                    JOptionPane.showMessageDialog(null, message == null ? genericMessage : message, "Compiling or flashing failed", JOptionPane.ERROR_MESSAGE);
+                    break;
+                case CANCEL:
+                    appendText("\nCANCELLED");
+                    break;
+            }
+        }
+
+        private void appendText(String text) {
+            textArea.append("\n" + text);
+            textArea.setCaretPosition(textArea.getDocument().getLength());
+        }
+
+        /**
+         * Get the ProcessBuilder for the current OS.
+         * Returns null if the OS is not recognized.
+         */
+        private ProcessBuilder getProcessBuilder() {
+            String OS = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
+            boolean isMac = OS.contains("mac") || OS.contains("darwin");
+
+            if (isMac || OS.contains("nux")) {
+                String shell = "bash";
+                String preCommand = "";
+
+                if (isMac) {
+                    // Extra setup for Macs: due to the lack of a built-in package manager, when running
+                    // shell scripts relying on non-builtin commands, the PATH needs to be updated to
+                    // account for the package manager (such as homebrew) or other custom setup.
+                    // Usually this is configured in the profile or rc file for the OS-default shell.
+                    // (zsh is default on newer macOS versions.)
+                    String sourceFormat = ". ~/%s &>/dev/null; ";
+                    if (System.getenv("SHELL").endsWith("/zsh")) {
+                        shell = "zsh";
+                        preCommand = String.format(sourceFormat + sourceFormat, ".zprofile", ".zshrc");
+                    } else {
+                        preCommand = String.format(sourceFormat + sourceFormat, ".bash_profile", ".bashrc");
+                    }
+                }
+
+                // Start a shell rather than running the command directly so that the PATH is set.
+                return new ProcessBuilder(
+                        "/bin/" + shell,
+                        "-c", String.format("%s sh %s %s --gui", preCommand, COMPILE_SCRIPT_SH, fileName));
+            }
+
+            if (OS.contains("win")) {
+                return new ProcessBuilder("cmd", "/c", "start", COMPILE_SCRIPT_BAT, fileName);
+            }
+
+            return null;
+        }
+
+        /**
+         * Wraps a Process with the AutoCloseable interface for try-with-resource.
+         * It will destroy the process on close.
+         */
+        private class AutoCloseProcess implements AutoCloseable {
+            private final Process process;
+
+            /** Start the process from the given ProcessBuilder. */
+            public AutoCloseProcess(ProcessBuilder processBuilder) throws IOException {
+                this.process = processBuilder.start();
+            }
+
+            public int waitFor() throws InterruptedException { return process.waitFor(); }
+            public InputStream getInputStream() { return process.getInputStream(); }
+            @Override
+            public void close() { process.destroy(); }
+        }
+    }
+
+    private static final String COMMITS_FILE = "commits.txt";
+    private static final String CONFIG_H_FILE = "src/controller/config.h";
+    private static final String EXPERIMENTAL_SETTINGS_DIR = "experimental settings";
+    private static final String PROVEN_SETTINGS_DIR = "proven settings";
+
+    private String rootPath;
+    private File experimentalSettingsDir;
+    private File lastSettingsFile = null;
+
+    private DefaultListModel provenSettingsFilesModel = new DefaultListModel();
+    private DefaultListModel experimentalSettingsFilesModel = new DefaultListModel();
+    private JList experimentalSettingsList = new JList(experimentalSettingsFilesModel);
+    private CompileWorker compileWorker;
 
     String[] displayDataArray = {"motor temperature", "battery SOC rem. %", "battery voltage", "battery current", "motor power", "adc throttle 8b", "adc torque sensor 10b", "pedal cadence rpm", "human power", "adc pedal torque delta", "consumed Wh"};
     String[] lightModeArray = {"<br>lights ON", "<br>lights FLASHING", "lights ON and BRAKE-FLASHING brak.", "lights FLASHING and ON when braking", "lights FLASHING BRAKE-FLASHING brak.", "lights ON and ON always braking", "lights ON and BRAKE-FLASHING alw.br.", "lights FLASHING and ON always braking", "lights FLASHING BRAKE-FLASHING alw.br.", "assist without pedal rotation", "assist with sensors error", "field weakening"};
@@ -314,7 +474,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
                 jLabelData5.setText("Data 5 - " + displayDataArray[Integer.parseInt(TF_DATA_5.getText())]);
                 jLabelData6.setText("Data 6 - " + displayDataArray[Integer.parseInt(TF_DATA_6.getText())]);
 
-                jLabelLights0.setText("<html>Lights mode on startup " + lightModeArray[Integer.parseInt(TF_LIGHT_MODE_ON_START.getText())] + "</html>");
+                jLabelLights0.setText("<html>Lights mode on startup - " + lightModeArray[Integer.parseInt(TF_LIGHT_MODE_ON_START.getText())] + "</html>");
                 jLabelLights1.setText("<html>Mode 1 - " + lightModeArray[Integer.parseInt(TF_LIGHT_MODE_1.getText())] + "</html>");
                 jLabelLights2.setText("<html>Mode 2 - " + lightModeArray[Integer.parseInt(TF_LIGHT_MODE_2.getText())] + "</html>");
                 jLabelLights3.setText("<html>Mode 3 - " + lightModeArray[Integer.parseInt(TF_LIGHT_MODE_3.getText())] + "</html>");
@@ -356,14 +516,6 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
                     TF_CRUISE_ASS_3.setText(String.valueOf((intCruiseSpeed3 * 10 + 5) / 16));
                     TF_CRUISE_ASS_4.setText(String.valueOf((intCruiseSpeed4 * 10 + 5) / 16));
                 }
-
-            try {
-		BufferedReader br = new BufferedReader (new FileReader("commits.txt"));
-                LB_LAST_COMMIT.setText("<html>" + br.readLine() + "</html>");
-                br.close();
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(null, " " + ex);
-            }
     }
 
     public void AddListItem(File newFile) {
@@ -380,57 +532,75 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
 
         this.setLocationRelativeTo(null);
 
-        // update lists
-      
-        experimentalSettingsDir = new File(Paths.get(".").toAbsolutePath().normalize().toString());
-      
-		while (!Arrays.asList(experimentalSettingsDir.list()).contains("experimental settings")) {
-			experimentalSettingsDir = experimentalSettingsDir.getParentFile();
-		}
-		File provenSettingsDir = new File(experimentalSettingsDir.getAbsolutePath() + File.separator + "proven settings");
-		experimentalSettingsDir = new File(experimentalSettingsDir.getAbsolutePath() + File.separator + "experimental settings");
+        // Try to find the git repo root
+        File currentDir = new File(Paths.get(".").toAbsolutePath().normalize().toString());
+        File rootDir = currentDir;
 
+        while (rootDir != null && !Arrays.asList(rootDir.list()).contains(CompileWorker.COMPILE_SCRIPT_SH)) {
+            rootDir = rootDir.getParentFile();
+        }
+        if (rootDir == null) {
+            JOptionPane.showMessageDialog(this, "Could not find the root path of the OSF git repo.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
+            return;
+        }
+        rootPath = rootDir.getAbsolutePath();
 
+        // Update the latest commit
+        File commitsFile = new File(Paths.get(rootPath, COMMITS_FILE).toString());
+        if (commitsFile.exists()) {
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(commitsFile.getAbsolutePath()));
+                LB_LAST_COMMIT.setText("<html>" + br.readLine() + "</html>");
+                br.close();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, ex.toString());
+            }
+        }
 
+        // Read the proven settings
+        File provenSettingsDir = new File(Paths.get(rootPath, PROVEN_SETTINGS_DIR).toString());
         File[] provenSettingsFiles = provenSettingsDir.listFiles();
         Arrays.sort(provenSettingsFiles);
-		for (File file : provenSettingsFiles) {
-			provenSettingsFilesModel.addElement(new TSDZ2_Configurator.FileContainer(file));
+        for (File file : provenSettingsFiles) {
+            provenSettingsFilesModel.addElement(new FileContainer(file));
 
-			if (lastSettingsFile == null) {
-				lastSettingsFile = file;
-			} else {
-				if(file.lastModified()>lastSettingsFile.lastModified()){
-					lastSettingsFile = file;
-				}
-			}
-		}
-
-
-        File[] experimentalSettingsFiles = experimentalSettingsDir.listFiles();
-            Arrays.sort(experimentalSettingsFiles, Collections.reverseOrder());
-        for (File file : experimentalSettingsFiles) {
-            experimentalSettingsFilesModel.addElement(new TSDZ2_Configurator.FileContainer(file));
             if (lastSettingsFile == null) {
-				lastSettingsFile = file;
-			} else {
-				if(file.lastModified()>lastSettingsFile.lastModified()){
-					lastSettingsFile = file;
-				}
-			}
+                lastSettingsFile = file;
+            } else {
+                if (file.lastModified() > lastSettingsFile.lastModified()) {
+                    lastSettingsFile = file;
+                }
+            }
         }
-        
-        experimentalSettingsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		experimentalSettingsList.setLayoutOrientation(JList.VERTICAL);
 
-		experimentalSettingsList.setVisibleRowCount(-1); 
-                
+        // Read the experimental settings
+        experimentalSettingsDir = new File(Paths.get(rootPath, EXPERIMENTAL_SETTINGS_DIR).toString());
+        File[] experimentalSettingsFiles = experimentalSettingsDir.listFiles();
+        Arrays.sort(experimentalSettingsFiles, Collections.reverseOrder());
+        for (File file : experimentalSettingsFiles) {
+            experimentalSettingsFilesModel.addElement(new FileContainer(file));
+            if (lastSettingsFile == null) {
+                lastSettingsFile = file;
+            } else {
+                if (file.lastModified() > lastSettingsFile.lastModified()) {
+                    lastSettingsFile = file;
+                }
+            }
+        }
+
+        experimentalSettingsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        experimentalSettingsList.setLayoutOrientation(JList.VERTICAL);
+
+        experimentalSettingsList.setVisibleRowCount(-1);
+
         expSet.setModel(experimentalSettingsFilesModel);
 
-		JList provenSettingsList = new JList(provenSettingsFilesModel);
-		provenSettingsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		provenSettingsList.setLayoutOrientation(JList.VERTICAL);
-		provenSettingsList.setVisibleRowCount(-1);
+        JList provenSettingsList = new JList(provenSettingsFilesModel);
+        provenSettingsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        provenSettingsList.setLayoutOrientation(JList.VERTICAL);
+        provenSettingsList.setVisibleRowCount(-1);
 
         provSet.setModel(provenSettingsFilesModel);
         jScrollPane2.setViewportView(provSet);
@@ -438,52 +608,57 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
         expSet.setSelectedIndex(0);
 
         expSet.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
+            @Override
+            public void mouseClicked(MouseEvent e) {
                 try {
                     int selectedIndex = expSet.getSelectedIndex();
                     experimentalSettingsList.setSelectedIndex(selectedIndex);
-					loadSettings(((FileContainer) experimentalSettingsList.getSelectedValue()).file);
-					experimentalSettingsList.clearSelection();
-				} catch (IOException ex) {
-					Logger.getLogger(TSDZ2_Configurator.class.getName()).log(Level.SEVERE, null, ex);
-				}
-				experimentalSettingsList.clearSelection();
+                    provenSettingsList.clearSelection();
+                    loadSettings(((FileContainer) experimentalSettingsList.getSelectedValue()).file);
+                    experimentalSettingsList.clearSelection();
+                } catch (IOException ex) {
+                    Logger.getLogger(TSDZ2_Configurator.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                experimentalSettingsList.clearSelection();
+            }
+        });
 
-				//updateDependiencies(false);
-			}
-		});
+        provSet.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                try {
+                    int selectedIndex = provSet.getSelectedIndex();
+                    provenSettingsList.setSelectedIndex(selectedIndex);
+                    experimentalSettingsList.clearSelection();
+                    loadSettings(((FileContainer) provenSettingsList.getSelectedValue()).file);
+                    provenSettingsList.clearSelection();
+                } catch (IOException ex) {
+                    Logger.getLogger(TSDZ2_Configurator.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                provenSettingsList.clearSelection();
+            }
+        });
 
-         provSet.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-                            	try {
-                                int selectedIndex = provSet.getSelectedIndex();
-                                provenSettingsList.setSelectedIndex(selectedIndex);
-					loadSettings(((FileContainer) provenSettingsList.getSelectedValue()).file);
-					provenSettingsList.clearSelection();
-				} catch (IOException ex) {
-					Logger.getLogger(TSDZ2_Configurator.class.getName()).log(Level.SEVERE, null, ex);
-				}
-				provenSettingsList.clearSelection();
-				//updateDependiencies(false);
-			}
-		});
+        BTN_COMPILE.addActionListener(new ActionListener() {
 
+        public void actionPerformed(ActionEvent arg0) {
+            BTN_COMPILE.setEnabled(false);
 
-          jButton1.addActionListener(new ActionListener() {
+            PrintWriter iWriter = null;
+            PrintWriter pWriter = null;
 
-          public void actionPerformed(ActionEvent arg0) {
-          			PrintWriter iWriter = null;
-                                PrintWriter pWriter = null;
+            String newFileName = new SimpleDateFormat("yyyyMMdd-HHmmssz").format(new Date()) + ".ini";
+            String newFilePath = Paths.get(experimentalSettingsDir.getAbsolutePath(), newFileName).toString();
+            String configHPath = Paths.get(rootPath, CONFIG_H_FILE).toString();
+            TA_COMPILE_OUTPUT.setText("Writing settings to " + newFilePath + " and " + configHPath);
 
-                                File newFile = new File(experimentalSettingsDir + File.separator + new SimpleDateFormat("yyyyMMdd-HHmmssz").format(new Date()) + ".ini");
-				try {
-                    AddListItem(newFile);
+            try {
+                File newFile = new File(newFilePath);
+                AddListItem(newFile);
 
-					iWriter = new PrintWriter(new BufferedWriter(new FileWriter(newFile)));
-					pWriter = new PrintWriter(new BufferedWriter(new FileWriter("src/controller/config.h")));
-					pWriter.println("/*\r\n"
+                iWriter = new PrintWriter(new BufferedWriter(new FileWriter(newFile)));
+                pWriter = new PrintWriter(new BufferedWriter(new FileWriter(configHPath)));
+                pWriter.println("/*\r\n"
 							+ " * config.h\r\n"
 							+ " *\r\n"
 							+ " *  Automatically created by TSDS2 Parameter Configurator\r\n"
@@ -1288,33 +1463,9 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
 
 					}
 				}
-                                try {
-                                    String backup_name = newFile.getName();
-                                    backup_name = backup_name.substring(0, backup_name.lastIndexOf('.')); //remove ini extension
 
-                                    // Detect OS
-                                    OSType os = getOperatingSystem();
-                                    Process process;
-                                    switch(os) {
-                                        case Windows:
-                                            process = Runtime.getRuntime().exec("cmd /c start compile_and_flash_20 " + backup_name);
-                                            break;
-                                        case MacOS:
-                                        case Linux:
-                                            process = Runtime.getRuntime().exec(new String[] { "/bin/bash", "-c", "'sh compile_and_flash_20.sh " + backup_name + "'" });
-                                            break;
-                                        case Other:
-                                        default:
-                                            JOptionPane.showMessageDialog(null, " Unknown OS.\n Please run:\ncd src/controller && make && make clear_eeprom && make flash\nto compile and flash your TSDZ2.");
-                                            break;
-                                    }
-				} catch (IOException e1) {
-					e1.printStackTrace(System.err);
-				}
-
-          }
-
-
+                compileAndFlash(newFileName);
+            }
           });
 
             if (lastSettingsFile != null) {
@@ -1326,24 +1477,34 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
 			}
 			provenSettingsList.clearSelection();
 			experimentalSettingsList.clearSelection();
-			//updateDependiencies(false);
 		}
     }
 
-    /**
-     * This method detect the current operating system used
-     */
-    public enum OSType {
-        Windows, MacOS, Linux, Other
-    };
-    private OSType getOperatingSystem() {
-        String OS = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
-        if ((OS.indexOf("mac") >= 0) || (OS.indexOf("darwin") >= 0)) return OSType.MacOS;
-        else if (OS.indexOf("win") >= 0) return OSType.Windows;
-        else if (OS.indexOf("nux") >= 0) return OSType.Linux;
-        return OSType.Other;
+    private void compileAndFlash(String fileName) {
+        BTN_CANCEL.setEnabled(true);
+
+        compileWorker = new CompileWorker(TA_COMPILE_OUTPUT, fileName, rootPath);
+        compileWorker.execute();
+
+        compileWorker.addPropertyChangeListener(
+                new PropertyChangeListener() {
+            boolean handled = false;
+
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if (!handled && compileWorker != null && compileWorker.isDone()) {
+                    handled = true;
+                    compileDone();
+                }
+            }
+        });
     }
 
+    private void compileDone() {
+        compileWorker = null;
+        BTN_COMPILE.setEnabled(true);
+        BTN_CANCEL.setEnabled(false);
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -1653,9 +1814,13 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         provSet = new javax.swing.JList<>();
         jLabel2 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        BTN_COMPILE = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         LB_LAST_COMMIT = new javax.swing.JLabel();
+        BTN_CANCEL = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
+        scollCompileOutput = new javax.swing.JScrollPane();
+        TA_COMPILE_OUTPUT = new javax.swing.JTextArea();
 
         jRadioButton1.setText("jRadioButton1");
 
@@ -1807,13 +1972,13 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel6Layout.createSequentialGroup()
                                 .addComponent(jLabel7)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(0, 0, Short.MAX_VALUE))
                             .addGroup(jPanel6Layout.createSequentialGroup()
                                 .addComponent(Label_Parameter1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGap(54, 54, 54)))
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(RB_MOTOR_36V, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(RB_MOTOR_48V, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(RB_MOTOR_36V, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(RB_MOTOR_48V, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -1867,15 +2032,15 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
                                     .addComponent(TF_TORQ_ADC_ANGLE_ADJ, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(16, 16, 16))))
                     .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel31, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel6Layout.createSequentialGroup()
-                                .addComponent(jLabel33, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(RB_BOOST_AT_ZERO_CADENCE)
-                                .addGap(18, 18, 18)
-                                .addComponent(RB_BOOST_AT_ZERO_SPEED)))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addComponent(jLabel31, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel33, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(RB_BOOST_AT_ZERO_CADENCE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(RB_BOOST_AT_ZERO_SPEED)
+                        .addGap(15, 15, 15))))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1886,10 +2051,9 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
                         .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(Label_Parameter1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(RB_MOTOR_36V)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(RB_MOTOR_48V)))
+                    .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(RB_MOTOR_48V)
+                        .addComponent(RB_MOTOR_36V)))
                 .addGap(2, 2, 2)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(TF_MOTOR_ACC, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -3309,7 +3473,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, 26, Short.MAX_VALUE)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, 26, Short.MAX_VALUE)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -3612,7 +3776,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel18Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel18Layout.createSequentialGroup()
-                        .addComponent(jLabel89, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
+                        .addComponent(jLabel89, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(TF_DELAY_DATA_1, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel18Layout.createSequentialGroup()
@@ -3999,7 +4163,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
                     .addComponent(jPanel18, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel19, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 54, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(TF_MOTOR_BLOCK_CURR, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabelMOTOR_BLOCK_CURR))
@@ -4035,13 +4199,31 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
 
         jLabel2.setText("Proven Settings");
 
-        jButton1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jButton1.setText("Compile & Flash");
+        BTN_COMPILE.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        BTN_COMPILE.setText("Compile & Flash");
 
         jLabel4.setText("Version (last commits)");
 
         LB_LAST_COMMIT.setText("<html>Last commit</html>");
         LB_LAST_COMMIT.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+
+        BTN_CANCEL.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        BTN_CANCEL.setText("Cancel");
+        BTN_CANCEL.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BTN_CANCELActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel5.setText("Output from flashing");
+
+        TA_COMPILE_OUTPUT.setEditable(false);
+        TA_COMPILE_OUTPUT.setBackground(new java.awt.Color(255, 255, 255));
+        TA_COMPILE_OUTPUT.setFont(new java.awt.Font("Monospaced", 0, 12)); // NOI18N
+        TA_COMPILE_OUTPUT.setLineWrap(true);
+        TA_COMPILE_OUTPUT.setWrapStyleWord(true);
+        scollCompileOutput.setViewportView(TA_COMPILE_OUTPUT);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -4050,21 +4232,35 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addContainerGap()
+                                        .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(18, 18, 18)
+                                        .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jLabel4)
+                                    .addComponent(jLabel1)
+                                    .addComponent(jLabel2)
+                                    .addComponent(jScrollPane1)
+                                    .addComponent(jScrollPane2)
+                                    .addComponent(LB_LAST_COMMIT, javax.swing.GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addComponent(BTN_COMPILE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(BTN_CANCEL, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jLabel5)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2)
-                    .addComponent(jScrollPane1)
-                    .addComponent(jScrollPane2)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE)
-                    .addComponent(LB_LAST_COMMIT, javax.swing.GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(scollCompileOutput)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -4084,12 +4280,18 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(BTN_COMPILE, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(BTN_CANCEL, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(2, 2, 2)
                         .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(scollCompileOutput, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         jTabbedPane1.getAccessibleContext().setAccessibleName("MotorConfiguration");
@@ -4643,6 +4845,13 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
         TF_BAT_CELL_1_4.setEnabled(!(RB_850C.isSelected()));
     }//GEN-LAST:event_RB_850CStateChanged
 
+    private void BTN_CANCELActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BTN_CANCELActionPerformed
+        if (compileWorker != null) {
+            compileWorker.cancel(true);
+            compileDone();
+        }
+    }//GEN-LAST:event_BTN_CANCELActionPerformed
+
     /*
      * @param args the command line arguments
      */
@@ -4669,6 +4878,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(TSDZ2_Configurator.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -4679,6 +4889,8 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton BTN_CANCEL;
+    private javax.swing.JButton BTN_COMPILE;
     private javax.swing.JCheckBox CB_ADC_STEP_ESTIM;
     private javax.swing.JCheckBox CB_ASS_WITHOUT_PED;
     private javax.swing.JCheckBox CB_AUTO_DISPLAY_DATA;
@@ -4734,6 +4946,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
     private javax.swing.JRadioButton RB_VLCD5;
     private javax.swing.JRadioButton RB_VLCD6;
     private javax.swing.JRadioButton RB_XH18;
+    private javax.swing.JTextArea TA_COMPILE_OUTPUT;
     private javax.swing.JTextField TF_ADC_THROTTLE_MAX;
     private javax.swing.JTextField TF_ADC_THROTTLE_MIN;
     private javax.swing.JTextField TF_ASSIST_THROTTLE_MAX;
@@ -4834,7 +5047,6 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
     private javax.swing.ButtonGroup buttonGroup8;
     private javax.swing.ButtonGroup buttonGroup9;
     private javax.swing.JList<String> expSet;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel100;
@@ -4887,6 +5099,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel47;
     private javax.swing.JLabel jLabel48;
     private javax.swing.JLabel jLabel49;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel50;
     private javax.swing.JLabel jLabel51;
     private javax.swing.JLabel jLabel52;
@@ -4981,5 +5194,6 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
     private javax.swing.JTabbedPane jTabbedPane1;
     private java.awt.Label label1;
     private javax.swing.JList<String> provSet;
+    private javax.swing.JScrollPane scollCompileOutput;
     // End of variables declaration//GEN-END:variables
 }
