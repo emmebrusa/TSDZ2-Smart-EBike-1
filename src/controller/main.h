@@ -16,9 +16,11 @@
 
 // PWM related values
 // motor
-#define PWM_CYCLES_SECOND                                       19047U // 52us (PWM period)
-#define PWM_CYCLES_COUNTER_MAX                                  3800U  // 5 erps minimum speed -> 1/5 = 200 ms; 200 ms / 50 us = 4000 (3125 at 15.625KHz)
-#define DOUBLE_PWM_CYCLES_SECOND                                38094 // 25us (2 irq x PWM period)
+#define PWM_PERIOD                                              420U
+#define PWM_DOUBLE_PERIOD                                       (2U*PWM_PERIOD) //PWM center aligned mode: counts from 0 to PWM_PERIOD and then down from PWM_PERIOD to 0
+#define PWM_CYCLES_SECOND                                       ((uint16_t)(HSE_VALUE / PWM_DOUBLE_PERIOD)) // 19047Hz - 52us (PWM period)  - !! has to be less than 21845
+#define DOUBLE_PWM_CYCLES_SECOND                                ((uint16_t)(HSE_VALUE / PWM_PERIOD))  // 25us (2 irq x PWM period)
+#define PWM_CYCLES_COUNTER_MAX                                  (DOUBLE_PWM_CYCLES_SECOND + 1U)  // +1U ensures ui16_motor_speed_erps is 0 when counter is max
 // ramp up/down PWM cycles count
 #define PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_CADENCE_OFFSET      60     // PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP offset for cadence assist mode
 //#define PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_DEFAULT             195    // 160 -> 160 * 64 us for every duty cycle increment at 15.625KHz

@@ -38,7 +38,7 @@ void pwm_init_bipolar_4q(void) {
     TIM1_TimeBaseInit(0, // TIM1_Prescaler = 0
             TIM1_COUNTERMODE_CENTERALIGNED3,
             // clock = 16MHz; counter period = 840; PWM freq = 16MHz / 840 = 19,047kHz;
-            420, // PWM center aligned mode: counts from 0 to 420 and then down from 420 to 0
+            PWM_PERIOD, // PWM center aligned mode: counts from 0 to PWM_PERIOD and then down from PWM_PERIOD to 0
             1);// will fire the TIM1_IT_UPDATE at every PWM period cycle
 
 //#define DISABLE_PWM_CHANNELS_1_3

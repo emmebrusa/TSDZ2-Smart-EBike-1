@@ -293,7 +293,7 @@ uint16_t ui16_PWM_cycles_counter_a = 3;
 uint8_t ui8_pwm_counter_valid_b = 0;
 uint16_t ui16_PWM_cycles_counter_b = 3;
 uint16_t ui16_PWM_cycles_counter_6 = 3;
-uint16_t ui16_PWM_cycles_counter_total = 0xffff;
+uint16_t ui16_PWM_cycles_counter_total = PWM_CYCLES_COUNTER_MAX;
 uint8_t ui8_motor_commutation_type = BLOCK_COMMUTATION;
 volatile uint16_t ui16_motor_speed_erps = 0;
 static uint8_t ui8_motor_rotor_absolute_angle;
@@ -538,7 +538,7 @@ void TIM1_CAP_COM_IRQHandler(void) __interrupt(TIM1_CAP_COM_IRQHANDLER)
         ui16_PWM_cycles_counter_6 = 2;
         ui8_pwm_counter_valid_a = 0;
         ui8_pwm_counter_valid_b = 0;
-        ui16_PWM_cycles_counter_total = 0xffff;
+        ui16_PWM_cycles_counter_total = PWM_CYCLES_COUNTER_MAX;
         ui8_g_foc_angle = 0;
         ui8_motor_commutation_type = BLOCK_COMMUTATION;
         ui8_hall_sensors_state_last = 0; // this way we force execution of hall sensors code next time
