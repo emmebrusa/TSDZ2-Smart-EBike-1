@@ -39,7 +39,7 @@
 #define CADENCE_SENSOR_CALC_COUNTER_MIN                         4266  // 3500 at 15.625KHz
 #define CADENCE_SENSOR_TICKS_COUNTER_MIN_AT_SPEED               341  // 280 at 15.625KHz
 #define CADENCE_TICKS_STARTUP                                   7618  // ui16_cadence_sensor_ticks value for startup. About 7-8 RPM (6250 at 15.625KHz)
-#define CADENCE_SENSOR_STANDARD_MODE_SCHMITT_TRIGGER_THRESHOLD  426   // software based Schmitt trigger to stop motor jitter when at resolution limits (350 at 15.625KHz)
+#define CADENCE_SENSOR_STANDARD_MODE_SCHMITT_TRIGGER_THRESHOLD  0   // software based Schmitt trigger to stop motor jitter when at resolution limits (350 at 15.625KHz)
 // Wheel speed sensor
 #define WHEEL_SPEED_SENSOR_TICKS_COUNTER_MAX                    165   // (135 at 15,625KHz) something like 200 m/h with a 6'' wheel
 #define WHEEL_SPEED_SENSOR_TICKS_COUNTER_MIN                    39976 // could be a bigger number but will make for a slow detection of stopped wheel speed
@@ -300,11 +300,18 @@
 #define MOTOR_INDUCTANCE_x1048576					80
 #define CRUISE_PID_KP                             	14
 #define CRUISE_PID_KI                             	0.7
+
+//bemf 36V motor = 0.0806 V/(rad/s) = 0.5 V/(rev/s) = 0.0633 V/erps source:  https://avdweb.nl/solar-bike/hub-motor/efficiency-bldc-motor-tongsheng-tsdz2-and-astro-3205-compared
+#define K_BEMF_X1000                               	63U
 #else
 // 48 volt motor
 #define MOTOR_INDUCTANCE_x1048576					142
 #define CRUISE_PID_KP                             	12
 #define CRUISE_PID_KI                             	1
+
+//casainho said 48V motor has the same max speed (4000rpm) as 36V motor [with corresponding battery] and 4/3 more windings, so the BEMF factor can be scaled by 4/3:
+//bemf 48V motor: 0.0633 * 48/36 = 0.0844 V/erps:
+#define K_BEMF_X1000                               	84U
 #endif
 
 // wheel perimeter

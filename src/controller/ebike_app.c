@@ -106,6 +106,8 @@ volatile uint8_t ui8_adc_battery_current_target = 0;
 static uint8_t ui8_duty_cycle_target = 0;
 static uint8_t ui8_target_battery_max_power_div25 = TARGET_MAX_BATTERY_POWER_DIV25;
 volatile uint8_t ui8_adc_motor_phase_current_max = ADC_10_BIT_MOTOR_PHASE_CURRENT_MAX;
+static uint16_t ui16_motor_bemf_voltage_x1000 = 0;
+static uint16_t smooth_start_duty_cycle_target = 0;
 
 // brakes
 static uint8_t ui8_brakes_engaged = 0;
@@ -446,6 +448,7 @@ static void uart_send_package(void);
 // system functions
 static void get_battery_voltage_filtered(void);
 static void get_battery_current_filtered(void);
+static void get_motor_bemf(void);
 static void get_pedal_torque(void);
 static void calc_wheel_speed(void);
 static void calc_cadence(void);
@@ -465,6 +468,7 @@ static void apply_walk_assist(void);
 static void apply_throttle(void);
 static void apply_temperature_limiting(void);
 static void apply_speed_limit(void);
+static void apply_smooth_start(void);
 
 // functions for oem display
 static void calc_oem_wheel_speed(void);
@@ -571,6 +575,7 @@ void ebike_app_controller(void)
 
     get_battery_voltage_filtered(); // get filtered voltage from FOC calculations
     get_battery_current_filtered(); // get filtered current from FOC calculations
+	get_motor_bemf();
     get_pedal_torque();				// get pedal torque
 
     check_system();					// check if there are any errors for motor control
@@ -649,8 +654,11 @@ static void ebike_control_motor(void)
 		case TEMPERATURE_CONTROL: apply_temperature_limiting(); break;
     }
 
-    // speed limit
     apply_speed_limit();
+
+	#if SMOOTH_START_STROKE
+	apply_smooth_start();
+	#endif
 	
     // check if to enable the motor
     if ((!ui8_motor_enabled) &&
@@ -698,17 +706,6 @@ static void ebike_control_motor(void)
         if (ui8_duty_cycle_target >= PWM_DUTY_CYCLE_MAX) {
             ui8_duty_cycle_target = PWM_DUTY_CYCLE_MAX;
         }
-/*		
-		if((ui16_motor_speed_erps < 50)&&(m_configuration_variables.ui8_riding_mode != CADENCE_ASSIST_MODE)) {
-			ui8_duty_cycle_ramp_up_inverse_step = map_ui8((uint8_t)(ui16_motor_speed_erps),
-				(uint8_t)0,
-				(uint8_t)50,
-				(uint8_t)PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_STARTUP,
-				(uint8_t)ui8_duty_cycle_ramp_up_inverse_step_default);
-			
-			ui8_duty_cycle_ramp_down_inverse_step = PWM_DUTY_CYCLE_RAMP_DOWN_INVERSE_STEP_MIN;
-		}
-*/		
         // limit target duty cycle ramp up inverse step if lower than min value (safety)
         if (ui8_duty_cycle_ramp_up_inverse_step < PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_MIN) {
             ui8_duty_cycle_ramp_up_inverse_step = PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_MIN;
@@ -768,6 +765,88 @@ static void set_assist_torque_rates(void){
     }
 }
 
+static void apply_smooth_start(void){
+	/*
+	* Smooth startup torque achieved by controlling current via PWM - more precise than current control
+	*/
+	#define SMOOTH_START_PEDAL_FACTOR  9U //more = stronger start torque// good values: 8 for cold motor, 12 for hot motor
+	#define SMOOTH_START_THROTTLE_FACTOR 4U
+	#define SMOOTH_START_TAPER_OFF_THRESHOLD_PEDAL  (ADC_TORQUE_SENSOR_RANGE_TARGET_MAX/2U)
+	#define SMOOTH_START_TAPER_OFF_SLOPE_PEDAL (SMOOTH_START_PEDAL_FACTOR/4U)  //more = quicker transition to normal assist current target
+	#define SMOOTH_START_TAPER_OFF_THRESHOLD_CADENCE  15U
+	#define SMOOTH_START_TAPER_OFF_SLOPE_CADENCE 8U  //more = quicker transition to normal assist current target
+	#define SMOOTH_START_TAPER_OFF_ADDED_VOLTAGE_X100 3000U //extra 30V
+	
+	uint16_t pedal_torque = 0; //independent from advanced pedal mappings
+	if(ui16_adc_pedal_torque > ui16_adc_pedal_torque_offset_cal){
+		pedal_torque = ui16_adc_pedal_torque - ui16_adc_pedal_torque_offset_cal;
+	}
+
+	//voltage based settings will produce the same torque regardless of motor type (36V vs 48V motors - less resistance vs more windings)
+	uint16_t smooth_start_voltage_limit_x100 = pedal_torque * SMOOTH_START_PEDAL_FACTOR;
+	//will limit the voltage based on the throttle (at higher speed the limit will gradually disappear)
+	if((ui8_throttle_adc * SMOOTH_START_THROTTLE_FACTOR) > smooth_start_voltage_limit_x100){
+		smooth_start_voltage_limit_x100 = (uint16_t)ui8_throttle_adc * SMOOTH_START_THROTTLE_FACTOR;
+	}
+
+	uint16_t smooth_start_voltage_limit_blend_x100 = 0;
+	uint16_t temp_blend = 0;
+	#if 1
+	//ramp away the limit for strong pedal press
+	temp_blend = (uint16_t)map_ui16(pedal_torque,
+			SMOOTH_START_TAPER_OFF_THRESHOLD_PEDAL,
+			(uint16_t)SMOOTH_START_TAPER_OFF_THRESHOLD_PEDAL + (SMOOTH_START_TAPER_OFF_ADDED_VOLTAGE_X100 / SMOOTH_START_TAPER_OFF_SLOPE_PEDAL),
+			0,
+			SMOOTH_START_TAPER_OFF_ADDED_VOLTAGE_X100);
+	if (temp_blend > smooth_start_voltage_limit_blend_x100){
+		smooth_start_voltage_limit_blend_x100 = temp_blend;
+	}
+
+	#endif
+	#if 1
+	//ramp away the limit for fast cadence
+	temp_blend = (uint16_t)map_ui16(ui8_pedal_cadence_RPM,
+			SMOOTH_START_TAPER_OFF_THRESHOLD_CADENCE,
+			SMOOTH_START_TAPER_OFF_THRESHOLD_CADENCE + (SMOOTH_START_TAPER_OFF_ADDED_VOLTAGE_X100 / SMOOTH_START_TAPER_OFF_SLOPE_CADENCE),
+			0,
+			SMOOTH_START_TAPER_OFF_ADDED_VOLTAGE_X100);
+	if (temp_blend > smooth_start_voltage_limit_blend_x100){
+		smooth_start_voltage_limit_blend_x100 = temp_blend;
+	}
+	#endif
+	
+	//wheel speed is less accurate - use it only for modes that could become unnecessarily limited if were only based on the cadence
+	if((ui8_throttle_adc !=0) ||
+		(m_configuration_variables.ui8_riding_mode == CADENCE_ASSIST_MODE) ||
+		(m_configuration_variables.ui8_riding_mode == CRUISE_MODE)){
+		temp_blend = (uint16_t)map_ui16(ui16_wheel_speed_x10,
+				80,	//8kph
+				350,//35kph
+				0,
+				SMOOTH_START_TAPER_OFF_ADDED_VOLTAGE_X100);
+		if (temp_blend > smooth_start_voltage_limit_blend_x100){
+			smooth_start_voltage_limit_blend_x100 = temp_blend;
+		}
+	}
+	
+	//voltage based control assumes the winding resistance is constant for simplicity
+	uint32_t smooth_start_voltage_target_x100 = (uint32_t)(uint16_t)(smooth_start_voltage_limit_x100 + smooth_start_voltage_limit_blend_x100);
+	//due to resolution of the pwm duty cycle, BEMF starts to increase the duty effectively only above about 3erps
+	smooth_start_voltage_target_x100 += (uint32_t)(uint16_t)((uint16_t)ui16_motor_bemf_voltage_x1000 / 10U);
+	if (smooth_start_voltage_target_x100 > UINT16_MAX){
+		smooth_start_voltage_target_x100 = UINT16_MAX;
+	}
+	smooth_start_duty_cycle_target = (uint16_t)((smooth_start_voltage_target_x100 << PWM_DUTY_CYCLE_BITS) / (uint32_t)(uint16_t)(ui16_battery_voltage_filtered_x1000/10U));
+
+	//ignore smooth start if walk assist controls the duty cycle
+	if(ui8_walk_assist_flag && ((uint16_t)ui8_walk_assist_duty_cycle_target > smooth_start_duty_cycle_target)){
+		smooth_start_duty_cycle_target = ui8_walk_assist_duty_cycle_target;
+	}
+	//limit duty cycle for the smooth start
+	if (smooth_start_duty_cycle_target < (uint16_t)ui8_duty_cycle_target){
+		ui8_duty_cycle_target = (uint8_t)smooth_start_duty_cycle_target;
+	}
+}
 
 static void apply_power_assist(void)
 {
@@ -1519,6 +1598,14 @@ static void get_battery_current_filtered(void)
 	ui8_battery_current_filtered_x10 = (uint8_t)(((uint16_t) ui8_adc_battery_current_filtered * BATTERY_CURRENT_PER_10_BIT_ADC_STEP_X100) / 10);
 }
 
+static void get_motor_bemf(void){
+	if(ui8_fw_angle==0U) { //bemf should not increase when field-weakening is enabled
+		//the worst case scenario is for 48V motor where max speed before overflow is 
+		//780erps = 5850rpm which equates to 140rpm cadence (from 41.8 gearing)
+		ui16_motor_bemf_voltage_x1000 = ui16_motor_speed_erps * K_BEMF_X1000;
+	}
+}
+
 #define TOFFSET_CYCLES 120 // 3sec (25ms*120)
 static uint8_t toffset_cycle_counter = 0;
 
@@ -1593,7 +1680,7 @@ static void get_pedal_torque(void)
 		else {
 			ui16_adc_pedal_torque_delta = ui16_adc_pedal_torque - ui16_adc_pedal_torque_offset;
 		}
-		ui16_adc_pedal_torque_delta = (ui16_adc_pedal_torque_delta + ui16_adc_pedal_torque_delta_temp) >> 1;
+		// ui16_adc_pedal_torque_delta = (ui16_adc_pedal_torque_delta + ui16_adc_pedal_torque_delta_temp) >> 1; //average with previous value
 	}
 	else {
 		ui16_adc_pedal_torque_delta = 0;
@@ -3105,6 +3192,8 @@ static void uart_send_package(void)
 			//ui16_data_value_array[0] = (uint16_t) ui16_display_data_factor / (ui8_g_foc_angle * 10);
 			//ui16_data_value_array[0] = (uint16_t) ui16_display_data_factor / (ui8_walk_assist_duty_cycle_target * 10);
 			//ui16_data_value_array[0] = (uint16_t) ui16_display_data_factor / (ui8_pedal_torque_per_10_bit_ADC_step_calc_x100 * 10);
+			//ui16_data_value_array[3] = (uint16_t) ui16_display_data_factor / ((uint32_t)ui8_duty_cycle_target * 1000U / 256U);
+			// ui16_data_value_array[3] = (uint16_t) ui16_display_data_factor / ((uint32_t)smooth_start_duty_cycle_target * 1000U / 256U);
 			ui16_data_value_array[1] = (uint16_t) ui16_display_data_factor / ui16_battery_SOC_percentage_x10;
 			ui16_data_value_array[2] = (uint16_t) ui16_display_data_factor / ui16_battery_voltage_calibrated_x10;
 			ui16_data_value_array[3] = (uint16_t) ui16_display_data_factor / ui8_battery_current_filtered_x10;
