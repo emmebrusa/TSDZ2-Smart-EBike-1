@@ -662,7 +662,7 @@ static void ebike_control_motor(void)
 	
     // check if to enable the motor
     if ((!ui8_motor_enabled) &&
-		(ui16_motor_speed_erps == 0) && // only enable motor if stopped, else something bad can happen due to high currents/regen or similar
+		(ui16_motor_speed_erps < (ui16_battery_voltage_filtered_x1000 / K_BEMF_X1000)) && // only enable motor if below base speed, else something bad can happen due to high currents/regen or similar
         (ui8_adc_battery_current_target) &&
 		(!ui8_brakes_engaged)) {
 			ui8_motor_enabled = 1;
