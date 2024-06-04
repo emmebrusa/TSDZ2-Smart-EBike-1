@@ -10,43 +10,50 @@
 #include "stm8s.h"
 #include "common.h"
 
-int16_t map_ui16(int16_t x, int16_t in_min, int16_t in_max, int16_t out_min, int16_t out_max) {
+uint16_t map_ui16(uint16_t in, uint16_t in_min, uint16_t in_max, uint16_t out_min, uint16_t out_max) {
     // if input min is smaller than output min, return the output min value
-    if (x < in_min) {
-        return out_min;
+    uint16_t out;
+    if (in <= in_min) {
+        out = out_min;
     }
-
     // if input max is bigger than output max, return the output max value
-    else if (x > in_max) {
-        return out_max;
+    else if (in >= in_max) {
+        out = out_max;
+    }else{
+        uint16_t in_range = in_max - in_min;
+        uint16_t out_range;
+        if (out_max > out_min) {//if output is inverted
+            out_range = out_max - out_min;
+        }else{
+            out_range = out_min - out_max;
+        }
+        // map the input to the output range, round up if mapping bigger ranges to smaller ranges
+        if (in_range > out_range) {
+            out =  (uint16_t)(((uint32_t)(in - in_min) * (out_range + 1U)) / (in_range + 1U)) + out_min;
+        }
+        // map the input to the output range, round down if mapping smaller ranges to bigger ranges
+        else {
+            out = (uint16_t)(((uint32_t)(in - in_min) * out_range) / in_range) + out_min;
+        }
     }
-
-    // map the input to the output range, round up if mapping bigger ranges to smaller ranges
-    else if ((in_max - in_min) > (out_max - out_min)) {
-        return (int16_t)(((int32_t)(x - in_min) * (out_max - out_min + 1)) / (in_max - in_min + 1)) + out_min;
-    }
-
-    // map the input to the output range, round down if mapping smaller ranges to bigger ranges
-    else {
-        return (int16_t)(((int32_t)(x - in_min) * (out_max - out_min)) / (in_max - in_min)) + out_min;
-    }
+    return out;
 }
 
-uint8_t map_ui8(uint8_t x, uint8_t in_min, uint8_t in_max, uint8_t out_min, uint8_t out_max) {
+uint8_t map_ui8(uint8_t in, uint8_t in_min, uint8_t in_max, uint8_t out_min, uint8_t out_max) {
     // if input min is smaller than output min, return the output min value
-    if (x <= in_min) {
+    if (in <= in_min) {
         return out_min;
     }
 
     // if input max is bigger than output max, return the output max value
-    if (x >= in_max) {
+    if (in >= in_max) {
         return out_max;
     }
 
     if (out_max < out_min)
-        return (uint16_t)out_min - (uint16_t)((uint8_t)(x - in_min) * (uint8_t)(out_min - out_max)) / (uint8_t)(in_max - in_min);
+        return (uint16_t)out_min - (uint16_t)((uint8_t)(in - in_min) * (uint8_t)(out_min - out_max)) / (uint8_t)(in_max - in_min);
     else
-        return (uint16_t)out_min + (uint16_t)((uint8_t)(x - in_min) * (uint8_t)(out_max - out_min)) / (uint8_t)(in_max - in_min);
+        return (uint16_t)out_min + (uint16_t)((uint8_t)(in - in_min) * (uint8_t)(out_max - out_min)) / (uint8_t)(in_max - in_min);
 }
 
 uint8_t ui8_min(uint8_t value_a, uint8_t value_b) {

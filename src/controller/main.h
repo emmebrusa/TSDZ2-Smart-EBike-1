@@ -16,9 +16,11 @@
 
 // PWM related values
 // motor
-#define PWM_CYCLES_SECOND                                       19047U // 52us (PWM period)
-#define PWM_CYCLES_COUNTER_MAX                                  3800U  // 5 erps minimum speed -> 1/5 = 200 ms; 200 ms / 50 us = 4000 (3125 at 15.625KHz)
-#define DOUBLE_PWM_CYCLES_SECOND                                38094 // 25us (2 irq x PWM period)
+#define PWM_PERIOD                                              420U
+#define PWM_DOUBLE_PERIOD                                       (2U*PWM_PERIOD) //PWM center aligned mode: counts from 0 to PWM_PERIOD and then down from PWM_PERIOD to 0
+#define PWM_CYCLES_SECOND                                       ((uint16_t)(HSE_VALUE / PWM_DOUBLE_PERIOD)) // 19047Hz - 52us (PWM period)  - !! has to be less than 21845
+#define DOUBLE_PWM_CYCLES_SECOND                                ((uint16_t)(HSE_VALUE / PWM_PERIOD))  // 25us (2 irq x PWM period)
+#define PWM_CYCLES_COUNTER_MAX                                  (DOUBLE_PWM_CYCLES_SECOND + 1U)  // +1U ensures ui16_motor_speed_erps is 0 when counter is max
 // ramp up/down PWM cycles count
 #define PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_CADENCE_OFFSET      60     // PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP offset for cadence assist mode
 //#define PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_DEFAULT             195    // 160 -> 160 * 64 us for every duty cycle increment at 15.625KHz
@@ -29,7 +31,7 @@
 #define PWM_DUTY_CYCLE_RAMP_DOWN_INVERSE_STEP_MIN               10     // 8 -> 8 * 64 us for every duty cycle decrement at 15.625KHz
 #define MOTOR_OVER_SPEED_ERPS                                   650    // motor max speed | 30 points for the sinewave at max speed (less than PWM_CYCLES_SECOND/30)
 #define CRUISE_DUTY_CYCLE_RAMP_UP_INVERSE_STEP                  98    // 80 at 15.625KHz
-#define WALK_ASSIST_DUTY_CYCLE_RAMP_UP_INVERSE_STEP             254    // 200 at 15.625KHz
+#define WALK_ASSIST_DUTY_CYCLE_RAMP_UP_INVERSE_STEP             255    // 200 at 15.625KHz
 #define THROTTLE_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_DEFAULT        98    // 80 at 15.625KHz
 #define THROTTLE_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_MIN            49     // 40 at 15.625KHz
 
@@ -39,13 +41,14 @@
 #define CADENCE_SENSOR_CALC_COUNTER_MIN                         4266  // 3500 at 15.625KHz
 #define CADENCE_SENSOR_TICKS_COUNTER_MIN_AT_SPEED               341  // 280 at 15.625KHz
 #define CADENCE_TICKS_STARTUP                                   7618  // ui16_cadence_sensor_ticks value for startup. About 7-8 RPM (6250 at 15.625KHz)
-#define CADENCE_SENSOR_STANDARD_MODE_SCHMITT_TRIGGER_THRESHOLD  426   // software based Schmitt trigger to stop motor jitter when at resolution limits (350 at 15.625KHz)
+#define CADENCE_SENSOR_STANDARD_MODE_SCHMITT_TRIGGER_THRESHOLD  0   // software based Schmitt trigger to stop motor jitter when at resolution limits (350 at 15.625KHz)
 // Wheel speed sensor
 #define WHEEL_SPEED_SENSOR_TICKS_COUNTER_MAX                    165   // (135 at 15,625KHz) something like 200 m/h with a 6'' wheel
 #define WHEEL_SPEED_SENSOR_TICKS_COUNTER_MIN                    39976 // could be a bigger number but will make for a slow detection of stopped wheel speed
 
 
-#define PWM_DUTY_CYCLE_MAX                                        254
+#define PWM_DUTY_CYCLE_MAX                                        255U
+#define PWM_DUTY_CYCLE_BITS                                       8U
 #define MIDDLE_SVM_TABLE                                          106
 #define MIDDLE_PWM_COUNTER                                        105
 
@@ -299,11 +302,18 @@
 #define MOTOR_INDUCTANCE_x1048576					80
 #define CRUISE_PID_KP                             	14
 #define CRUISE_PID_KI                             	0.7
+
+//bemf 36V motor = 0.0806 V/(rad/s) = 0.5 V/(rev/s) = 0.0633 V/erps source:  https://avdweb.nl/solar-bike/hub-motor/efficiency-bldc-motor-tongsheng-tsdz2-and-astro-3205-compared
+#define K_BEMF_X1000                               	63U
 #else
 // 48 volt motor
 #define MOTOR_INDUCTANCE_x1048576					142
 #define CRUISE_PID_KP                             	12
 #define CRUISE_PID_KI                             	1
+
+//casainho said 48V motor has the same max speed (4000rpm) as 36V motor [with corresponding battery] and 4/3 more windings, so the BEMF factor can be scaled by 4/3:
+//bemf 48V motor: 0.0633 * 48/36 = 0.0844 V/erps:
+#define K_BEMF_X1000                               	84U
 #endif
 
 // wheel perimeter
