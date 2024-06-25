@@ -1,0 +1,71 @@
+{
+	// Use IntelliSense to learn about possible attributes.
+	// Hover to view descriptions of existing attributes.
+	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"preLaunchTask": "STM8 Build & Flash",
+			"postDebugTask": "OpenOCD reset target",
+			"name": "STM8-gdb",
+			"request": "launch",
+			"type": "cppdbg",
+			"MIMode": "gdb",
+			"linux": {
+				"miDebuggerPath": "stm8-gdb"
+			},
+			"windows": {
+				"miDebuggerPath": "stm8-gdb" // unpack from from tools/stm8-gdb.zip and put in workspace root or PATH
+			},
+			"program": "${workspaceRoot}/bin/main.elf",
+			"stopAtEntry": true,
+			"cwd": "${workspaceRoot}/src",
+			"svdPath": "src/STM8S_StdPeriph_Lib/STM8S105C6.svd", // requires Peripheral Viewer extension
+			"filterStderr": true,
+			"filterStdout": false,
+			"debugServerPath": "openocd.exe",
+			"debugServerArgs": "-f interface/stlink-dap.cfg -f target/stm8s105.cfg -c \"cd C:/Users/dzidm/Repos/TSDZ2-Smart-EBike-1\" -c init -c reset",
+			// "miDebuggerServerAddress": "localhost:3333",    // it probably connects to server too early with this
+			// "serverStarted": "downloaded\\s+\\d+\\s+bytes", // doesn't seem to be necessary
+			"setupCommands": [
+				//flashing with gdb doesn't work, becasue flashing with openocd barely works on its own
+                // {"text": "file bin/main.elf", "description": "provide the file",},
+				// {"text": "load", "description": "load target",},
+				// {"text": "set print pretty on"}, //doesn't seem to work
+				{"text": "-target-select extended-remote localhost:3333", "description": "connect to target", "ignoreFailures": true},
+				{"text": "mon reset halt", "description": "reset target", "ignoreFailures": true},
+				
+			],
+			// "hardwareBreakpoints": {"require": true, "limit": 2},  // stm8 has 2 hardware breakpoints
+			"externalConsole": false,
+			"internalConsoleOptions": "openOnSessionStart",
+			"logging": {
+				"moduleLoad": true,
+				"engineLogging": true,	
+				"programOutput": true,
+				"exceptions": true,
+				"trace": true,
+			},
+		},
+		{
+			"preLaunchTask": "SDCC build",
+			"name": "stm8-debug extension", // it is Windows only
+			"type": "stm8-debug",
+			"request": "launch",
+			"serverType": "stm8-sdcc",
+			"executable": "${workspaceFolder}\\bin\\main.elf",
+			"cpu": "STM8S105S6",
+			"port": "3333",
+			"svdFile": ".vscode\\stm8s105s6.svd.json", // based on stm8s105k4 from the demo - some registers might not be accurate
+			"openOcdConfigs": [ //stm8-debug extension comes with sdcc 10.0 Windows binaries
+				"interface/stlink.cfg",
+				"target/stm8s105.cfg"
+			],
+			"customCommands": [
+				// "cd src",
+				"set solib-search-path C:/Users/dzidm/Repos/TSDZ2-Smart-EBike-1/src/",
+				// "directory ./", //doesn't seem to work  https://alex.dzyoba.com/blog/gdb-source-path/
+			]
+		}
+	]
+}

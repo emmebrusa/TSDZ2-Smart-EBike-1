@@ -4,5 +4,10 @@ Debug
 .vscode
 tools/Java_Configurator_Source/
 !tools/Java_Configurator_Source/src
-src/main.ihx
+*.hex
+*.bin
+*.elf
 src/Result.log
+bin/
+experimental settings/
+releases/

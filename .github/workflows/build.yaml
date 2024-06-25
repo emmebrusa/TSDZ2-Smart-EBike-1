@@ -23,7 +23,7 @@ jobs:
     steps:
     - name: install SDCC
       run: | #install silent and then unpack missing installation libraries
-        Invoke-WebRequest https://netix.dl.sourceforge.net/project/sdcc/sdcc-win64/$env:SDCC_VERSION/sdcc-$env:SDCC_VERSION-rc3-x64-setup.exe -OutFile sdcc_setup.exe
+        Invoke-WebRequest -UserAgent "Wget" -Uri https://sourceforge.net/projects/sdcc/files/sdcc-win64/$env:SDCC_VERSION/sdcc-$env:SDCC_VERSION-rc3-x64-setup.exe/download -OutFile sdcc_setup.exe
         ls
         Start-Process -wait -FilePath "sdcc_setup.exe" -ArgumentList "/S", "/D=C:\Program Files\SDCC"
         echo "Adding sdcc to PATH"
@@ -37,7 +37,7 @@ jobs:
     - uses: actions/upload-artifact@v4
       with:
         name: firmware_from_windows
-        path: bin/main.ihx
+        path: bin/main.hex
 
 
   Build_Linux:
@@ -46,9 +46,9 @@ jobs:
       - name: install SDCC
         run: |
            cd ~
-           wget https://altushost-swe.dl.sourceforge.net/project/sdcc/sdcc-linux-amd64/$SDCC_VERSION/sdcc-$SDCC_VERSION-amd64-unknown-linux2.5.tar.bz2
+           wget https://sourceforge.net/projects/sdcc/files/sdcc-linux-amd64/4.4.0/sdcc-4.4.0-amd64-unknown-linux2.5.tar.bz2/download -O sdcc-amd64.tar.bz2
            ls
-           sudo tar xf sdcc-$SDCC_VERSION-amd64-unknown-linux2.5.tar.bz2
+           sudo tar xf sdcc-amd64.tar.bz2
            cd sdcc-$SDCC_VERSION/
            sudo cp -r * /usr/local
            sdcc --version
@@ -62,7 +62,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: firmware_from_linux
-          path: bin/main.ihx
+          path: bin/main.hex
 
 
   Compare_builds:
@@ -83,5 +83,5 @@ jobs:
         run: |
           ls
           echo "Comparing build files"
-          git diff  firmware_from_windows/main.ihx firmware_from_linux/main.ihx --word-diff=color --ignore-space-at-eol --exit-code
+          git diff  firmware_from_windows/main.hex firmware_from_linux/main.hex --word-diff=color --ignore-space-at-eol --exit-code
           echo "Done comparing build files. Files are the same."

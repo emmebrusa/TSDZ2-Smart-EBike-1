@@ -671,9 +671,9 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
          provSet.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-                            	try {
-                                int selectedIndex = provSet.getSelectedIndex();
-                                provenSettingsList.setSelectedIndex(selectedIndex);
+                try {
+                    int selectedIndex = provSet.getSelectedIndex();
+                    provenSettingsList.setSelectedIndex(selectedIndex);
 					loadSettings(((FileContainer) provenSettingsList.getSelectedValue()).file);
 					provenSettingsList.clearSelection();
 				} catch (IOException ex) {
@@ -688,10 +688,10 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
           BTN_COMPILE.addActionListener(new ActionListener() {
 
           public void actionPerformed(ActionEvent arg0) {
-          			PrintWriter iWriter = null;
-                                PrintWriter pWriter = null;
+          		PrintWriter iWriter = null;
+                PrintWriter pWriter = null;
 
-                                File newFile = new File(experimentalSettingsDir + File.separator + new SimpleDateFormat("yyyyMMdd-HHmmssz").format(new Date()) + ".ini");
+                File newFile = new File(experimentalSettingsDir + File.separator + new SimpleDateFormat("yyyyMMdd-HHmmssz").format(new Date()) + ".ini");
 				try {
                     AddListItem(newFile);
 

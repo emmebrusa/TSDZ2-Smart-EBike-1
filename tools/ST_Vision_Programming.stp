@@ -23,10 +23,10 @@ Step=0
 Little Endian=0
 [OPTION BYTE]
 Count=1
-File0=.\..\src\controller\option_stock.ihx
+File0=.\..\src\option_stock.hex
 [DATA MEMORY]
 Count=1
-File0=.\..\src\controller\data_empty.ihx
+File0=.\..\src\data_empty.hex
 [PROGRAM MEMORY]
 Count=1
-File0=.\..\bin\main.ihx
+File0=.\..\bin\main.hex

@@ -1,0 +1,1868 @@
+[
+    {
+        "name": "GPIOA",
+        "baseAddress": "0x5000",
+        "registers": [
+            {
+                "name": "ODR",
+                "bytes": 1,
+                "fields": [
+                    {
+                        "name": "0",
+                        "bitsOffset": 0,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "1",
+                        "bitsOffset": 1,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "2",
+                        "bitsOffset": 2,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "3",
+                        "bitsOffset": 3,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "4",
+                        "bitsOffset": 4,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "5",
+                        "bitsOffset": 5,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "6",
+                        "bitsOffset": 6,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "7",
+                        "bitsOffset": 7,
+                        "bitsWidth": 1
+                    }
+                ]
+            },
+            {
+                "name": "IDR",
+                "bytes": 1,
+                "fields": [
+                    {
+                        "name": "0",
+                        "bitsOffset": 0,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "1",
+                        "bitsOffset": 1,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "2",
+                        "bitsOffset": 2,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "3",
+                        "bitsOffset": 3,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "4",
+                        "bitsOffset": 4,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "5",
+                        "bitsOffset": 5,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "6",
+                        "bitsOffset": 6,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "7",
+                        "bitsOffset": 7,
+                        "bitsWidth": 1
+                    }
+                ]
+            },
+            {
+                "name": "DDR",
+                "bytes": 1
+            },
+            {
+                "name": "CR1",
+                "bytes": 1
+            },
+            {
+                "name": "CR2",
+                "bytes": 1
+            }
+        ]
+    },
+    {
+        "name": "GPIOB",
+        "baseAddress": "0x5005",
+        "registers": [
+            {
+                "name": "ODR",
+                "bytes": 1,
+                "fields": [
+                    {
+                        "name": "0",
+                        "bitsOffset": 0,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "1",
+                        "bitsOffset": 1,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "2",
+                        "bitsOffset": 2,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "3",
+                        "bitsOffset": 3,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "4",
+                        "bitsOffset": 4,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "5",
+                        "bitsOffset": 5,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "6",
+                        "bitsOffset": 6,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "7",
+                        "bitsOffset": 7,
+                        "bitsWidth": 1
+                    }
+                ]
+            },
+            {
+                "name": "IDR",
+                "bytes": 1,
+                "fields": [
+                    {
+                        "name": "0",
+                        "bitsOffset": 0,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "1",
+                        "bitsOffset": 1,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "2",
+                        "bitsOffset": 2,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "3",
+                        "bitsOffset": 3,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "4",
+                        "bitsOffset": 4,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "5",
+                        "bitsOffset": 5,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "6",
+                        "bitsOffset": 6,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "7",
+                        "bitsOffset": 7,
+                        "bitsWidth": 1
+                    }
+                ]
+            },
+            {
+                "name": "DDR",
+                "bytes": 1
+            },
+            {
+                "name": "CR1",
+                "bytes": 1
+            },
+            {
+                "name": "CR2",
+                "bytes": 1
+            }
+        ]
+    },
+    {
+        "name": "GPIOC",
+        "baseAddress": "0x500A",
+        "registers": [
+            {
+                "name": "ODR",
+                "bytes": 1,
+                "fields": [
+                    {
+                        "name": "0",
+                        "bitsOffset": 0,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "1",
+                        "bitsOffset": 1,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "2",
+                        "bitsOffset": 2,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "3",
+                        "bitsOffset": 3,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "4",
+                        "bitsOffset": 4,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "5",
+                        "bitsOffset": 5,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "6",
+                        "bitsOffset": 6,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "7",
+                        "bitsOffset": 7,
+                        "bitsWidth": 1
+                    }
+                ]
+            },
+            {
+                "name": "IDR",
+                "bytes": 1,
+                "fields": [
+                    {
+                        "name": "0",
+                        "bitsOffset": 0,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "1",
+                        "bitsOffset": 1,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "2",
+                        "bitsOffset": 2,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "3",
+                        "bitsOffset": 3,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "4",
+                        "bitsOffset": 4,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "5",
+                        "bitsOffset": 5,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "6",
+                        "bitsOffset": 6,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "7",
+                        "bitsOffset": 7,
+                        "bitsWidth": 1
+                    }
+                ]
+            },
+            {
+                "name": "DDR",
+                "bytes": 1
+            },
+            {
+                "name": "CR1",
+                "bytes": 1
+            },
+            {
+                "name": "CR2",
+                "bytes": 1
+            }
+        ]
+    },
+    {
+        "name": "GPIOD",
+        "baseAddress": "0x500F",
+        "registers": [
+            {
+                "name": "ODR",
+                "bytes": 1,
+                "fields": [
+                    {
+                        "name": "0",
+                        "bitsOffset": 0,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "1",
+                        "bitsOffset": 1,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "2",
+                        "bitsOffset": 2,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "3",
+                        "bitsOffset": 3,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "4",
+                        "bitsOffset": 4,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "5",
+                        "bitsOffset": 5,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "6",
+                        "bitsOffset": 6,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "7",
+                        "bitsOffset": 7,
+                        "bitsWidth": 1
+                    }
+                ]
+            },
+            {
+                "name": "IDR",
+                "bytes": 1,
+                "fields": [
+                    {
+                        "name": "0",
+                        "bitsOffset": 0,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "1",
+                        "bitsOffset": 1,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "2",
+                        "bitsOffset": 2,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "3",
+                        "bitsOffset": 3,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "4",
+                        "bitsOffset": 4,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "5",
+                        "bitsOffset": 5,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "6",
+                        "bitsOffset": 6,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "7",
+                        "bitsOffset": 7,
+                        "bitsWidth": 1
+                    }
+                ]
+            },
+            {
+                "name": "DDR",
+                "bytes": 1
+            },
+            {
+                "name": "CR1",
+                "bytes": 1
+            },
+            {
+                "name": "CR2",
+                "bytes": 1
+            }
+        ]
+    },
+    {
+        "name": "GPIOE",
+        "baseAddress": "0x5014",
+        "registers": [
+            {
+                "name": "ODR",
+                "bytes": 1,
+                "fields": [
+                    {
+                        "name": "0",
+                        "bitsOffset": 0,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "1",
+                        "bitsOffset": 1,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "2",
+                        "bitsOffset": 2,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "3",
+                        "bitsOffset": 3,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "4",
+                        "bitsOffset": 4,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "5",
+                        "bitsOffset": 5,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "6",
+                        "bitsOffset": 6,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "7",
+                        "bitsOffset": 7,
+                        "bitsWidth": 1
+                    }
+                ]
+            },
+            {
+                "name": "IDR",
+                "bytes": 1,
+                "fields": [
+                    {
+                        "name": "0",
+                        "bitsOffset": 0,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "1",
+                        "bitsOffset": 1,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "2",
+                        "bitsOffset": 2,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "3",
+                        "bitsOffset": 3,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "4",
+                        "bitsOffset": 4,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "5",
+                        "bitsOffset": 5,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "6",
+                        "bitsOffset": 6,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "7",
+                        "bitsOffset": 7,
+                        "bitsWidth": 1
+                    }
+                ]
+            },
+            {
+                "name": "DDR",
+                "bytes": 1
+            },
+            {
+                "name": "CR1",
+                "bytes": 1
+            },
+            {
+                "name": "CR2",
+                "bytes": 1
+            }
+        ]
+    },
+    {
+        "name": "GPIOF",
+        "baseAddress": "0x5019",
+        "registers": [
+            {
+                "name": "ODR",
+                "bytes": 1,
+                "fields": [
+                    {
+                        "name": "0",
+                        "bitsOffset": 0,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "1",
+                        "bitsOffset": 1,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "2",
+                        "bitsOffset": 2,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "3",
+                        "bitsOffset": 3,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "4",
+                        "bitsOffset": 4,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "5",
+                        "bitsOffset": 5,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "6",
+                        "bitsOffset": 6,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "7",
+                        "bitsOffset": 7,
+                        "bitsWidth": 1
+                    }
+                ]
+            },
+            {
+                "name": "IDR",
+                "bytes": 1,
+                "fields": [
+                    {
+                        "name": "0",
+                        "bitsOffset": 0,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "1",
+                        "bitsOffset": 1,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "2",
+                        "bitsOffset": 2,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "3",
+                        "bitsOffset": 3,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "4",
+                        "bitsOffset": 4,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "5",
+                        "bitsOffset": 5,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "6",
+                        "bitsOffset": 6,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "7",
+                        "bitsOffset": 7,
+                        "bitsWidth": 1
+                    }
+                ]
+            },
+            {
+                "name": "DDR",
+                "bytes": 1
+            },
+            {
+                "name": "CR1",
+                "bytes": 1
+            },
+            {
+                "name": "CR2",
+                "bytes": 1
+            }
+        ]
+    },
+    {
+        "name": "GPIOG",
+        "baseAddress": "0x501E",
+        "registers": [
+            {
+                "name": "ODR",
+                "bytes": 1,
+                "fields": [
+                    {
+                        "name": "0",
+                        "bitsOffset": 0,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "1",
+                        "bitsOffset": 1,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "2",
+                        "bitsOffset": 2,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "3",
+                        "bitsOffset": 3,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "4",
+                        "bitsOffset": 4,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "5",
+                        "bitsOffset": 5,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "6",
+                        "bitsOffset": 6,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "7",
+                        "bitsOffset": 7,
+                        "bitsWidth": 1
+                    }
+                ]
+            },
+            {
+                "name": "IDR",
+                "bytes": 1,
+                "fields": [
+                    {
+                        "name": "0",
+                        "bitsOffset": 0,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "1",
+                        "bitsOffset": 1,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "2",
+                        "bitsOffset": 2,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "3",
+                        "bitsOffset": 3,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "4",
+                        "bitsOffset": 4,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "5",
+                        "bitsOffset": 5,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "6",
+                        "bitsOffset": 6,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "7",
+                        "bitsOffset": 7,
+                        "bitsWidth": 1
+                    }
+                ]
+            },
+            {
+                "name": "DDR",
+                "bytes": 1
+            },
+            {
+                "name": "CR1",
+                "bytes": 1
+            },
+            {
+                "name": "CR2",
+                "bytes": 1
+            }
+        ]
+    },
+    {
+        "name": "GPIOH",
+        "baseAddress": "0x5023",
+        "registers": [
+            {
+                "name": "ODR",
+                "bytes": 1,
+                "fields": [
+                    {
+                        "name": "0",
+                        "bitsOffset": 0,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "1",
+                        "bitsOffset": 1,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "2",
+                        "bitsOffset": 2,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "3",
+                        "bitsOffset": 3,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "4",
+                        "bitsOffset": 4,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "5",
+                        "bitsOffset": 5,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "6",
+                        "bitsOffset": 6,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "7",
+                        "bitsOffset": 7,
+                        "bitsWidth": 1
+                    }
+                ]
+            },
+            {
+                "name": "IDR",
+                "bytes": 1,
+                "fields": [
+                    {
+                        "name": "0",
+                        "bitsOffset": 0,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "1",
+                        "bitsOffset": 1,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "2",
+                        "bitsOffset": 2,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "3",
+                        "bitsOffset": 3,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "4",
+                        "bitsOffset": 4,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "5",
+                        "bitsOffset": 5,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "6",
+                        "bitsOffset": 6,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "7",
+                        "bitsOffset": 7,
+                        "bitsWidth": 1
+                    }
+                ]
+            },
+            {
+                "name": "DDR",
+                "bytes": 1
+            },
+            {
+                "name": "CR1",
+                "bytes": 1
+            },
+            {
+                "name": "CR2",
+                "bytes": 1
+            }
+        ]
+    },
+    {
+        "name": "GPIOI",
+        "baseAddress": "0x5028",
+        "registers": [
+            {
+                "name": "ODR",
+                "bytes": 1,
+                "fields": [
+                    {
+                        "name": "0",
+                        "bitsOffset": 0,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "1",
+                        "bitsOffset": 1,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "2",
+                        "bitsOffset": 2,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "3",
+                        "bitsOffset": 3,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "4",
+                        "bitsOffset": 4,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "5",
+                        "bitsOffset": 5,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "6",
+                        "bitsOffset": 6,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "7",
+                        "bitsOffset": 7,
+                        "bitsWidth": 1
+                    }
+                ]
+            },
+            {
+                "name": "IDR",
+                "bytes": 1,
+                "fields": [
+                    {
+                        "name": "0",
+                        "bitsOffset": 0,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "1",
+                        "bitsOffset": 1,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "2",
+                        "bitsOffset": 2,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "3",
+                        "bitsOffset": 3,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "4",
+                        "bitsOffset": 4,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "5",
+                        "bitsOffset": 5,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "6",
+                        "bitsOffset": 6,
+                        "bitsWidth": 1
+                    },
+                    {
+                        "name": "7",
+                        "bitsOffset": 7,
+                        "bitsWidth": 1
+                    }
+                ]
+            },
+            {
+                "name": "DDR",
+                "bytes": 1
+            },
+            {
+                "name": "CR1",
+                "bytes": 1
+            },
+            {
+                "name": "CR2",
+                "bytes": 1
+            }
+        ]
+    },
+    {
+        "name": "FLASH",
+        "baseAddress": "0x505A",
+        "registers": [
+            {
+                "name": "CR1",
+                "bytes": 1
+            },
+            {
+                "name": "CR2",
+                "bytes": 1
+            },
+            {
+                "name": "NCR2",
+                "bytes": 1
+            },
+            {
+                "name": "FPR",
+                "bytes": 1
+            },
+            {
+                "name": "NFPR",
+                "bytes": 1
+            },
+            {
+                "name": "IAPSR",
+                "bytes": 1
+            },
+            {
+                "name": "PUKR",
+                "baseAddress": "0x5062",
+                "bytes": 1
+            },
+            {
+                "name": "DUKR",
+                "baseAddress": "0x5064",
+                "bytes": 1
+            }
+        ]
+    },
+    {
+        "name": "EXTI",
+        "baseAddress": "0x50A0",
+        "registers": [
+            {
+                "name": "CR1",
+                "bytes": 1
+            },
+            {
+                "name": "CR2",
+                "bytes": 1
+            }
+        ]
+    },
+    {
+        "name": "RST",
+        "baseAddress": "0x50B3",
+        "registers": [
+            {
+                "name": "SR",
+                "bytes": 1
+            }
+        ]
+    },
+    {
+        "name": "CLK",
+        "baseAddress": "0x50C0",
+        "registers": [
+            {
+                "name": "ICKR",
+                "bytes": 1
+            },
+            {
+                "name": "ECKR",
+                "bytes": 1
+            },
+            {
+                "name": "CMSR",
+                "baseAddress": "0x50C3",
+                "bytes": 1
+            },
+            {
+                "name": "SWR",
+                "bytes": 1
+            },
+            {
+                "name": "SWCR",
+                "bytes": 1
+            },
+            {
+                "name": "CKDIVR",
+                "bytes": 1
+            },
+            {
+                "name": "PCKENR1",
+                "bytes": 1
+            },
+            {
+                "name": "CSSR",
+                "bytes": 1
+            },
+            {
+                "name": "CCOR",
+                "bytes": 1
+            },
+            {
+                "name": "PCKENR2",
+                "bytes": 1
+            },
+            {
+                "name": "HSITRIMR",
+                "baseAddress": "0x50CC",
+                "bytes": 1
+            },
+            {
+                "name": "SWIMCCR",
+                "bytes": 1
+            }
+        ]
+    },
+    {
+        "name": "WWDG",
+        "baseAddress": "0x50D1",
+        "registers": [
+            {
+                "name": "CR",
+                "bytes": 1
+            },
+            {
+                "name": "WR",
+                "bytes": 1
+            }
+        ]
+    },
+    {
+        "name": "IWDG",
+        "baseAddress": "0x50E0",
+        "registers": [
+            {
+                "name": "KR",
+                "bytes": 1
+            },
+            {
+                "name": "PR",
+                "bytes": 1
+            },
+            {
+                "name": "RLR",
+                "bytes": 1
+            }
+        ]
+    },
+    {
+        "name": "AWU",
+        "baseAddress": "0x50F0",
+        "registers": [
+            {
+                "name": "CSR1",
+                "bytes": 1
+            },
+            {
+                "name": "APR",
+                "bytes": 1
+            },
+            {
+                "name": "TBR",
+                "bytes": 1
+            }
+        ]
+    },
+    {
+        "name": "BEEP",
+        "baseAddress": "0x50F3",
+        "registers": [
+            {
+                "name": "CSR",
+                "bytes": 1
+            }
+        ]
+    },
+    {
+        "name": "SPI",
+        "baseAddress": "0x5200",
+        "registers": [
+            {
+                "name": "CR1",
+                "bytes": 1
+            },
+            {
+                "name": "CR2",
+                "bytes": 1
+            },
+            {
+                "name": "ICR",
+                "bytes": 1
+            },
+            {
+                "name": "SR",
+                "bytes": 1
+            },
+            {
+                "name": "DR",
+                "bytes": 1
+            },
+            {
+                "name": "CRCPR",
+                "bytes": 1
+            },
+            {
+                "name": "RXCRCR",
+                "bytes": 1
+            },
+            {
+                "name": "TXCRCR",
+                "bytes": 1
+            }
+        ]
+    },
+    {
+        "name": "I2C",
+        "baseAddress": "0x5210",
+        "registers": [
+            {
+                "name": "CR1",
+                "bytes": 1
+            },
+            {
+                "name": "CR2",
+                "bytes": 1
+            },
+            {
+                "name": "FREQR",
+                "bytes": 1
+            },
+            {
+                "name": "OARL",
+                "bytes": 1
+            },
+            {
+                "name": "OARH",
+                "bytes": 1
+            },
+            {
+                "name": "DR",
+                "baseAddress": "0x5216",
+                "bytes": 1
+            },
+            {
+                "name": "SR1",
+                "bytes": 1
+            },
+            {
+                "name": "SR2",
+                "bytes": 1
+            },
+            {
+                "name": "SR3",
+                "bytes": 1
+            },
+            {
+                "name": "ITR",
+                "bytes": 1
+            },
+            {
+                "name": "CCRL",
+                "bytes": 1
+            },
+            {
+                "name": "CCRH",
+                "bytes": 1
+            },
+            {
+                "name": "TRISER",
+                "bytes": 1
+            },
+            {
+                "name": "PECR",
+                "bytes": 1
+            }
+        ]
+    },
+    {
+        "name": "UART2",
+        "baseAddress": "0x5240",
+        "registers": [
+            {
+                "name": "SR",
+                "bytes": 1
+            },
+            {
+                "name": "DR",
+                "bytes": 1
+            },
+            {
+                "name": "BRR1",
+                "bytes": 1
+            },
+            {
+                "name": "BRR2",
+                "bytes": 1
+            },
+            {
+                "name": "CR1",
+                "bytes": 1
+            },
+            {
+                "name": "CR2",
+                "bytes": 1
+            },
+            {
+                "name": "CR3",
+                "bytes": 1
+            },
+            {
+                "name": "CR4",
+                "bytes": 1
+            },
+            {
+                "name": "CR5",
+                "bytes": 1
+            },
+            {
+                "name": "CR6",
+                "bytes": 1
+            },
+            {
+                "name": "GTR",
+                "bytes": 1
+            },
+            {
+                "name": "PSCR",
+                "bytes": 1
+            }
+        ]
+    },
+    {
+        "name": "TIM1",
+        "baseAddress": "0x5250",
+        "registers": [
+            {
+                "name": "CR1",
+                "bytes": 1
+            },
+            {
+                "name": "CR2",
+                "bytes": 1
+            },
+            {
+                "name": "SMCR",
+                "bytes": 1
+            },
+            {
+                "name": "ETR",
+                "bytes": 1
+            },
+            {
+                "name": "IER",
+                "bytes": 1
+            },
+            {
+                "name": "SR1",
+                "bytes": 1
+            },
+            {
+                "name": "SR2",
+                "bytes": 1
+            },
+            {
+                "name": "EGR",
+                "bytes": 1
+            },
+            {
+                "name": "CCMR1",
+                "bytes": 1
+            },
+            {
+                "name": "CCMR2",
+                "bytes": 1
+            },
+            {
+                "name": "CCMR3",
+                "bytes": 1
+            },
+            {
+                "name": "CCMR4",
+                "bytes": 1
+            },
+            {
+                "name": "CCER1",
+                "bytes": 1
+            },
+            {
+                "name": "CCER2",
+                "bytes": 1
+            },
+            {
+                "name": "CNTRH",
+                "bytes": 1
+            },
+            {
+                "name": "CNTRL",
+                "bytes": 1
+            },
+            {
+                "name": "PSCRH",
+                "bytes": 1
+            },
+            {
+                "name": "PSCRL",
+                "bytes": 1
+            },
+            {
+                "name": "ARRH",
+                "bytes": 1
+            },
+            {
+                "name": "ARRL",
+                "bytes": 1
+            },
+            {
+                "name": "RCR",
+                "bytes": 1
+            },
+            {
+                "name": "CCR1H",
+                "bytes": 1
+            },
+            {
+                "name": "CCR1L",
+                "bytes": 1
+            },
+            {
+                "name": "CCR2H",
+                "bytes": 1
+            },
+            {
+                "name": "CCR2L",
+                "bytes": 1
+            },
+            {
+                "name": "CCR3H",
+                "bytes": 1
+            },
+            {
+                "name": "CCR3L",
+                "bytes": 1
+            },
+            {
+                "name": "CCR4H",
+                "bytes": 1
+            },
+            {
+                "name": "CCR4L",
+                "bytes": 1
+            },
+            {
+                "name": "BKR",
+                "bytes": 1
+            },
+            {
+                "name": "DTR",
+                "bytes": 1
+            },
+            {
+                "name": "OISR",
+                "bytes": 1
+            }
+        ]
+    },
+    {
+        "name": "TIM2",
+        "baseAddress": "0x5300",
+        "registers": [
+            {
+                "name": "CR1",
+                "bytes": 1
+            },
+            {
+                "name": "IER",
+                "bytes": 1
+            },
+            {
+                "name": "SR1",
+                "bytes": 1
+            },
+            {
+                "name": "SR2",
+                "bytes": 1
+            },
+            {
+                "name": "EGR",
+                "bytes": 1
+            },
+            {
+                "name": "CCMR1",
+                "bytes": 1
+            },
+            {
+                "name": "CCMR2",
+                "bytes": 1
+            },
+            {
+                "name": "CCMR3",
+                "bytes": 1
+            },
+            {
+                "name": "CCER1",
+                "bytes": 1
+            },
+            {
+                "name": "CCER2",
+                "bytes": 1
+            },
+            {
+                "name": "CNTRH",
+                "bytes": 1
+            },
+            {
+                "name": "CNTRL",
+                "bytes": 1
+            },
+            {
+                "name": "PSCR",
+                "bytes": 1
+            },
+            {
+                "name": "ARRH",
+                "bytes": 1
+            },
+            {
+                "name": "ARRL",
+                "bytes": 1
+            },
+            {
+                "name": "CCR1H",
+                "bytes": 1
+            },
+            {
+                "name": "CCR1L",
+                "bytes": 1
+            },
+            {
+                "name": "CCR2H",
+                "bytes": 1
+            },
+            {
+                "name": "CCR2L",
+                "bytes": 1
+            },
+            {
+                "name": "CCR3H",
+                "bytes": 1
+            },
+            {
+                "name": "CCR3L",
+                "bytes": 1
+            }
+        ]
+    },
+    {
+        "name": "TIM3",
+        "baseAddress": "0x5320",
+        "registers": [
+            {
+                "name": "CR1",
+                "bytes": 1
+            },
+            {
+                "name": "IER",
+                "bytes": 1
+            },
+            {
+                "name": "SR1",
+                "bytes": 1
+            },
+            {
+                "name": "SR2",
+                "bytes": 1
+            },
+            {
+                "name": "EGR",
+                "bytes": 1
+            },
+            {
+                "name": "CCMR1",
+                "bytes": 1
+            },
+            {
+                "name": "CCMR2",
+                "bytes": 1
+            },
+            {
+                "name": "CCER1",
+                "bytes": 1
+            },
+            {
+                "name": "CNTRH",
+                "bytes": 1
+            },
+            {
+                "name": "CNTRL",
+                "bytes": 1
+            },
+            {
+                "name": "PSCR",
+                "bytes": 1
+            },
+            {
+                "name": "ARRH",
+                "bytes": 1
+            },
+            {
+                "name": "ARRL",
+                "bytes": 1
+            },
+            {
+                "name": "CCR1H",
+                "bytes": 1
+            },
+            {
+                "name": "CCR1L",
+                "bytes": 1
+            },
+            {
+                "name": "CCR2H",
+                "bytes": 1
+            },
+            {
+                "name": "CCR2L",
+                "bytes": 1
+            }
+        ]
+    },
+    {
+        "name": "TIM4",
+        "baseAddress": "0x5340",
+        "registers": [
+            {
+                "name": "CR1",
+                "bytes": 1
+            },
+            {
+                "name": "IER",
+                "bytes": 1
+            },
+            {
+                "name": "SR",
+                "bytes": 1
+            },
+            {
+                "name": "EGR",
+                "bytes": 1
+            },
+            {
+                "name": "CNTR",
+                "bytes": 1
+            },
+            {
+                "name": "PSCR",
+                "bytes": 1
+            },
+            {
+                "name": "ARR",
+                "bytes": 1
+            }
+        ]
+    },
+    {
+        "name": "ADC1",
+        "baseAddress": "0x53E0",
+        "registers": [
+            {
+                "name": "DB0R",
+                "bytes": 2
+            },
+            {
+                "name": "DB1R",
+                "bytes": 2
+            },
+            {
+                "name": "DB2R",
+                "bytes": 2
+            },
+            {
+                "name": "DB3R",
+                "bytes": 2
+            },
+            {
+                "name": "DB4R",
+                "bytes": 2
+            },
+            {
+                "name": "DB5R",
+                "bytes": 2
+            },
+            {
+                "name": "DB6R",
+                "bytes": 2
+            },
+            {
+                "name": "DB7R",
+                "bytes": 2
+            },
+            {
+                "name": "DB8R",
+                "bytes": 2
+            },
+            {
+                "name": "DB9R",
+                "bytes": 2
+            },
+            {
+                "name": "CSR",
+                "baseAddress": "0x5400",
+                "bytes": 1
+            },
+            {
+                "name": "CR1",
+                "bytes": 1
+            },
+            {
+                "name": "CR2",
+                "bytes": 1
+            },
+            {
+                "name": "CR3",
+                "bytes": 1
+            },
+            {
+                "name": "DRH",
+                "bytes": 1
+            },
+            {
+                "name": "DRL",
+                "bytes": 1
+            },
+            {
+                "name": "TDRH",
+                "bytes": 1
+            },
+            {
+                "name": "TDRL",
+                "bytes": 1
+            },
+            {
+                "name": "HTRH",
+                "bytes": 1
+            },
+            {
+                "name": "HTRL",
+                "bytes": 1
+            },
+            {
+                "name": "LTRH",
+                "bytes": 1
+            },
+            {
+                "name": "LTRL",
+                "bytes": 1
+            },
+            {
+                "name": "AWSRH",
+                "bytes": 1
+            },
+            {
+                "name": "AWSRL",
+                "bytes": 1
+            },
+            {
+                "name": "AWCRH",
+                "bytes": 1
+            },
+            {
+                "name": "AWCRL",
+                "bytes": 1
+            }
+        ]
+    },
+    {
+        "name": "ITC",
+        "baseAddress": "0x7F70",
+        "registers": [
+            {
+                "name": "SPR1",
+                "bytes": 1
+            },
+            {
+                "name": "SPR2",
+                "bytes": 1
+            },
+            {
+                "name": "SPR3",
+                "bytes": 1
+            },
+            {
+                "name": "SPR4",
+                "bytes": 1
+            },
+            {
+                "name": "SPR5",
+                "bytes": 1
+            },
+            {
+                "name": "SPR6",
+                "bytes": 1
+            },
+            {
+                "name": "SPR7",
+                "bytes": 1
+            },
+            {
+                "name": "SPR8",
+                "bytes": 1
+            }
+        ]
+    },
+    {
+        "name": "SWIM",
+        "baseAddress": "0x7F80",
+        "registers": [
+            {
+                "name": "CSR",
+                "bytes": 1
+            }
+        ]
+    },
+    {
+        "name": "DM",
+        "baseAddress": "0x7F90",
+        "registers": [
+            {
+                "name": "BK1RE",
+                "bytes": 1
+            },
+            {
+                "name": "BK1RH",
+                "bytes": 1
+            },
+            {
+                "name": "BK1RL",
+                "bytes": 1
+            },
+            {
+                "name": "BK2RE",
+                "bytes": 1
+            },
+            {
+                "name": "BK2RH",
+                "bytes": 1
+            },
+            {
+                "name": "BK2RL",
+                "bytes": 1
+            },
+            {
+                "name": "CR1",
+                "bytes": 1
+            },
+            {
+                "name": "CR2",
+                "bytes": 1
+            },
+            {
+                "name": "CSR1",
+                "bytes": 1
+            },
+            {
+                "name": "CSR2",
+                "bytes": 1
+            },
+            {
+                "name": "ENFCTR",
+                "bytes": 1
+            }
+        ]
+    }
+]

@@ -8,7 +8,7 @@
 
 #Compiler
 CC = sdcc --verbose
-OBJCOPY = stm8-objcopy
+OBJCOPY = objcopy
 SIZE = stm8-size
 
 #Platform
@@ -27,7 +27,8 @@ SDIR = STM8S_StdPeriph_Lib/src
 # In case you ever want a different name for the main source file
 MAINSRC = $(PNAME).c
 
-ELF_SECTIONS_TO_REMOVE = -R DATA -R INITIALIZED -R SSEG -R .debug_line -R .debug_loc -R .debug_abbrev -R .debug_info -R .debug_pubnames -R .debug_frame
+# those sections are outside of the memory range (0x8000-0xFFF0) of the STM8S105
+ELF_SECTIONS_TO_REMOVE = -R DATA -R INITIALIZED -R SSEG
 
 # These are the sources that must be compiled to .rel files:
 	EXTRASRCS = \
@@ -65,7 +66,7 @@ RELS = $(addprefix $(ODIR)/,$(notdir $(EXTRASRCS:.c=.rel)))
 
 override INCLUDES += -I$(IDIR) -I.
 override CFLAGS += -m$(PLATFORM) -D$(DEVICE) -Ddouble=float --std-c99 --nolospre --opt-code-speed --peep-asm --peep-file peep.txt
-override DEBUG_FLAGS += --out-fmt-ihx --debug
+override DEBUG_FLAGS += --out-fmt-elf --debug
 LIBS = 
 
 # This just provides the conventional target name "all"; it is optional
@@ -75,10 +76,11 @@ all: mkdir $(PNAME)
 
 # How to build the overall program
 $(PNAME): $(MAINSRC) $(RELS)
-	$(CC) $(INCLUDES) $(CFLAGS) $(DEBUG_FLAGS) $(LIBS) $(MAINSRC) $(RELS) -o$(ODIR)/
-# $(SIZE) $(PNAME).elf
-# $(OBJCOPY) -O binary $(ELF_SECTIONS_TO_REMOVE) $(PNAME).elf $(PNAME).bin
-# $(OBJCOPY) -O ihex $(ELF_SECTIONS_TO_REMOVE) $(PNAME).elf $(PNAME).hex
+	$(CC) $(INCLUDES) $(CFLAGS) $(DEBUG_FLAGS) $(LIBS) $(MAINSRC) $(RELS) -o$(ODIR)/$(PNAME).elf
+
+# 	$(SIZE) $(PNAME).elf	
+	$(OBJCOPY) -g $(ODIR)/$(PNAME).elf -O ihex $(ODIR)/$(PNAME).hex $(ELF_SECTIONS_TO_REMOVE)
+	cp $(ODIR)/$(PNAME).hex $(ODIR)/../$(PNAME).hex
 
 #Rules for firmware sources
 %.rel: %.c $(HEADERS)
@@ -94,9 +96,8 @@ $(ODIR)/%.rel: $(SDIR)/%.c
 # Necessary because .rel is not one of the standard suffixes.
 .SUFFIXES: .c .rel
 
-# hex:
-# 	@cd $(ODIR)
-# 	$(OBJCOPY) -O ihex $(ELF_SECTIONS_TO_REMOVE) $(PNAME).elf $(PNAME).ihx*
+bin:
+	$(OBJCOPY) -I ihex $(ODIR)/$(PNAME).hex -O binary $(ODIR)/$(PNAME).bin
 
 backup:
 	stm8flash -c stlinkv2 -p stm8s105?6 -s opt -r $(ODIR)/TSDZ_orig_opt.bin
@@ -104,10 +105,10 @@ backup:
 	stm8flash -c stlinkv2 -p stm8s105?6 -s eeprom -r $(ODIR)/TSDZ_orig_eeprom.bin
 
 flash:
-	stm8flash -c stlinkv2 -p stm8s105\?6 -w $(ODIR)/$(PNAME).ihx
-clear_eeprom:
-	stm8flash -c stlinkv2 -p stm8s105\?6 -s eeprom -w data_empty.ihx
+	stm8flash -c stlinkv2 -p stm8s105\?6 -w $(ODIR)/$(PNAME).hex
 
+clear_eeprom:
+	stm8flash -c stlinkv2 -p stm8s105\?6 -s eeprom -w data_empty.hex
 
 clean:
 	@echo "Cleaning files..."
@@ -116,3 +117,7 @@ clean:
 
 mkdir:
 	mkdir -p $(ODIR)
+
+## uncomment to print make variables
+# debug_make:
+#     $(foreach var,$(.VARIABLES),$(info $(var) = $($(var))))

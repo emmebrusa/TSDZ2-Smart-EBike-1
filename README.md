@@ -20,7 +20,7 @@ It has the following benefits compared to the stock firmware:
 
 This project is being developed and maintained for free by a community of users. Some of them are developers who work professionally developing this type of technology for very well known companies.
 
-## Building and flashing
+## Building and flashing with Java tool
 ### Windows 
 - Install [SDCC](http://sdcc.sourceforge.net/index.php#Download).
   version 4.1.0 or higher required.
@@ -38,15 +38,31 @@ This project is being developed and maintained for free by a community of users.
 - Open JavaConfigurator.jar customize the parameters and click Compile & Flash
 - And/Or use supplied shell script `compile_and_flash_20.sh` 
 
-# For more information, go to the [wiki](https://github.com/emmebrusa/TSDZ2-Smart-EBike-1/wiki) instructions.
+### For more information, go to the [wiki](https://github.com/emmebrusa/TSDZ2-Smart-EBike-1/wiki) instructions.
 
 ## Development / contributing
 ### Setup
 1. Clone this repository
 2. Install the SDCC compiler
 
-### Compile the firmware
-`cd src/` and use `make` or `compile.bat` to compile the firmware.
+### Debugging
+- You can use [STMStdudio](https://www.st.com/en/development-tools/stm-studio-stm8.html) to plot global variables in real-time
+- Or use VScode and one of the debugging setups from `.vscode/launch.json`
+ - on Windows, unpack stm8-gdb.exe binary to folder located in your system's PATH environment variable
+ - make sure OpenOCD 0.12 is installed
+ - install [cpptools](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools)
+ - press F5 in VScode to build, flash, and debug (`STM8-gdb` profile)
+
+
+
+### Compile the firmware manually
+- `cd src/` and use `make` or `compile.bat` to compile the firmware.
+
+### Flashing the firmware manually
+- Use `make flash` or `flash.bat` to flash the firmware.
+- If you have Android with OTG you can [transfer](https://dl.google.com/tag/s/appguid%3D%7B232066FE-FF4D-4C25-83B4-3F8747CF7E3A%7D%26iid%3D%7B4A198779-3904-500B-CF23-602510C07E5B%7D%26lang%3Den%26browser%3D4%26usagestats%3D0%26appname%3DNearby%2520Better%2520Together%26needsadmin%3Dtrue/better_together/BetterTogetherSetup.exe) `main.hex`to your phone and use [Stm8 updater](https://play.google.com/store/apps/details?id=com.yatrim.stlinkp8) app to flash the `stm8s105s6`
+- For advanced flashing and option bytes managment use [ST Visual Programmer STM8](https://www.st.com/en/development-tools/stvp-stm8.html). You can use preconfigured project file from `tools/ST_Vision_Programming.stp`.
+
 
 ### Editing environment
 1. VScode can be used for the development.

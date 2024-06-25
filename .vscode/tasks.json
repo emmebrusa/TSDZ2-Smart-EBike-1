@@ -17,7 +17,7 @@
 				"all"
 			],
 			"options": {
-				"cwd": "${workspaceFolder}/src/controller/"
+				"cwd": "${workspaceFolder}/src/"
 			},
 			"problemMatcher": [
 				"$gcc"
@@ -29,7 +29,7 @@
 		},
 		{
 			"type": "process",
-			"label": "STM8 Flash",
+			"label": "Build & Flash",
 			"windows": {
 			  "command": "flash.bat"
 			},
@@ -40,7 +40,7 @@
 				"command": "make flash",
 			},
 			"options": {
-				"cwd": "${workspaceFolder}/src/controller"
+				"cwd": "${workspaceFolder}/src"
 			},
 			"dependsOn": [
 				"SDCC build"
@@ -48,10 +48,101 @@
 			"presentation": {
 				"echo": false,
 				"reveal": "always",
-				"focus": true,
-				"close": false
+				"focus": false,
+				"close": true
 			},
-			"problemMatcher": []
+			"problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+		},
+
+		{
+			"label": "Launch OpenOCD",
+			"type": "shell",
+			"command": "openocd",
+			"args": [
+				"-f",
+				"interface/stlink-dap.cfg",  //swim is @stlink-dap in openocd > 10.0
+				"-f",
+				"target/stm8s105.cfg"
+			],
+			"problemMatcher": [],
+		},
+
+		{
+			"label": "Flash with OpenOCD",  //actually doesn't seem to flash correctly
+			"hide": true,
+			"type": "process",
+			"presentation": {
+				"reveal": "always",
+				"focus": false,
+				"panel": "dedicated",
+				"showReuseMessage": true,
+				"clear": false
+			},
+			"dependsOn": "SDCC build",
+			"command": "openocd",
+			"options": {
+				"cwd": "${workspaceFolder}",
+			},
+			"runOptions": {
+				"instanceLimit": 1,
+			},
+			"args": [
+				"-d2",
+				"-f",
+				"interface/stlink-dap.cfg",
+				"-f",
+				"target/stm8s105.cfg",
+				"-c",
+				"init",
+				"-c",
+				"reset halt",
+                "-c",
+                "load_image bin/main.hex 0x9000",
+				"-c",
+				"reset",
+				"-c",
+				"exit",
+                // "-c",
+                // "program orig.hex",
+			],
+			"problemMatcher": [],
+		},
+
+		{
+			"label": "OpenOCD reset target",
+			"hide": true,
+			"type": "process",
+			"presentation": {
+				"reveal": "always",
+				"focus": false,
+				"panel": "dedicated",
+				"showReuseMessage": true,
+				"clear": false
+			},
+			"dependsOn": "SDCC build",
+			"command": "openocd",
+			"options": {
+				"cwd": "${workspaceFolder}",
+			},
+			"runOptions": {
+				"instanceLimit": 1,
+			},
+			"args": [
+				"interface/stlink-dap.cfg",
+				"-f",
+				"target/stm8s105.cfg",
+				"-c",
+				"init",
+				"-c",
+				"reset",
+				"-c",
+				"exit",
+			],
+			"problemMatcher": [],
 		}
 	],
 }

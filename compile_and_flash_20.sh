@@ -10,7 +10,7 @@ backup_folder=$(pwd)/releases/backup
 cd src
 
 # Clean existing
-rm -rf main.ihx || true
+rm -rf main.hex || true
 make clean || true
 
 # Build firmware
@@ -21,7 +21,7 @@ make all
 echo Copying firmware to release folder.
 echo $release_folder/TSDZ2-$version-$settings_date.hex
 mkdir -p "$release_folder"
-yes | cp -rf ../bin/main.ihx "$release_folder/TSDZ2-$version-$settings_date.hex"
+yes | cp -rf ../bin/main.hex "$release_folder/TSDZ2-$version-$settings_date.hex"
 
 backup=no
 while true; do

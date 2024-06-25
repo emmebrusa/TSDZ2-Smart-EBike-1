@@ -8,7 +8,7 @@ goto CLEAN
 PATH = %PATH%;%~dp0..\tools\cygwin_64\bin;
 
 :CLEAN
-del /q main.ihx >NUL 2>NUL
+del /q main.hex >NUL 2>NUL
 make clean || goto FAIL
 echo.
 
