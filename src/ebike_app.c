@@ -3103,6 +3103,9 @@ static void uart_send_package(void)
 					ui16_duty_cycle_percent = (uint16_t) ((ui8_g_duty_cycle * (uint8_t)100) / PWM_DUTY_CYCLE_MAX) - 1;
 					ui16_display_data = ui16_display_data_factor / (ui16_duty_cycle_percent * 10U);
 				  break;
+				case 13:
+					ui16_display_data = (uint16_t) ui16_display_data_factor / (u8_isr_load_perc * (uint8_t)10U);
+				  break;
 				default:
 				  break;
 			  }
