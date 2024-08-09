@@ -30,7 +30,6 @@ extern volatile uint8_t ui8_controller_duty_cycle_target;
 extern volatile uint16_t ui16_hall_calib_cnt[6];
 extern volatile uint8_t ui8_hall_ref_angles[6];
 extern volatile uint8_t ui8_hall_counter_offsets[6];
-extern volatile uint8_t ui8_hall_sensors_state;
 
 // Sensors
 extern volatile uint8_t ui8_brake_state;

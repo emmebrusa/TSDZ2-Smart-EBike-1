@@ -5,6 +5,7 @@
 	// List of extensions which should be recommended for users of this workspace.
 	"recommendations": [
 		"ms-vscode.cpptools",
-		"cl.stm8-debug"
+		"ms-python.python",
+		"cl.stm8-debug",
 	]
 }

@@ -135,7 +135,7 @@ HALL_COUNTER_OFFSET_UP:    29 -> 44
 #define HALL_COUNTER_OFFSET_UP                  (HALL_COUNTER_OFFSET_DOWN + 21)
 #define FW_HALL_COUNTER_OFFSET_MAX              5 // 5*4=20us max time offset
 
-#define MOTOR_ROTOR_INTERPOLATION_MIN_ERPS      10
+#define MOTOR_ROTOR_INTERPOLATION_MIN_ERPS      10U
  
 // adc torque offset gap value for error
 #define ADC_TORQUE_SENSOR_OFFSET_THRESHOLD		30
@@ -372,7 +372,7 @@ HALL_COUNTER_OFFSET_UP:    29 -> 44
 // battery voltage to be subtracted from the cut-off 8bit
 #define DIFFERENCE_CUT_OFF_SHUTDOWN_8_BIT			26
 // battery voltage for saving battery capacity at shutdown
-#define BATTERY_VOLTAGE_SHUTDOWN_8_BIT			(uint8_t) ((uint16_t)(BATTERY_LOW_VOLTAGE_CUT_OFF * 250 / BATTERY_VOLTAGE_PER_10_BIT_ADC_STEP_X1000)) - ((uint16_t) DIFFERENCE_CUT_OFF_SHUTDOWN_8_BIT)
+#define BATTERY_VOLTAGE_SHUTDOWN_8_BIT			(uint8_t) ((uint16_t)((BATTERY_LOW_VOLTAGE_CUT_OFF * 250 / BATTERY_VOLTAGE_PER_10_BIT_ADC_STEP_X1000)) - ((uint16_t) DIFFERENCE_CUT_OFF_SHUTDOWN_8_BIT))
 #define BATTERY_VOLTAGE_SHUTDOWN_10_BIT			(uint16_t) (BATTERY_VOLTAGE_SHUTDOWN_8_BIT << 2) 
 // max battery power div25
 #define TARGET_MAX_BATTERY_POWER_DIV25			(uint8_t)(TARGET_MAX_BATTERY_POWER / 25)

@@ -99,7 +99,7 @@ static uint16_t ui16_cadence_sensor_ticks_counter_min = CADENCE_SENSOR_CALC_COUN
 static uint8_t ui8_pas_state_old = 4;
 static uint16_t ui16_cadence_calc_counter, ui16_cadence_stop_counter;
 static uint8_t ui8_cadence_calc_ref_state = NO_PAS_REF;
-const static uint8_t ui8_pas_old_valid_state[4] = { 0x01, 0x03, 0x00, 0x02 };
+static const uint8_t ui8_pas_old_valid_state[4] = { 0x01, 0x03, 0x00, 0x02 };
 
 // wheel speed sensor
 volatile uint16_t ui16_wheel_speed_sensor_ticks = 0;
@@ -355,7 +355,7 @@ void TIM1_CAP_COM_IRQHandler(void) __interrupt(TIM1_CAP_COM_IRQHANDLER)
 		else {
             // Verify if rotor stopped (< 10 ERPS)
             // ui16_a - ui16_b = Hall counter ticks from the last Hall sensor transition;
-            if ((ui16_a - ui16_b) > (HALL_COUNTER_FREQ/MOTOR_ROTOR_INTERPOLATION_MIN_ERPS/6)) {
+            if ((uint16_t)(ui16_a - ui16_b) > (HALL_COUNTER_FREQ/MOTOR_ROTOR_INTERPOLATION_MIN_ERPS/6U)) {
                 ui8_motor_commutation_type = BLOCK_COMMUTATION;
                 ui8_g_foc_angle = 0;
                 ui8_hall_360_ref_valid = 0;
@@ -554,7 +554,7 @@ void TIM1_CAP_COM_IRQHandler(void) __interrupt(TIM1_CAP_COM_IRQHANDLER)
         */
 
             ld a, _ui8_temp+0     // ui8_svm_table_index is stored in ui8_temp
-            add a, #0x55        // ui8_temp = ui8_svm_table[(uint8_t) (ui8_svm_table_index + 85 /* 120ยบ */)];
+            add a, #0x55        // ui8_temp = ui8_svm_table[(uint8_t) (ui8_svm_table_index + 85); /* 120deg */];
             clrw x
             ld  xl, a
             ld  a, (_ui8_svm_table+0, x)
@@ -868,7 +868,7 @@ void TIM1_CAP_COM_IRQHandler(void) __interrupt(TIM1_CAP_COM_IRQHANDLER)
 		else { ui16_wheel_speed_sensor_ticks_counter_min = WHEEL_SPEED_SENSOR_TICKS_COUNTER_MIN >> 3; }
 
 		if (!ui8_wheel_speed_sensor_ticks_counter_started ||
-		  (ui16_wheel_speed_sensor_ticks_counter > ui16_wheel_speed_sensor_ticks_counter_min)) { 
+		    (ui16_wheel_speed_sensor_ticks_counter > ui16_wheel_speed_sensor_ticks_counter_min)) { 
 			// check if wheel speed sensor pin state has changed
 			if (ui8_temp != ui8_wheel_speed_sensor_pin_state_old) {
 				// update old wheel speed sensor pin state
@@ -898,7 +898,7 @@ void TIM1_CAP_COM_IRQHandler(void) __interrupt(TIM1_CAP_COM_IRQHANDLER)
 		}
 
         // increment and also limit the ticks counter
-        if (ui8_wheel_speed_sensor_ticks_counter_started)
+        if (ui8_wheel_speed_sensor_ticks_counter_started) {
             if (ui16_wheel_speed_sensor_ticks_counter < WHEEL_SPEED_SENSOR_TICKS_COUNTER_MIN) {
                 ++ui16_wheel_speed_sensor_ticks_counter;
             }
@@ -908,6 +908,7 @@ void TIM1_CAP_COM_IRQHandler(void) __interrupt(TIM1_CAP_COM_IRQHANDLER)
                 ui16_wheel_speed_sensor_ticks_counter = 0;
                 ui8_wheel_speed_sensor_ticks_counter_started = 0;
             }
+        }
 
 
         /****************************************************************************/
@@ -1019,7 +1020,6 @@ void TIM1_CAP_COM_IRQHandler(void) __interrupt(TIM1_CAP_COM_IRQHANDLER)
 	}
 	
     /****************************************************************************/
-    irq_end:
     // clears the TIM1 interrupt TIM1_IT_UPDATE pending bit
     TIM1->SR1 = (uint8_t) (~(uint8_t) TIM1_IT_CC4);
 }

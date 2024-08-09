@@ -752,7 +752,7 @@ static void apply_power_assist(void)
         ui8_adc_battery_current_target = ui8_adc_battery_current_max;
     }
 	else {
-        ui8_adc_battery_current_target = ui16_adc_battery_current_target;
+        ui8_adc_battery_current_target = (uint8_t)ui16_adc_battery_current_target;
     }
 	
 	#if STARTUP_ASSIST_ENABLED
@@ -815,7 +815,7 @@ static void apply_torque_assist(void)
             ui8_adc_battery_current_target = ui8_adc_battery_current_max;
         }
 		else {
-            ui8_adc_battery_current_target = ui16_adc_battery_current_target_torque_assist;
+            ui8_adc_battery_current_target = (uint8_t)ui16_adc_battery_current_target_torque_assist;
         }
 		
 		#if STARTUP_ASSIST_ENABLED
@@ -865,7 +865,7 @@ static void apply_cadence_assist(void)
             ui8_adc_battery_current_target = ui8_adc_battery_current_max;
         }
 		else {
-            ui8_adc_battery_current_target = ui16_adc_battery_current_target_cadence_assist;
+            ui8_adc_battery_current_target = (uint8_t)ui16_adc_battery_current_target_cadence_assist;
         }
 		
 		// set duty cycle target
@@ -926,7 +926,7 @@ static void apply_emtb_assist(void)
             ui8_adc_battery_current_target = ui8_adc_battery_current_max;
         }
 		else {
-            ui8_adc_battery_current_target = ui16_adc_battery_current_target_eMTB_assist;
+            ui8_adc_battery_current_target = (uint8_t)ui16_adc_battery_current_target_eMTB_assist;
         }
 		
 		#if STARTUP_ASSIST_ENABLED
@@ -1014,7 +1014,7 @@ static void apply_hybrid_assist(void)
 			ui8_adc_battery_current_target = ui8_adc_battery_current_max;
 		}
 		else {
-			ui8_adc_battery_current_target = ui16_adc_battery_current_target;
+			ui8_adc_battery_current_target = (uint8_t)ui16_adc_battery_current_target;
 		}
 		
 		#if STARTUP_ASSIST_ENABLED
@@ -1435,7 +1435,7 @@ static void apply_temperature_limiting(void)
     }
 	else {
         // adjust target current if motor over temperature limit
-        ui8_adc_battery_current_target = map_ui16((uint16_t) ui16_motor_temperature_filtered_x10,
+        ui8_adc_battery_current_target = (uint8_t)map_ui16((uint16_t) ui16_motor_temperature_filtered_x10,
 				(uint16_t) ((uint8_t)ui8_motor_temperature_min_value_to_limit_array[TEMPERATURE_SENSOR_TYPE] * (uint8_t)10U),
 				(uint16_t) ((uint8_t)ui8_motor_temperature_max_value_to_limit_array[TEMPERATURE_SENSOR_TYPE] * (uint8_t)10U),
 				ui8_adc_battery_current_target,
@@ -1652,9 +1652,8 @@ static void get_pedal_torque(void)
 }
 
 
-struct_configuration_variables* get_configuration_variables(void)
-{
-    return &m_configuration_variables;
+struct_configuration_variables* get_configuration_variables(void) {
+    return (struct_configuration_variables*) &m_configuration_variables;
 }
 
 
@@ -2929,7 +2928,7 @@ static void uart_send_package(void)
 		
 		// reserved for VLCD5, torque sensor value TE and TE1
 		#if ENABLE_VLCD5
-		ui8_tx_buffer[3] = ui16_adc_pedal_torque_offset_init;
+		ui8_tx_buffer[3] = (uint8_t)ui16_adc_pedal_torque_offset_init;
 		if (ui16_adc_pedal_torque > ui16_adc_pedal_torque_offset_init) {
 			ui8_tx_buffer[4] = ui16_adc_pedal_torque - ui16_adc_pedal_torque_offset_init;
 		}

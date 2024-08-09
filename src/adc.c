@@ -7,7 +7,6 @@
  */
 
 #include <stdint.h>
-#include <stdio.h>
 #include "stm8s.h"
 #include "pins.h"
 #include "stm8s_adc1.h"

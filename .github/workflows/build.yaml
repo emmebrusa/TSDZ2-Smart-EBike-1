@@ -8,11 +8,17 @@ on:
         default: 'warning'
   push:
     paths:
-    - ".github/workflows/build.yaml"
+    - ".github/workflows/*"
     - "src/*"
+    - "tests/*"
+    - "pyproject.toml"
+    - "setup.py"
   pull_request:
     paths:
     - "src/*"
+    - "tests/*"
+    - "pyproject.toml"
+    - "setup.py"
 
 env:
   SDCC_VERSION: 4.4.0
@@ -21,33 +27,50 @@ jobs:
   Build_Windows:
     runs-on: windows-latest
     steps:
-    - name: install SDCC
-      run: | #install silent and then unpack missing installation libraries
+      # - name: Start SSH session
+      #   uses: luchihoratiu/debug-via-ssh@main
+      #   with:
+      #     NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
+      #     SSH_PASS: ${{ secrets.SSH_PASS }}
+    - name: Install SDCC
+      run: |
         Invoke-WebRequest -UserAgent "Wget" -Uri https://sourceforge.net/projects/sdcc/files/sdcc-win64/$env:SDCC_VERSION/sdcc-$env:SDCC_VERSION-rc3-x64-setup.exe/download -OutFile sdcc_setup.exe
-        ls
         Start-Process -wait -FilePath "sdcc_setup.exe" -ArgumentList "/S", "/D=C:\Program Files\SDCC"
-        echo "Adding sdcc to PATH"
+        echo "Adding SDCC to PATH"
         Add-Content $env:GITHUB_PATH "C:\Program Files\SDCC\bin"
     - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.x'
+    # this mainly checks whether tests compile and work on windows. The actual test report runs on Ubuntu job
+    - name: Check testing framework
+      run: |
+        pip install -e .
+        rm tests/sim/_tsdz2.cdef # make sure cdef is generated from the source to check testing framework
+        pytest
     - name: Build
       run: |
         cd src
-        ../tools/cygwin_64/bin/make.exe clean
-        ../tools/cygwin_64/bin/make.exe CFLAGS=--Werror
+        make clean
+        make CFLAGS=--Werror
     - uses: actions/upload-artifact@v4
       with:
         name: firmware_from_windows
         path: bin/main.hex
 
-
   Build_Linux:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
-      - name: install SDCC
+      # - name: Start SSH session
+      #   uses: luchihoratiu/debug-via-ssh@main
+      #   with:
+      #     NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
+      #     SSH_PASS: ${{ secrets.SSH_PASS }}
+      - name: Install SDCC
         run: |
            cd ~
-           wget https://sourceforge.net/projects/sdcc/files/sdcc-linux-amd64/4.4.0/sdcc-4.4.0-amd64-unknown-linux2.5.tar.bz2/download -O sdcc-amd64.tar.bz2
-           ls
+           wget https://sourceforge.net/projects/sdcc/files/sdcc-linux-amd64/$SDCC_VERSION/sdcc-$SDCC_VERSION-amd64-unknown-linux2.5.tar.bz2/download -O sdcc-amd64.tar.bz2
            sudo tar xf sdcc-amd64.tar.bz2
            cd sdcc-$SDCC_VERSION/
            sudo cp -r * /usr/local
@@ -65,9 +88,67 @@ jobs:
           path: bin/main.hex
 
 
+  Tests:
+    runs-on: ubuntu-20.04
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Install dependencies
+        run: |
+          pip install -e .
+          pip install --upgrade pytest-md-report
+          pip install gcovr
+      - name: Run tests
+        env:
+          REPORT_OUTPUT: md_report.md
+        shell: bash
+        run: |
+          rm tests/sim/_tsdz2.cdef # make sure cdef is generated from the source to check testing framework
+
+          echo "REPORT_FILE=${REPORT_OUTPUT}" >> "$GITHUB_ENV"
+
+          gcc -Wall -Wextra -Q --help=warning # print warnings that shouldbe enabled by pytest --strict
+
+          pytest --strict --coverage --md-report --md-report-flavor gfm --md-report-output "$REPORT_OUTPUT"
+      - name: Output reports to the job summary
+        if: always()
+        shell: bash
+        run: |
+          if [ -f "$REPORT_FILE" ]; then
+            echo "## Test Report" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            cat "$REPORT_FILE" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "Report file not found."
+          fi
+      - name: Render the report to the PR when tests fail
+        uses: marocchino/sticky-pull-request-comment@v2
+        if: failure()
+        with:
+          header: test-report
+          recreate: true
+          path: ${{ env.REPORT_FILE }}
+      - name: Collect coverage data
+        run: |
+          echo "### Coverage Report" >> $GITHUB_STEP_SUMMARY
+          gcovr -r tests --print-summary >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coverage_report
+          path: |
+            tests/coverage_report.html
+
   Compare_builds:
     needs: [Build_Windows, Build_Linux]
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - name: Download Windows build
         uses: actions/download-artifact@v4
@@ -81,7 +162,7 @@ jobs:
           path: firmware_from_linux
       - name: Compare build files
         run: |
-          ls
           echo "Comparing build files"
-          git diff  firmware_from_windows/main.hex firmware_from_linux/main.hex --word-diff=color --ignore-space-at-eol --exit-code
+          git diff firmware_from_windows/main.hex firmware_from_linux/main.hex --word-diff=color --ignore-space-at-eol --exit-code
           echo "Done comparing build files. Files are the same."
+
