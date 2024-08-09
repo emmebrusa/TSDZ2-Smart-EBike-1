@@ -6,8 +6,9 @@
  * Released under the GPL License, Version 3
  */
 
-#ifndef _INTERRUPTS_H_
-#define _INTERRUPTS_H_
+#ifndef INTERRUPTS_H_
+#define INTERRUPTS_H_
+
 
 #define EXTI_HALL_A_IRQ  7              // ITC_IRQ_PORTE - Hall sensor A rise/fall detection
 #define EXTI_HALL_B_IRQ  6              // ITC_IRQ_PORTD - Hall sensor B rise/fall detection

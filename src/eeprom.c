@@ -7,6 +7,7 @@
  */
 
 #include <stdint.h>
+#include "main.h"
 #include "stm8s.h"
 #include "stm8s_flash.h"
 #include "eeprom.h"

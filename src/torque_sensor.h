@@ -6,11 +6,8 @@
  * Released under the GPL License, Version 3
  */
 
-#ifndef _TORQUE_SENSOR_H_
-#define _TORQUE_SENSOR_H_
-
-#include "main.h"
-#include "stm8s_gpio.h"
+#ifndef TORQUE_SENSOR_H_
+#define TORQUE_SENSOR_H_
 
 void torque_sensor_init(void);
 

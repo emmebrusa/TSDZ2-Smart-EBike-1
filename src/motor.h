@@ -6,8 +6,8 @@
  * Released under the GPL License, Version 3
  */
 
-#ifndef _MOTOR_H_
-#define _MOTOR_H_
+#ifndef MOTOR_H_
+#define MOTOR_H_
 
 #include <stdint.h>
 

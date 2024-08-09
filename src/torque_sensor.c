@@ -6,7 +6,6 @@
  * Released under the GPL License, Version 3
  */
 
-#include "stm8s.h"
 #include "stm8s_gpio.h"
 #include "pins.h"
 #include "torque_sensor.h"

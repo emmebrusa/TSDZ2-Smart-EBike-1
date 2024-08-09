@@ -9,7 +9,6 @@
 #include <stdint.h>
 #include "interrupts.h"
 #include "stm8s.h"
-#include "pins.h"
 #include "uart.h"
 #include "pwm.h"
 #include "motor.h"

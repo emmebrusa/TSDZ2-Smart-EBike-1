@@ -6,8 +6,8 @@
  * Released under the GPL License, Version 3
  */
 
-#ifndef _PINS_H_
-#define _PINS_H_
+#ifndef PINS_H_
+#define PINS_H_
 
 #include "stm8s_gpio.h"
 
