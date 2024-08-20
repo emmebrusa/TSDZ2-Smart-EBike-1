@@ -7,7 +7,6 @@
  */
 
 #include <stdint.h>
-#include <stdio.h>
 
 #include "stm8s.h"
 #include "stm8s_uart2.h"

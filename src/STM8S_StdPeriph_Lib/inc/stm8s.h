@@ -241,12 +241,12 @@ typedef uint16_t u16;
 typedef uint8_t  u8;
 
 
-typedef enum {RESET = 0, SET = !RESET} FlagStatus, ITStatus, BitStatus, BitAction;
+typedef enum {RESET = 0, SET = 1} FlagStatus, ITStatus, BitStatus, BitAction;
 
-typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
+typedef enum {DISABLE = 0, ENABLE = 1} FunctionalState;
 #define IS_FUNCTIONALSTATE_OK(STATE) (((STATE) == DISABLE) || ((STATE) == ENABLE))
 
-typedef enum {ERROR = 0, SUCCESS = !ERROR} ErrorStatus;
+typedef enum {ERROR = 0, SUCCESS = 1} ErrorStatus;
 
 
 /**
