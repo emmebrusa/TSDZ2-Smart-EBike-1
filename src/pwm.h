@@ -6,8 +6,8 @@
  * Released under the GPL License, Version 3
  */
 
-#ifndef _PWM_H
-#define _PWM_H
+#ifndef PWM_H_
+#define PWM_H_
 
 void pwm_init(void);
 

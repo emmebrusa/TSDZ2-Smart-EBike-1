@@ -6,10 +6,10 @@
  * Released under the GPL License, Version 3
  */
 
-#ifndef _EEPROM_H_
-#define _EEPROM_H_
+#ifndef EEPROM_H_
+#define EEPROM_H_
 
-#include "main.h"
+#include <stdint.h>
 
 #define EEPROM_BASE_ADDRESS                                 0x4000
 

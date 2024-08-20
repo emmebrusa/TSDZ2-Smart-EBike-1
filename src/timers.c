@@ -6,6 +6,7 @@
  * Released under the GPL License, Version 3
  */
 
+#include "timers.h"
 #include "stm8s.h"
 #include "interrupts.h"
 

@@ -6,9 +6,10 @@
  * Released under the GPL License, Version 3
  */
 
-#ifndef _MAIN_H_
-#define _MAIN_H_
+#ifndef MAIN_H_
+#define MAIN_H_
 
+#include <stdint.h>
 #include "config.h"
 #include "common.h"
 
@@ -37,6 +38,7 @@
 
 // ----------------------------------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------------------------------
+#define F_CPU                                           (HSI_VALUE / 1U)  //cpu frequency, based on HSI clock and 1x prescaler
 
 //#define PWM_FREQ										18 // 18 Khz
 #define PWM_FREQ										19 // 19 Khz
@@ -57,7 +59,7 @@
 #define OEM_WHEEL_SPEED_DIVISOR								363 // at 18 KHz
 #endif
 
-#define PWM_CYCLES_SECOND									(16000000/(PWM_COUNTER_MAX*2)) // 55.5us (PWM period) 18 Khz
+#define MOTOR_TASK_FREQ									((uint16_t)(F_CPU / (PWM_COUNTER_MAX*2))) // 55.5us (PWM period) 18 Khz
 
 /*---------------------------------------------------------
  NOTE: regarding duty cycle (PWM) ramping
@@ -70,16 +72,16 @@
  ---------------------------------------------------------*/
 
 // ramp up/down PWM cycles count
-#define PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_DEFAULT			(uint8_t)(PWM_CYCLES_SECOND/98)
-#define PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_MIN				(uint8_t)(PWM_CYCLES_SECOND/781)
-#define PWM_DUTY_CYCLE_RAMP_DOWN_INVERSE_STEP_DEFAULT		(uint8_t)(PWM_CYCLES_SECOND/260)
-#define PWM_DUTY_CYCLE_RAMP_DOWN_INVERSE_STEP_MIN			(uint8_t)(PWM_CYCLES_SECOND/1953)
-#define CRUISE_DUTY_CYCLE_RAMP_UP_INVERSE_STEP				(uint8_t)(PWM_CYCLES_SECOND/78)
-#define WALK_ASSIST_DUTY_CYCLE_RAMP_UP_INVERSE_STEP			(uint8_t)(PWM_CYCLES_SECOND/78)
-#define THROTTLE_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_DEFAULT	(uint8_t)(PWM_CYCLES_SECOND/78)
-#define THROTTLE_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_MIN		(uint8_t)(PWM_CYCLES_SECOND/390)
+#define PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_DEFAULT			(uint8_t)(MOTOR_TASK_FREQ/98)
+#define PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_MIN				(uint8_t)(MOTOR_TASK_FREQ/781)
+#define PWM_DUTY_CYCLE_RAMP_DOWN_INVERSE_STEP_DEFAULT		(uint8_t)(MOTOR_TASK_FREQ/260)
+#define PWM_DUTY_CYCLE_RAMP_DOWN_INVERSE_STEP_MIN			(uint8_t)(MOTOR_TASK_FREQ/1953)
+#define CRUISE_DUTY_CYCLE_RAMP_UP_INVERSE_STEP				(uint8_t)(MOTOR_TASK_FREQ/78)
+#define WALK_ASSIST_DUTY_CYCLE_RAMP_UP_INVERSE_STEP			(uint8_t)(MOTOR_TASK_FREQ/78)
+#define THROTTLE_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_DEFAULT	(uint8_t)(MOTOR_TASK_FREQ/78)
+#define THROTTLE_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_MIN		(uint8_t)(MOTOR_TASK_FREQ/390)
 
-#define MOTOR_OVER_SPEED_ERPS								((PWM_CYCLES_SECOND/29) < 650 ?  (PWM_CYCLES_SECOND/29) : 650) // motor max speed | 29 points for the sinewave at max speed (less than PWM_CYCLES_SECOND/29)
+#define MOTOR_OVER_SPEED_ERPS								((MOTOR_TASK_FREQ/29) < 650 ?  (MOTOR_TASK_FREQ/29) : 650) // motor max speed | 29 points for the sinewave at max speed (less than MOTOR_TASK_FREQ/29)
 #define MOTOR_SPEED_FIELD_WEAKENING_MIN						490
 
 // foc angle multiplier
@@ -92,17 +94,16 @@
 #endif
 
 // cadence
-#define CADENCE_SENSOR_CALC_COUNTER_MIN                         (uint16_t)((uint32_t)PWM_CYCLES_SECOND*100U/446U)  // 3500 at 15.625KHz
-#define CADENCE_SENSOR_TICKS_COUNTER_MIN_AT_SPEED               (uint16_t)((uint32_t)PWM_CYCLES_SECOND*10U/558U)   // 280 at 15.625KHz
-#define CADENCE_TICKS_STARTUP                                   (uint16_t)((uint32_t)PWM_CYCLES_SECOND*10U/25U)  // ui16_cadence_sensor_ticks value for startup. About 7-8 RPM (6250 at 15.625KHz)
-#define CADENCE_SENSOR_STANDARD_MODE_SCHMITT_TRIGGER_THRESHOLD  (uint16_t)((uint32_t)PWM_CYCLES_SECOND*10U/446U)   // software based Schmitt trigger to stop motor jitter when at resolution limits (350 at 15.625KHz)
+#define CADENCE_SENSOR_CALC_COUNTER_MIN                         (uint16_t)((uint32_t)MOTOR_TASK_FREQ*100U/446U)  // 3500 at 15.625KHz
+#define CADENCE_SENSOR_TICKS_COUNTER_MIN_AT_SPEED               (uint16_t)((uint32_t)MOTOR_TASK_FREQ*10U/558U)   // 280 at 15.625KHz
+#define CADENCE_TICKS_STARTUP                                   (uint16_t)((uint32_t)MOTOR_TASK_FREQ*10U/25U)  // ui16_cadence_sensor_ticks value for startup. About 7-8 RPM (6250 at 15.625KHz)
+#define CADENCE_SENSOR_STANDARD_MODE_SCHMITT_TRIGGER_THRESHOLD  (uint16_t)((uint32_t)MOTOR_TASK_FREQ*10U/446U)   // software based Schmitt trigger to stop motor jitter when at resolution limits (350 at 15.625KHz)
 
 // Wheel speed sensor
-#define WHEEL_SPEED_SENSOR_TICKS_COUNTER_MAX				(uint16_t)((uint32_t)PWM_CYCLES_SECOND*10U/1157U)   // (135 at 15,625KHz) something like 200 m/h with a 6'' wheel
-#define WHEEL_SPEED_SENSOR_TICKS_COUNTER_MIN				(uint16_t)((uint32_t)PWM_CYCLES_SECOND*1000U/477U) // 32767@15625KHz could be a bigger number but will make for a slow detection of stopped wheel speed
+#define WHEEL_SPEED_SENSOR_TICKS_COUNTER_MAX				(uint16_t)((uint32_t)MOTOR_TASK_FREQ*10U/1157U)   // (135 at 15,625KHz) something like 200 m/h with a 6'' wheel
+#define WHEEL_SPEED_SENSOR_TICKS_COUNTER_MIN				(uint16_t)((uint32_t)MOTOR_TASK_FREQ*1000U/477U) // 32767@15625KHz could be a bigger number but will make for a slow detection of stopped wheel speed
 
-// duty cycle
-#define PWM_DUTY_CYCLE_MAX									255
+#define PWM_DUTY_CYCLE_MAX									UINT8_MAX
 #define PWM_DUTY_CYCLE_STARTUP								30    // Initial PWM Duty Cycle at motor startup
 
 // ----------------------------------------------------------------------------------------------------------------
@@ -132,7 +133,7 @@ HALL_COUNTER_OFFSET_UP:    29 -> 44
 ****************************************
 */
 
-#define HALL_COUNTER_OFFSET_DOWN                (HALL_COUNTER_FREQ/PWM_CYCLES_SECOND/2 + 17)
+#define HALL_COUNTER_OFFSET_DOWN                (HALL_COUNTER_FREQ/MOTOR_TASK_FREQ/2 + 17)
 #define HALL_COUNTER_OFFSET_UP                  (HALL_COUNTER_OFFSET_DOWN + 21)
 #define FW_HALL_COUNTER_OFFSET_MAX              5 // 5*4=20us max time offset
 

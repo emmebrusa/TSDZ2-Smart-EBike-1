@@ -9,12 +9,9 @@
 #include <stdint.h>
 #include <stdio.h>
 #include "stm8s.h"
-#include "pins.h"
 #include "stm8s_adc1.h"
+#include "stm8s_gpio.h"
 #include "adc.h"
-#include "ebike_app.h"
-#include "motor.h"
-#include "common.h"
 
 
 void adc_init(void) {

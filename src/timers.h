@@ -6,8 +6,10 @@
  * Released under the GPL License, Version 3
  */
 
-#ifndef _TIMERS_H_
-#define _TIMERS_H_
+#ifndef TIMERS_H_
+#define TIMERS_H_
+
+#include <stdint.h>
 
 void timers_init(void);
 

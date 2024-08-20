@@ -6,10 +6,9 @@
  * Released under the GPL License, Version 3
  */
 
-#ifndef _ADC_H
-#define _ADC_H
+#ifndef ADC_H_
+#define ADC_H_
 
-#include "main.h"
 
 // for AIN6: 0x53E0 + 2*6 = 0x53E8
 //#define UI8_ADC_BATTERY_VOLTAGE             (*(uint8_t*)(0x53EC)) // AIN6

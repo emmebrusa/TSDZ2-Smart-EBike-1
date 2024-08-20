@@ -10,9 +10,7 @@
 #include "stm8s_tim1.h"
 #include "stm8s_flash.h"
 #include "main.h"
-#include "interrupts.h"
 #include "pwm.h"
-#include "pins.h"
 
 void pwm_init(void) {
     // verify if PWM N channels are active on option bytes, if not, enable

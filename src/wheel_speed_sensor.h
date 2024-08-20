@@ -6,8 +6,8 @@
  * Released under the GPL License, Version 3
  */
 
-#ifndef _WHELL_SPEED_SENSOR_H_
-#define _WHELL_SPEED_SENSOR_H_
+#ifndef WHELL_SPEED_SENSOR_H_
+#define WHELL_SPEED_SENSOR_H_
 
 void wheel_speed_sensor_init(void);
 

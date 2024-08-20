@@ -6,13 +6,8 @@
  * Released under the GPL License, Version 3
  */
 
-#include <stdint.h>
-#include "stm8s.h"
+#include "stm8s_gpio.h"
 #include "pins.h"
-#include "interrupts.h"
-#include "motor.h"
-#include "main.h"
-#include "ebike_app.h"
 
 void pas_init(void) {
     //PAS1 pin as external input pin

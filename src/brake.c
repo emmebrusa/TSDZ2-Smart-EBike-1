@@ -6,14 +6,9 @@
  * Released under the GPL License, Version 3
  */
 
-#include <stdint.h>
-#include "stm8s.h"
-#include "stm8s_it.h"
+#include "stm8s_gpio.h"
 #include "pins.h"
-#include "main.h"
-#include "interrupts.h"
 #include "brake.h"
-#include "motor.h"
 
 void brake_init(void) {
     // brake pin as external input pin interrupt

@@ -6,10 +6,8 @@
  * Released under the GPL License, Version 3
  */
 
-#ifndef _PAS_H_
-#define _PAS_H_
-
-#include "main.h"
+#ifndef PAS_H_
+#define PAS_H_
 
 void pas_init(void);
 void pas2_init(void);

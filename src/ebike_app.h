@@ -6,11 +6,10 @@
  * Released under the GPL License, Version 3
  */
 
-#ifndef _EBIKE_APP_H_
-#define _EBIKE_APP_H_
+#ifndef EBIKE_APP_H_
+#define EBIKE_APP_H_
 
 #include <stdint.h>
-#include "main.h"
 
 // startup boost mode
 #define CADENCE						0

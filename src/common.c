@@ -7,7 +7,6 @@
  */
 
 #include <stdint.h>
-#include "stm8s.h"
 #include "common.h"
 
 

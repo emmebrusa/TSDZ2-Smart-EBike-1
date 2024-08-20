@@ -6,10 +6,8 @@
  * Released under the GPL License, Version 3
  */
 
-#ifndef _BRAKE_H
-#define _BRAKE_H
-
-#include "main.h"
+#ifndef BRAKE_H_
+#define BRAKE_H_
 
 void brake_init (void);
 //BitStatus brake_is_set (void);

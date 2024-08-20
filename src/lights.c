@@ -7,7 +7,6 @@
  */
 
 #include <stdint.h>
-#include "stm8s.h"
 #include "pins.h"
 #include "stm8s_gpio.h"
 

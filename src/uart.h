@@ -6,10 +6,8 @@
  * Released under the GPL License, Version 3
  */
 
-#ifndef _UART_H
-#define _UART_H
-
-#include "main.h"
+#ifndef UART_H_
+#define UART_H_
 
 void uart2_init(void);
 
