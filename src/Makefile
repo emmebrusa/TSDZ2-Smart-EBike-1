@@ -4,10 +4,10 @@
 #Copyright 2016
 #LICENSE:	GNU-LGPL
 
-.PHONY: all clean mkdir
+.PHONY: all clean mkdir build
 
 #Compiler
-CC = sdcc --verbose
+CC = sdcc
 OBJCOPY = objcopy
 SIZE = stm8-size
 
@@ -32,6 +32,19 @@ ELF_SECTIONS_TO_REMOVE = -R DATA -R INITIALIZED -R SSEG
 
 # These are the sources that must be compiled to .rel files:
 	EXTRASRCS = \
+	ebike_app.c \
+	common.c \
+	torque_sensor.c \
+	uart.c \
+	pwm.c \
+	motor.c \
+	wheel_speed_sensor.c \
+	brake.c \
+	pas.c \
+	adc.c \
+	timers.c \
+	eeprom.c \
+	lights.c \
 	$(SDIR)/stm8s_iwdg.c \
 	$(SDIR)/stm8s_itc.c \
 	$(SDIR)/stm8s_clk.c \
@@ -44,19 +57,6 @@ ELF_SECTIONS_TO_REMOVE = -R DATA -R INITIALIZED -R SSEG
 	$(SDIR)/stm8s_exti.c \
 	$(SDIR)/stm8s_adc1.c \
 	$(SDIR)/stm8s_flash.c \
-	common.c \
-	torque_sensor.c \
-	uart.c \
-	pwm.c \
-	motor.c \
-	wheel_speed_sensor.c \
-	brake.c \
-	pas.c \
-	adc.c \
-	timers.c \
-	ebike_app.c \
-	eeprom.c \
-	lights.c \
 
 HEADERS = common.h torque_sensor.h interrupts.h main.h uart.h pwm.h motor.h wheel_speed_sensor.h brake.h pas.h adc.h timers.h \
 ebike_app.h pins.h eeprom.h lights.h config.h
@@ -69,18 +69,16 @@ override CFLAGS += -m$(PLATFORM) -D$(DEVICE) -Ddouble=float --std-c99 --nolospre
 override DEBUG_FLAGS += --out-fmt-elf --debug
 LIBS = 
 
-# This just provides the conventional target name "all"; it is optional
-# Note: I assume you set PNAME via some means not exhibited in your original file
-all: mkdir $(PNAME)
+default: build
+all: build bin
 
-
+build: mkdir $(PNAME)
 # How to build the overall program
 $(PNAME): $(MAINSRC) $(RELS)
 	$(CC) $(INCLUDES) $(CFLAGS) $(DEBUG_FLAGS) $(LIBS) $(MAINSRC) $(RELS) -o$(ODIR)/$(PNAME).elf
 
 # 	$(SIZE) $(PNAME).elf	
 	$(OBJCOPY) -g $(ODIR)/$(PNAME).elf -O ihex $(ODIR)/$(PNAME).hex $(ELF_SECTIONS_TO_REMOVE)
-	cp $(ODIR)/$(PNAME).hex $(ODIR)/../$(PNAME).hex
 
 #Rules for firmware sources
 %.rel: %.c $(HEADERS)
@@ -96,7 +94,7 @@ $(ODIR)/%.rel: $(SDIR)/%.c
 # Necessary because .rel is not one of the standard suffixes.
 .SUFFIXES: .c .rel
 
-bin:
+bin: build
 	$(OBJCOPY) -I ihex $(ODIR)/$(PNAME).hex -O binary $(ODIR)/$(PNAME).bin
 
 backup:

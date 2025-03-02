@@ -53,7 +53,7 @@ jobs:
       run: |
         cd src
         make clean
-        make CFLAGS=--Werror
+        make CFLAGS=--Werror -j4
     - uses: actions/upload-artifact@v4
       with:
         name: firmware_from_windows
@@ -81,7 +81,7 @@ jobs:
         run: |
           cd src
           make clean
-          make CFLAGS=--Werror
+          make CFLAGS=--Werror -j4
       - uses: actions/upload-artifact@v4
         with:
           name: firmware_from_linux

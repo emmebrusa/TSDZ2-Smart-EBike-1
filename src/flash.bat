@@ -1,6 +1,6 @@
 @echo off
 
-PATH = %PATH%;%~dp0..\tools\tool-stm8flash;C:\STMicroelectronics\st_toolset\stvp;%PROGRAMFILES%\STMicroelectronics\st_toolset\stvp;%PROGRAMFILES(x86)%\STMicroelectronics\st_toolset\stvp;
+PATH = %~dp0..\tools\tool-stm8flash;C:\STMicroelectronics\st_toolset\stvp;%PROGRAMFILES%\STMicroelectronics\st_toolset\stvp;%PROGRAMFILES(x86)%\STMicroelectronics\st_toolset\stvp;%PATH%;
 
 :FLASH
 STVP_CmdLine -BoardName=ST-LINK -ProgMode=SWIM -Port=USB -Device=STM8S105x6 -FileProg=../bin/main.hex -FileData=data_empty.hex -verbose -no_loop -verif -no_warn_protect
