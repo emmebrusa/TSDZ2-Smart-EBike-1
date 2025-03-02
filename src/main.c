@@ -7,6 +7,7 @@
  */
 
 #include <stdint.h>
+#include "main.h"
 #include "interrupts.h"
 #include "stm8s.h"
 #include "uart.h"
@@ -21,6 +22,8 @@
 #include "torque_sensor.h"
 #include "eeprom.h"
 #include "lights.h"
+#include "delay.h"
+#include "stm8s_tim3.h"
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 //// Functions prototypes
@@ -63,13 +66,28 @@ void HALL_SENSOR_C_PORT_IRQHandler(void) __interrupt(EXTI_HALL_C_IRQ);
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 #ifdef TIME_DEBUG
-static uint8_t ui8_main_time;
-uint8_t ui8_max_ebike_time = 0;
+static uint16_t ebike_app_time;
+static uint16_t ebike_app_time_max = 0;
 #endif
 
 
-static uint8_t ui8_1ms_counter = 0;
-static uint8_t ui8_ebike_app_controller_counter = 0;
+volatile uint8_t u8_isr_load_perc = 100U; 
+static uint16_t isr_load_delta_tim;
+
+/**
+ * Calculates the ISR load percentage.
+ * The function intentionally wastes a known time amount of cpu cycles
+ * and compares with how long it actually took to execute.
+ */
+static void calc_isr_load(void){
+    #define MEAS_WINDOW 184U // uS - divides nicely inside T_COUNT_US
+    uint16_t tim3_prev = TIM3_GetCounter();
+    delay_us(MEAS_WINDOW); // precisly tuned delay - can be verified by comparing to isr_load_delta_tim with enableInterrupts() commented ouut
+    isr_load_delta_tim = (uint16_t)(TIM3_GetCounter() - tim3_prev) * (1000U / 256U); // uS
+    u8_isr_load_perc = 100U - (uint8_t)(100U * MEAS_WINDOW / isr_load_delta_tim);
+}
+
+
 
 int main(void) {
     // set clock at the max 16 MHz
@@ -93,26 +111,29 @@ int main(void) {
     enableInterrupts();
 	ebike_app_init();
 
+
+
+
+    #define EBIKE_TASK_MS 25U
     while (1) {
-        ui8_1ms_counter = ui8_tim4_counter;
-
-        // run every 25ms. Max measured ebike_app_controller() duration is 3,1 ms.
-        if ((uint8_t)(ui8_1ms_counter - ui8_ebike_app_controller_counter) >= 25U) {
-
+        static uint8_t ui8_ebike_app_controller_counter = 0U;
+        
+        // run every 25ms. Measured duration ebike_app_controller() is 1ms average and 4ms peak.
+        if ((uint8_t)(ui8_1ms_counter - ui8_ebike_app_controller_counter) >= EBIKE_TASK_MS) {
+            ui8_ebike_app_controller_counter = ui8_1ms_counter;
             #ifdef TIME_DEBUG
-            // incremented every 50us by PWM interrupt function
-            ui8_main_time = 0;
+            uint16_t tim3_prev = TIM3_GetCounter(); // use TIM3 to measure exact duration of ebike_app_controller() 
             #endif
 
-            ui8_ebike_app_controller_counter = ui8_1ms_counter;
             ebike_app_controller();
 
             #ifdef TIME_DEBUG
-            ui8_main_time = ui8_tim4_counter - ui8_main_time
-            if (ui8_main_time > ui8_max_ebike_time) {
-                ui8_max_ebike_time = ui8_main_time;
-			}
+            uint16_t tim3_delta = (uint16_t)(TIM3_GetCounter() - tim3_prev); // this can wrap around correctly because tim3 period is full 16bit (0xffff)
+            ebike_app_time = tim3_delta * (uint8_t)(1000U/125U); // measure ebike_app_controller duration in uS, tim3 is 250khz
+            if (ebike_app_time > ebike_app_time_max) {ebike_app_time_max = ebike_app_time;}
             #endif
         }
+
+        calc_isr_load();
     }
 }
