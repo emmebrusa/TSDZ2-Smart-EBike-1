@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm8s_tim2.c
   * @author  MCD Application Team
-  * @version V2.2.0
-  * @date    30-September-2014
+  * @version V2.3.0
+  * @date    16-June-2017
   * @brief   This file contains all the functions for the TIM2 peripheral.
    ******************************************************************************
   * @attention
@@ -430,7 +430,7 @@ void TIM2_UpdateRequestConfig(TIM2_UpdateSource_TypeDef TIM2_UpdateSource)
 }
 
 /**
-  * @brief  Selects the TIM2’s One Pulse Mode.
+  * @brief  Selects the TIM2ï¿½s One Pulse Mode.
   * @param   TIM2_OPMode specifies the OPM Mode to be used.
   * This parameter can be one of the following values
   *                    - TIM2_OPMODE_SINGLE
@@ -1088,7 +1088,7 @@ FlagStatus TIM2_GetFlagStatus(TIM2_FLAG_TypeDef TIM2_FLAG)
 }
 
 /**
-  * @brief  Clears the TIM2’s pending flags.
+  * @brief  Clears the TIM2ï¿½s pending flags.
   * @param   TIM2_FLAG specifies the flag to clear.
   * This parameter can be one of the following values:
   *                       - TIM2_FLAG_UPDATE: TIM2 update Flag
@@ -1105,7 +1105,7 @@ void TIM2_ClearFlag(TIM2_FLAG_TypeDef TIM2_FLAG)
   /* Check the parameters */
   assert_param(IS_TIM2_CLEAR_FLAG_OK(TIM2_FLAG));
 
-  /* Clear the flags (rc_w0) clear this bit by writing 0. Writing ‘1’ has no effect*/
+  /* Clear the flags (rc_w0) clear this bit by writing 0. Writing ï¿½1ï¿½ has no effect*/
   TIM2->SR1 = (uint8_t)(~((uint8_t)(TIM2_FLAG)));
   //TIM2->SR2 = (uint8_t)(~((uint8_t)((uint8_t)TIM2_FLAG >> 8)));
   TIM2->SR2 = (uint8_t)(~((uint8_t)(TIM2_FLAG >> 8))); // [Roshan, 2015-Nov-09]

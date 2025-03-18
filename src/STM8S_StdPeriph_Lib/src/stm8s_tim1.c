@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm8s_tim1.c
   * @author  MCD Application Team
-  * @version V2.2.0
-  * @date    30-September-2014
+  * @version V2.3.0
+  * @date    16-June-2017
   * @brief   This file contains all the functions for the TIM1 peripheral.
    ******************************************************************************
   * @attention
@@ -841,7 +841,7 @@ void TIM1_UpdateRequestConfig(TIM1_UpdateSource_TypeDef TIM1_UpdateSource)
 }
 
 /**
-  * @brief  Enables or Disables the TIM1ï¿½s Hall sensor interface.
+  * @brief  Enables or Disables the TIM1’s Hall sensor interface.
   * @param   NewState new state of the TIM1 Hall sensor interface.This parameter can
   * be ENABLE or DISABLE.
   * @retval None
@@ -863,7 +863,7 @@ void TIM1_SelectHallSensor(FunctionalState NewState)
 }
 
 /**
-  * @brief  Selects the TIM1ï¿½s One Pulse Mode.
+  * @brief  Selects the TIM1’s One Pulse Mode.
   * @param   TIM1_OPMode specifies the OPM Mode to be used.
   * This parameter can be one of the following values
   *                    - TIM1_OPMODE_SINGLE
@@ -2067,7 +2067,7 @@ FlagStatus TIM1_GetFlagStatus(TIM1_FLAG_TypeDef TIM1_FLAG)
 }
 
 /**
-  * @brief  Clears the TIM1ï¿½s pending flags.
+  * @brief  Clears the TIM1’s pending flags.
   * @param  TIM1_FLAG specifies the flag to clear.
   *         This parameter can be one of the following values:
   *                       - TIM1_FLAG_UPDATE: TIM1 update Flag
@@ -2089,7 +2089,7 @@ void TIM1_ClearFlag(TIM1_FLAG_TypeDef TIM1_FLAG)
   /* Check the parameters */
   assert_param(IS_TIM1_CLEAR_FLAG_OK(TIM1_FLAG));
   
-  /* Clear the flags (rc_w0) clear this bit by writing 0. Writing ï¿½1ï¿½ has no effect*/
+  /* Clear the flags (rc_w0) clear this bit by writing 0. Writing ‘1’ has no effect*/
   TIM1->SR1 = (uint8_t)(~(uint8_t)(TIM1_FLAG));
   TIM1->SR2 = (uint8_t)((uint8_t)(~((uint8_t)((uint16_t)TIM1_FLAG >> 8))) & 
                         (uint8_t)0x1E);

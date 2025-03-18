@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm8s_flash.c
   * @author  MCD Application Team
-  * @version V2.2.0
-  * @date    30-September-2014
+  * @version V2.3.0
+  * @date    16-June-2017
   * @brief   This file contains all the functions for the FLASH peripheral.
    ******************************************************************************
   * @attention
@@ -468,29 +468,29 @@ FlagStatus FLASH_GetFlagStatus(FLASH_Flag_TypeDef FLASH_FLAG)
    erased or corrupted, so it may be desirable to perform the copy again.
    Depending on the application memory model, the memcpy() or fmemcpy() functions
    should be used to perform the copy.
-      • In case your project uses the SMALL memory model (code smaller than 64K),
+      ï¿½ In case your project uses the SMALL memory model (code smaller than 64K),
        memcpy()function is recommended to perform the copy
-      • In case your project uses the LARGE memory model, functions can be
+      ï¿½ In case your project uses the LARGE memory model, functions can be
       everywhere in the 24-bits address space (not limited to the first 64KB of
       code), In this case, the use of memcpy() function will not be appropriate,
       you need to use the specific fmemcpy() function (which copies objects with
       24-bit addresses).
       - The linker automatically defines 2 symbols for each inram function:
-           • __address__functionname is a symbol that holds the Flash address
+           ï¿½ __address__functionname is a symbol that holds the Flash address
            where the given function code is stored.
-           • __size__functionname is a symbol that holds the function size in bytes.
+           ï¿½ __size__functionname is a symbol that holds the function size in bytes.
      And we already have the function address (which is itself a pointer)
   4- In main.c file these two steps should be performed for each inram function:
-     • Import the "__address__functionname" and "__size__functionname" symbols
+     ï¿½ Import the "__address__functionname" and "__size__functionname" symbols
        as global variables:
          extern int __address__functionname; // Symbol holding the flash address
          extern int __size__functionname;    // Symbol holding the function size
-     • In case of SMALL memory model use, Call the memcpy() function to copy the
+     ï¿½ In case of SMALL memory model use, Call the memcpy() function to copy the
       inram function to the RAM destination address:
                 memcpy(functionname, // RAM destination address
                       (void*)&__address__functionname, // Flash source address
                       (int)&__size__functionname); // Code size of the function
-     • In case of LARGE memory model use, call the fmemcpy() function to copy
+     ï¿½ In case of LARGE memory model use, call the fmemcpy() function to copy
      the inram function to the RAM destination address:
                  memcpy(functionname, // RAM destination address
                       (void @far*)&__address__functionname, // Flash source address
@@ -553,7 +553,7 @@ IN_RAM(FLASH_Status_TypeDef FLASH_WaitForLastOperation(FLASH_MemType_TypeDef FLA
 
   /* Wait until operation completion or write protection page occurred */
 #if defined (STM8S208) || defined(STM8S207) || defined(STM8S007) || defined(STM8S105) || \
-  defined(STM8S005) || defined(STM8AF52Ax) || defined(STM8AF62Ax) || defined(STM8AF626x)
+    defined (STM8S005) || defined(STM8AF52Ax) || defined(STM8AF62Ax) || defined(STM8AF626x)  
     if(FLASH_MemType == FLASH_MEMTYPE_PROG)
     {
       while((flagstatus == 0x00) && (timeout != 0x00))
@@ -572,8 +572,8 @@ IN_RAM(FLASH_Status_TypeDef FLASH_WaitForLastOperation(FLASH_MemType_TypeDef FLA
         timeout--;
       }
     }
-#else /*STM8S103, STM8S903, STM8AF622x */
-  (void)FLASH_MemType; // Eliminate compiler warning about unused variable
+#else /*STM8S103, STM8S001, STM8S903, STM8AF622x */
+  UNUSED(FLASH_MemType);
   while((flagstatus == 0x00) && (timeout != 0x00))
   {
     flagstatus = (uint8_t)(FLASH->IAPSR & (FLASH_IAPSR_EOP | FLASH_IAPSR_WR_PG_DIS));
@@ -601,9 +601,9 @@ IN_RAM(void FLASH_EraseBlock(uint16_t BlockNum, FLASH_MemType_TypeDef FLASH_MemT
   uint32_t startaddress = 0;
 
 #if defined(STM8S105) || defined(STM8S005) || defined(STM8S103) || defined(STM8S003) || \
-  defined (STM8S903) || defined (STM8AF626x) || defined (STM8AF622x)
+    defined(STM8S001) || defined(STM8S903) || defined (STM8AF626x) || defined (STM8AF622x)
     uint32_t PointerAttr  *pwFlash;
-#elif defined (STM8S208) || defined(STM8S207) || defined(STM8S007) || defined (STM8AF62Ax) || defined (STM8AF52Ax)
+#elif defined (STM8S208) || defined(STM8S207) || defined(STM8S007) || defined (STM8AF62Ax) || defined (STM8AF52Ax) 
   uint8_t PointerAttr  *pwFlash;
 #endif
 
@@ -624,7 +624,7 @@ IN_RAM(void FLASH_EraseBlock(uint16_t BlockNum, FLASH_MemType_TypeDef FLASH_MemT
 #if defined (STM8S208) || defined(STM8S207) || defined(STM8S007) || defined (STM8AF62Ax) || defined (STM8AF52Ax)
   pwFlash = (PointerAttr uint8_t *)(MemoryAddressCast)(startaddress + ((uint32_t)BlockNum * FLASH_BLOCK_SIZE));
 #elif defined(STM8S105) || defined(STM8S005) || defined(STM8S103) || defined(STM8S003) || \
-  defined (STM8S903) || defined (STM8AF626x) || defined (STM8AF622x)
+      defined(STM8S001) || defined (STM8S903) || defined (STM8AF626x) || defined (STM8AF622x)
     pwFlash = (PointerAttr uint32_t *)(MemoryAddressCast)(startaddress + ((uint32_t)BlockNum * FLASH_BLOCK_SIZE));
 #endif	/* STM8S208, STM8S207 */
 
@@ -633,7 +633,7 @@ IN_RAM(void FLASH_EraseBlock(uint16_t BlockNum, FLASH_MemType_TypeDef FLASH_MemT
   FLASH->NCR2 &= (uint8_t)(~FLASH_NCR2_NERASE);
 
 #if defined(STM8S105) || defined(STM8S005) || defined(STM8S103) || defined(STM8S003) ||  \
-  defined (STM8S903) || defined (STM8AF626x) || defined (STM8AF622x)
+    defined(STM8S001) || defined(STM8S903) || defined (STM8AF626x) || defined (STM8AF622x)
     *pwFlash = (uint32_t)0;
 #elif defined (STM8S208) || defined(STM8S207) || defined(STM8S007) || defined (STM8AF62Ax) || \
   defined (STM8AF52Ax)

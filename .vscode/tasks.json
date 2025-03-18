@@ -3,7 +3,7 @@
 	"tasks": [
 		{
 			"type": "cppbuild",
-			"label": "SDCC build",
+			"label": "Build",
 			"command": "make",
 			"presentation": {
 				"echo": false,
@@ -14,7 +14,7 @@
 				"clear": true
 			},
 			"args": [
-				"all"
+				"all", "-j3", "--output-sync"
 			],
 			"options": {
 				"cwd": "${workspaceFolder}/src/"
@@ -28,28 +28,39 @@
 			}
 		},
 		{
+			"type": "cppbuild",
+			"label": "Clean Builds",
+			"command": "make",
+			"args": [
+				"clean"
+			],
+
+			"options": {
+				"cwd": "${workspaceFolder}/src/"
+			},
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		},
+		{
 			"type": "process",
 			"label": "Build & Flash",
-			"windows": {
-			  "command": "flash.bat"
-			},
-			"osx": { //untested
-				"command": "make flash",
-			},
-			"linux": { //untested
-				"command": "make flash",
-			},
+			"command": "make",
+			"args": [
+				"flash"
+			],
 			"options": {
 				"cwd": "${workspaceFolder}/src"
 			},
 			"dependsOn": [
-				"SDCC build"
+				"Build"
 			],
 			"presentation": {
 				"echo": false,
 				"reveal": "always",
 				"focus": false,
-				"close": true
+				"close": false
 			},
 			"problemMatcher": [],
             "group": {
@@ -60,19 +71,18 @@
 
 		{
 			"label": "Launch OpenOCD",
+			"hide": true,
 			"type": "shell",
 			"command": "openocd",
 			"args": [
-				"-f",
-				"interface/stlink-dap.cfg",  //swim is @stlink-dap in openocd > 10.0
-				"-f",
-				"target/stm8s105.cfg"
+				"-f", "interface/stlink-dap.cfg",  //swim is @stlink-dap in openocd > 10.0
+				"-f", "target/stm8s105.cfg"
 			],
 			"problemMatcher": [],
 		},
 
 		{
-			"label": "Flash with OpenOCD",  //actually doesn't seem to flash correctly
+			"label": "Flash with OpenOCD",  //! actually doesn't seem to flash correctly
 			"hide": true,
 			"type": "process",
 			"presentation": {
@@ -92,22 +102,14 @@
 			},
 			"args": [
 				"-d2",
-				"-f",
-				"interface/stlink-dap.cfg",
-				"-f",
-				"target/stm8s105.cfg",
-				"-c",
-				"init",
-				"-c",
-				"reset halt",
-                "-c",
-                "load_image bin/main.hex 0x9000",
-				"-c",
-				"reset",
-				"-c",
-				"exit",
-                // "-c",
-                // "program orig.hex",
+				"-f", "interface/stlink-dap.cfg",
+				"-f", "target/stm8s105.cfg",
+				"-c", "init",
+				"-c", "reset halt",
+                "-c", "load_image bin/main.hex 0x8000",
+				"-c", "reset",
+				"-c", "exit",
+                // "-c", "program orig.hex",
 			],
 			"problemMatcher": [],
 		},
@@ -132,17 +134,40 @@
 				"instanceLimit": 1,
 			},
 			"args": [
-				"interface/stlink-dap.cfg",
-				"-f",
-				"target/stm8s105.cfg",
-				"-c",
-				"init",
-				"-c",
-				"reset",
-				"-c",
-				"exit",
+				"-f", "interface/stlink-dap.cfg",
+				"-f", "target/stm8s105.cfg",
+				"-c", "init",
+				"-c", "reset",
+				"-c", "exit",
 			],
 			"problemMatcher": [],
-		}
+		},
+		{	//stm8 simulator doesn't  to be supported by sdcdb though
+			"label": "Load main into simulator", 
+			"type": "process",
+			"presentation": {
+				"reveal": "always",
+				"focus": false,
+				"panel": "dedicated",
+				"showReuseMessage": true,
+				"clear": false,
+			},
+			"command": "ucsim_stm8",
+			"options": {
+				"cwd": "${workspaceFolder}",
+			},
+			"runOptions": {
+				"instanceLimit": 1,
+			},
+			"args": [
+				"-t", "stm8s105",
+				// -S option to connect system serial to simulator uart
+				"-B",
+				"-e", "run", //start simualtion
+				// type break ebike_app_init or any other address to set a breakpoint
+				"bin/main",
+			],
+			"problemMatcher": [],
+		},
 	],
 }

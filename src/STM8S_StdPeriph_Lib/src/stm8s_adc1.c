@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm8s_adc1.c
   * @author  MCD Application Team
-  * @version V2.2.0
-  * @date    30-September-2014
+  * @version V2.3.0
+  * @date    16-June-2017
   * @brief   This file contains all the functions/macros for the ADC1 peripheral.
    ******************************************************************************
   * @attention
@@ -87,6 +87,16 @@ void ADC1_DeInit(void)
   */
 void ADC1_Init(ADC1_ConvMode_TypeDef ADC1_ConversionMode, ADC1_Channel_TypeDef ADC1_Channel, ADC1_PresSel_TypeDef ADC1_PrescalerSelection, ADC1_ExtTrig_TypeDef ADC1_ExtTrigger, FunctionalState ADC1_ExtTriggerState, ADC1_Align_TypeDef ADC1_Align, ADC1_SchmittTrigg_TypeDef ADC1_SchmittTriggerChannel, FunctionalState ADC1_SchmittTriggerState)
 {
+  /* Check the parameters */
+  assert_param(IS_ADC1_CONVERSIONMODE_OK(ADC1_ConversionMode));
+  assert_param(IS_ADC1_CHANNEL_OK(ADC1_Channel));
+  assert_param(IS_ADC1_PRESSEL_OK(ADC1_PrescalerSelection));
+  assert_param(IS_ADC1_EXTTRIG_OK(ADC1_ExtTrigger));
+  assert_param(IS_FUNCTIONALSTATE_OK(((ADC1_ExtTriggerState))));
+  assert_param(IS_ADC1_ALIGN_OK(ADC1_Align));
+  assert_param(IS_ADC1_SCHMITTTRIG_OK(ADC1_SchmittTriggerChannel));
+  assert_param(IS_FUNCTIONALSTATE_OK(ADC1_SchmittTriggerState));
+  
   /*-----------------CR1 & CSR configuration --------------------*/
   /* Configure the conversion mode and the channel to convert
   respectively according to ADC1_ConversionMode & ADC1_Channel values  &  ADC1_Align values */
@@ -179,6 +189,10 @@ void ADC1_DataBufferCmd(FunctionalState NewState)
   */
 void ADC1_ITConfig(ADC1_IT_TypeDef ADC1_IT, FunctionalState NewState)
 {
+  /* Check the parameters */
+  assert_param(IS_ADC1_IT_OK(ADC1_IT));
+  assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+  
   if (NewState != DISABLE)
   {
     /* Enable the ADC1 interrupts */
@@ -199,6 +213,9 @@ void ADC1_ITConfig(ADC1_IT_TypeDef ADC1_IT, FunctionalState NewState)
   */
 void ADC1_PrescalerConfig(ADC1_PresSel_TypeDef ADC1_Prescaler)
 {
+  /* Check the parameter */
+  assert_param(IS_ADC1_PRESSEL_OK(ADC1_Prescaler));
+  
   /* Clear the SPSEL bits */
   ADC1->CR1 &= (uint8_t)(~ADC1_CR1_SPSEL);
   /* Select the prescaler division factor according to ADC1_PrescalerSelection values */
@@ -215,6 +232,10 @@ void ADC1_PrescalerConfig(ADC1_PresSel_TypeDef ADC1_Prescaler)
   */
 void ADC1_SchmittTriggerConfig(ADC1_SchmittTrigg_TypeDef ADC1_SchmittTriggerChannel, FunctionalState NewState)
 {
+  /* Check the parameters */
+  assert_param(IS_ADC1_SCHMITTTRIG_OK(ADC1_SchmittTriggerChannel));
+  assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+  
   if (ADC1_SchmittTriggerChannel == ADC1_SCHMITTTRIG_ALL)
   {
     if (NewState != DISABLE)
@@ -264,6 +285,11 @@ void ADC1_SchmittTriggerConfig(ADC1_SchmittTrigg_TypeDef ADC1_SchmittTriggerChan
   */
 void ADC1_ConversionConfig(ADC1_ConvMode_TypeDef ADC1_ConversionMode, ADC1_Channel_TypeDef ADC1_Channel, ADC1_Align_TypeDef ADC1_Align)
 {
+  /* Check the parameters */
+  assert_param(IS_ADC1_CONVERSIONMODE_OK(ADC1_ConversionMode));
+  assert_param(IS_ADC1_CHANNEL_OK(ADC1_Channel));
+  assert_param(IS_ADC1_ALIGN_OK(ADC1_Align));
+  
   /* Clear the align bit */
   ADC1->CR2 &= (uint8_t)(~ADC1_CR2_ALIGN);
   /* Configure the data alignment */
@@ -298,6 +324,10 @@ void ADC1_ConversionConfig(ADC1_ConvMode_TypeDef ADC1_ConversionMode, ADC1_Chann
   */
 void ADC1_ExternalTriggerConfig(ADC1_ExtTrig_TypeDef ADC1_ExtTrigger, FunctionalState NewState)
 {
+  /* Check the parameters */
+  assert_param(IS_ADC1_EXTTRIG_OK(ADC1_ExtTrigger));
+  assert_param(IS_FUNCTIONALSTATE_OK(NewState));
+  
   /* Clear the external trigger selection bits */
   ADC1->CR2 &= (uint8_t)(~ADC1_CR2_EXTSEL);
   
@@ -498,6 +528,9 @@ FlagStatus ADC1_GetFlagStatus(ADC1_Flag_TypeDef Flag)
 {
   uint8_t flagstatus = 0;
   uint8_t temp = 0;
+  
+  /* Check the parameters */
+  assert_param(IS_ADC1_FLAG_OK(Flag));
   
   if ((Flag & 0x0F) == 0x01)
   {

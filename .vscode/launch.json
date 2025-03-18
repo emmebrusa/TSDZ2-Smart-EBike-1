@@ -33,30 +33,32 @@
 				// {"text": "load", "description": "load target",},
 				// {"text": "set print pretty on"}, //doesn't seem to work
 				{"text": "-target-select extended-remote localhost:3333", "description": "connect to target", "ignoreFailures": true},
-				{"text": "mon reset halt", "description": "reset target", "ignoreFailures": true},
-				
+				{"text": "mon reset halt", "description": "reset target", "ignoreFailures": true},	
+			],
+			"postRemoteConnectCommands": [
+				{"text": "mon reset halt", "description": "reset target", "ignoreFailures": true},	
 			],
 			// "hardwareBreakpoints": {"require": true, "limit": 2},  // stm8 has 2 hardware breakpoints
 			"externalConsole": false,
 			"internalConsoleOptions": "openOnSessionStart",
 			"logging": {
 				"moduleLoad": true,
-				"engineLogging": true,	
+				"engineLogging": false,	
 				"programOutput": true,
 				"exceptions": true,
-				"trace": true,
+				"trace": false,
 			},
 		},
 		{
-			"preLaunchTask": "SDCC build",
+			"preLaunchTask": "Build & Flash",
 			"name": "stm8-debug extension", // it is Windows only
 			"type": "stm8-debug",
 			"request": "launch",
 			"serverType": "stm8-sdcc",
-			"executable": "${workspaceFolder}\\bin\\main.elf",
+			"executable": "${workspaceFolder}/bin/main.elf",
 			"cpu": "STM8S105S6",
 			"port": "3333",
-			"svdFile": ".vscode\\stm8s105s6.svd.json", // based on stm8s105k4 from the demo - some registers might not be accurate
+			"svdFile": ".vscode/stm8s105s6.svd.json", // based on stm8s105k4 from the demo - some registers might not be accurate
 			"openOcdConfigs": [ //stm8-debug extension comes with sdcc 10.0 Windows binaries
 				"interface/stlink.cfg",
 				"target/stm8s105.cfg"

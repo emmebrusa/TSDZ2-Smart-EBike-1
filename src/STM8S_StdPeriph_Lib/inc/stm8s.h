@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm8s.h
   * @author  MCD Application Team
-  * @version V2.2.0
-  * @date    30-September-2014
+  * @version V2.3.0
+  * @date    16-June-2017
   * @brief   This file contains all HW registers definitions and memory mapping.
    ******************************************************************************
   * @attention
@@ -16,8 +16,8 @@
   *
   *        http://www.st.com/software_license_agreement_liberty_v2
   *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
+  * Unless required by applicable law or agreed to in writing, software 
+  * distributed under the License is distributed on an "AS IS" BASIS, 
   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   * See the License for the specific language governing permissions and
   * limitations under the License.
@@ -41,36 +41,37 @@
  /* #define STM8S007 */      /*!< STM8S Value Line High density devices */
  /* #define STM8AF52Ax */    /*!< STM8A High density devices with CAN */
  /* #define STM8AF62Ax */    /*!< STM8A High density devices without CAN */
- // #define STM8S105         /*!< STM8S Medium density devices */
+ /* #define STM8S105 */      /*!< STM8S Medium density devices */
  /* #define STM8S005 */      /*!< STM8S Value Line Medium density devices */
  /* #define STM8AF626x */    /*!< STM8A Medium density devices */
  /* #define STM8AF622x */    /*!< STM8A Low density devices */
  /* #define STM8S103 */      /*!< STM8S Low density devices */
- /* #define STM8S003 */     /*!< STM8S Value Line Low density devices */
+ /* #define STM8S003 */      /*!< STM8S Value Line Low density devices */
  /* #define STM8S903 */      /*!< STM8S Low density devices */
+ /* #define STM8S001 */      /*!< STM8S Value Line Low denisty devices */
 
 /*   Tip: To avoid modifying this file each time you need to switch between these
-        devices, you can define the device in your toolchain compiler preprocessor.
+        devices, you can define the device in your toolchain compiler preprocessor. 
 
   - High-Density STM8A devices are the STM8AF52xx STM8AF6269/8x/Ax,
     STM8AF51xx, and STM8AF6169/7x/8x/9x/Ax microcontrollers where the Flash memory
     density ranges between 32 to 128 Kbytes
   - Medium-Density STM8A devices are the STM8AF622x/4x, STM8AF6266/68,
-    STM8AF612x/4x, and STM8AF6166/68 microcontrollers where the Flash memory
+    STM8AF612x/4x, and STM8AF6166/68 microcontrollers where the Flash memory 
     density ranges between 8 to 32 Kbytes
   - High-Density STM8S devices are the STM8S207xx, STM8S007 and STM8S208xx microcontrollers
     where the Flash memory density ranges between 32 to 128 Kbytes.
   - Medium-Density STM8S devices are the STM8S105x and STM8S005 microcontrollers
     where the Flash memory density ranges between 16 to 32-Kbytes.
   - Low-Density STM8A devices are the STM8AF622x microcontrollers where the Flash
-    density is 8 Kbytes.
-  - Low-Density STM8S devices are the STM8S103xx, STM8S003 and STM8S903xx microcontrollers
+    density is 8 Kbytes. 
+  - Low-Density STM8S devices are the STM8S103xx, STM8S003, STM8S903xx and STM8S001 microcontrollers
     where the Flash density is 8 Kbytes. */
 
 #if !defined (STM8S208) && !defined (STM8S207) && !defined (STM8S105) && \
     !defined (STM8S103) && !defined (STM8S903) && !defined (STM8AF52Ax) && \
     !defined (STM8AF62Ax) && !defined (STM8AF626x) && !defined (STM8S007) && \
-    !defined (STM8S003)&& !defined (STM8S005) && !defined (STM8AF622x)
+    !defined (STM8S003)&& !defined (STM8S005) && !defined(STM8S001) && !defined (STM8AF622x) 
  #error "Please select first the target STM8S/A device used in your application (in stm8s.h file)"
 #endif
 
@@ -137,7 +138,7 @@
      defined (STM8AF62Ax)
    /*!< Used with memory Models for code higher than 64K */
   #define MEMCPY fmemcpy
- #else /* STM8S903, STM8S103, STM8S003, STM8S105, STM8AF626x, STM8AF622x */
+ #else /* STM8S903, STM8S103, STM8S001, STM8S003, STM8S105, STM8AF626x, STM8AF622x */
   /*!< Used with memory Models for code less than 64K */
   #define MEMCPY memcpy
  #endif /* STM8S208 or STM8S207 or STM8S007 or STM8AF62Ax or STM8AF52Ax */
@@ -156,11 +157,11 @@
 #endif /* __CSMC__ */
 
 /* For FLASH routines, select whether pointer will be declared as near (2 bytes,
-   to handle code smaller than 64KB) or far (3 bytes, to handle code larger
+   to handle code smaller than 64KB) or far (3 bytes, to handle code larger 
    than 64K) */
 
 #if defined (STM8S105) || defined (STM8S005) || defined (STM8S103) || defined (STM8S003) || \
-    defined (STM8S903) || defined (STM8AF626x) || defined (STM8AF622x)
+    defined (STM8S001) || defined (STM8S903) || defined (STM8AF626x) || defined (STM8AF622x)
 /*!< Used with memory Models for code smaller than 64K */
  #define PointerAttr NEAR
  #define MemoryAddressCast uint16_t
@@ -168,7 +169,7 @@
 /*!< Used with memory Models for code higher than 64K */
  #define PointerAttr FAR
  #define MemoryAddressCast uint32_t
-#endif /* STM8S105 or STM8S103 or STM8S003 or STM8S903 or STM8AF626x or STM8AF622x */
+#endif /* STM8S105 or STM8S103 or STM8S003 or STM8S001 or STM8S903 or STM8AF626x or STM8AF622x */
 
 /* Uncomment the line below to enable the FLASH functions execution from RAM */
 #if !defined (RAM_EXECUTION)
@@ -187,11 +188,11 @@
   #define IN_RAM(a) a
 #endif /* RAM_EXECUTION */
 
-/*!< [31:16] STM8S Standard Peripheral Library main version V2.2.0*/
-#define __STM8S_STDPERIPH_VERSION_MAIN   ((uint8_t)0x02) /*!< [31:24] main version */
-#define __STM8S_STDPERIPH_VERSION_SUB1   ((uint8_t)0x02) /*!< [23:16] sub1 version */
+/*!< [31:16] STM8S Standard Peripheral Library main version V2.3.0*/
+#define __STM8S_STDPERIPH_VERSION_MAIN   ((uint8_t)0x02) /*!< [31:24] main version */                                  
+#define __STM8S_STDPERIPH_VERSION_SUB1   ((uint8_t)0x03) /*!< [23:16] sub1 version */
 #define __STM8S_STDPERIPH_VERSION_SUB2   ((uint8_t)0x00) /*!< [15:8]  sub2 version */
-#define __STM8S_STDPERIPH_VERSION_RC     ((uint8_t)0x00) /*!< [7:0]  release candidate */
+#define __STM8S_STDPERIPH_VERSION_RC     ((uint8_t)0x00) /*!< [7:0]  release candidate */ 
 #define __STM8S_STDPERIPH_VERSION       ( (__STM8S_STDPERIPH_VERSION_MAIN << 24)\
                                           |(__STM8S_STDPERIPH_VERSION_SUB1 << 16)\
                                           |(__STM8S_STDPERIPH_VERSION_SUB2 << 8)\
@@ -274,6 +275,10 @@ typedef struct GPIO_struct
 }
 GPIO_TypeDef;
 
+/**
+  * @}
+  */
+
 /** @addtogroup GPIO_Registers_Reset_Value
   * @{
   */
@@ -289,7 +294,7 @@ GPIO_TypeDef;
 
 /*----------------------------------------------------------------------------*/
 #if defined(STM8S105) || defined(STM8S005) || defined(STM8S103) || defined(STM8S003) || \
-    defined(STM8S903) || defined(STM8AF626x) || defined(STM8AF622x)
+    defined(STM8S001) || defined(STM8S903) || defined(STM8AF626x) || defined(STM8AF622x)
 /**
   * @brief  Analog to Digital Converter (ADC1)
   */
@@ -375,7 +380,7 @@ GPIO_TypeDef;
  #define ADC1_CR3_DBUF    ((uint8_t)0x80) /*!< Data Buffer Enable mask */
  #define ADC1_CR3_OVR     ((uint8_t)0x40) /*!< Overrun Status Flag mask */
 
-#endif /* (STM8S105) ||(STM8S103) || (STM8S005) ||(STM8S003) || (STM8S903) || (STM8AF626x) || (STM8AF622x) */
+#endif /* (STM8S105) ||(STM8S103) || (STM8S005) ||(STM8S003) || (STM8S001) || (STM8S903) || (STM8AF626x) || (STM8AF622x) */
 /**
   * @}
   */
@@ -568,7 +573,7 @@ CLK_TypeDef;
 #define CLK_CKDIVR_HSIDIV    ((uint8_t)0x18) /*!< High speed internal clock prescaler */
 #define CLK_CKDIVR_CPUDIV    ((uint8_t)0x07) /*!< CPU clock prescaler */
 
-#define CLK_PCKENR1_TIM1     ((uint8_t)0x80) /*!< Timer 1 clock enable */
+#define CLK_PCKENR1_TIM1     ((uint8_t)0x80) /*!< Timer 1 clock enable */ 
 #define CLK_PCKENR1_TIM3     ((uint8_t)0x40) /*!< Timer 3 clock enable */
 #define CLK_PCKENR1_TIM2     ((uint8_t)0x20) /*!< Timer 2 clock enable */
 #define CLK_PCKENR1_TIM5     ((uint8_t)0x20) /*!< Timer 5 clock enable */
@@ -822,7 +827,7 @@ TIM1_TypeDef;
 typedef struct TIM2_struct
 {
   __IO uint8_t CR1;   /*!< control register 1 */
-#if defined(STM8S103) || defined(STM8S003)
+#if defined(STM8S103) || defined(STM8S003) || defined(STM8S001)
 	uint8_t RESERVED1; /*!< Reserved register */
 	uint8_t RESERVED2; /*!< Reserved register */
 #endif
@@ -1056,7 +1061,7 @@ TIM3_TypeDef;
 typedef struct TIM4_struct
 {
   __IO uint8_t CR1;  /*!< control register 1 */
-#if defined(STM8S103) || defined(STM8S003)
+#if defined(STM8S103) || defined(STM8S003) || defined(STM8S001)
 	uint8_t RESERVED1; /*!< Reserved register */
 	uint8_t RESERVED2; /*!< Reserved register */
 #endif
@@ -1249,7 +1254,7 @@ typedef struct TIM5_struct
 /**
   * @}
   */
-
+	
 /*----------------------------------------------------------------------------*/
 /**
   * @brief  8-bit system timer  with synchro module(TIM6)
@@ -2544,10 +2549,6 @@ CFG_TypeDef;
   * @}
   */
 
-/**
-  * @}
-  */
-
 /******************************************************************************/
 /*                          Peripherals Base Address                          */
 /******************************************************************************/
@@ -2601,9 +2602,9 @@ CFG_TypeDef;
 /******************************************************************************/
 
 #if defined(STM8S105) || defined(STM8S005) || defined(STM8S103) || defined(STM8S003) || \
-    defined(STM8S903) || defined(STM8AF626x) || defined(STM8AF622x)
+    defined(STM8S001) || defined(STM8S903) || defined(STM8AF626x) || defined(STM8AF622x)
  #define ADC1 ((ADC1_TypeDef *) ADC1_BaseAddress)
-#endif /* (STM8S105) ||(STM8S103) || (STM8S005) ||(STM8S003) || (STM8S903) || (STM8AF626x) || (STM8AF622x)*/
+#endif /* (STM8S105)||(STM8S103)||(STM8S005)||(STM8S003)||(STM8S001)||(STM8S903)||(STM8AF626x)||(STM8AF622x)*/
 
 #if defined(STM8S208) || defined(STM8S207) || defined (STM8S007) || defined (STM8AF52Ax) || \
     defined (STM8AF62Ax)
@@ -2657,10 +2658,10 @@ CFG_TypeDef;
 #define SPI ((SPI_TypeDef *) SPI_BaseAddress)
 #define I2C ((I2C_TypeDef *) I2C_BaseAddress)
 
-#if defined(STM8S208) ||defined(STM8S207) || defined (STM8S007) || defined(STM8S103) || \
-    defined(STM8S003) ||defined(STM8S903) || defined (STM8AF52Ax) || defined (STM8AF62Ax)
+#if defined(STM8S208) || defined(STM8S207) || defined (STM8S007) || defined(STM8S103) || \
+    defined(STM8S003) || defined(STM8S001) || defined(STM8S903) || defined (STM8AF52Ax) || defined (STM8AF62Ax)
  #define UART1 ((UART1_TypeDef *) UART1_BaseAddress)
-#endif /* (STM8S208) ||(STM8S207)  || (STM8S103) || (STM8S903) || (STM8AF52Ax) || (STM8AF62Ax) */
+#endif /* (STM8S208) ||(STM8S207)  || (STM8S103) || (STM8S001) || (STM8S903) || (STM8AF52Ax) || (STM8AF62Ax) */
 
 #if defined (STM8S105) || defined (STM8S005) || defined (STM8AF626x)
  #define UART2 ((UART2_TypeDef *) UART2_BaseAddress)
@@ -2678,10 +2679,10 @@ CFG_TypeDef;
 #define TIM1 ((TIM1_TypeDef *) TIM1_BaseAddress)
 
 #if defined(STM8S208) || defined(STM8S207) || defined (STM8S007) || defined(STM8S103) || \
-    defined(STM8S003) || defined(STM8S105) || defined(STM8S005) || defined (STM8AF52Ax) || \
+    defined(STM8S003) || defined(STM8S001) || defined(STM8S105) || defined(STM8S005) || defined (STM8AF52Ax) || \
     defined (STM8AF62Ax) || defined (STM8AF626x)
  #define TIM2 ((TIM2_TypeDef *) TIM2_BaseAddress)
-#endif /* (STM8S208) ||(STM8S207)  || (STM8S103) || (STM8S105) || (STM8AF52Ax) || (STM8AF62Ax) || (STM8AF626x)*/
+#endif /* (STM8S208) ||(STM8S207)  || (STM8S103) || (STM8S001) || (STM8S105) || (STM8AF52Ax) || (STM8AF62Ax) || (STM8AF626x)*/
 
 #if defined(STM8S208) || defined(STM8S207) || defined (STM8S007) || defined(STM8S105) || \
     defined(STM8S005) || defined (STM8AF52Ax) || defined (STM8AF62Ax) || defined (STM8AF626x)
@@ -2689,15 +2690,15 @@ CFG_TypeDef;
 #endif /* (STM8S208) ||(STM8S207)  || (STM8S105) || (STM8AF62Ax) || (STM8AF52Ax) || (STM8AF626x)*/
 
 #if defined(STM8S208) ||defined(STM8S207) || defined (STM8S007) || defined(STM8S103) || \
-    defined(STM8S003) || defined(STM8S105) || defined(STM8S005) || defined (STM8AF52Ax) || \
+    defined(STM8S003) || defined(STM8S001) || defined(STM8S105) || defined(STM8S005) || defined (STM8AF52Ax) || \
     defined (STM8AF62Ax) || defined (STM8AF626x)
  #define TIM4 ((TIM4_TypeDef *) TIM4_BaseAddress)
-#endif /* (STM8S208) ||(STM8S207)  || (STM8S103) || (STM8S105) || (STM8AF52Ax) || (STM8AF62Ax) || (STM8AF626x)*/
+#endif /* (STM8S208) ||(STM8S207)  || (STM8S103) || (STM8S001) || (STM8S105) || (STM8AF52Ax) || (STM8AF62Ax) || (STM8AF626x)*/
 
 #if defined (STM8S903) || defined (STM8AF622x)
  #define TIM5 ((TIM5_TypeDef *) TIM5_BaseAddress)
  #define TIM6 ((TIM6_TypeDef *) TIM6_BaseAddress)
-#endif /* (STM8S903) || (STM8AF622x) */
+#endif /* (STM8S903) || (STM8AF622x) */ 
 
 #define ITC ((ITC_TypeDef *) ITC_BaseAddress)
 
@@ -2818,6 +2819,7 @@ Comments :    The different parameters of commands are
 #define BYTE_2(n)                 ((uint8_t)(BYTE_0((n) >> (uint8_t)16))) /*!< Returns the third byte of the 32-bit value */
 #define BYTE_3(n)                 ((uint8_t)(BYTE_0((n) >> (uint8_t)24))) /*!< Returns the high byte of the 32-bit value */
 
+#define UNUSED(x)                 ((void)(x))
 /*============================== Assert Macros ====================================*/
 #define IS_STATE_VALUE_OK(SensitivityValue) \
   (((SensitivityValue) == ENABLE) || \
@@ -2841,10 +2843,6 @@ Comments :    The idea is to handle directly with the bit name. For that, it is
 /* Exported functions ------------------------------------------------------- */
 
 #endif /* __STM8S_H */
-
-/**
-  * @}
-  */
 
 /**
   * @}
