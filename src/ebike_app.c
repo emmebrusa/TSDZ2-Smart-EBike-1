@@ -1404,7 +1404,7 @@ static void apply_temperature_limiting(void)
     uint16_t ui16_temp = ui16_adc_throttle;
 
     // filter ADC measurement to motor temperature variable
-    ui16_adc_motor_temperature_filtered = filter(ui16_temp, ui16_adc_motor_temperature_filtered, 8);
+    ui16_adc_motor_temperature_filtered = filter(ui16_temp, ui16_adc_motor_temperature_filtered, 13);
 
     // convert ADC value
     ui16_motor_temperature_filtered_x10 = (uint16_t)(((uint32_t) ui16_adc_motor_temperature_filtered * 10000) / 2048);
@@ -1540,7 +1540,7 @@ static void get_pedal_torque(void)
 	
     if (toffset_cycle_counter < TOFFSET_CYCLES) {
         uint16_t ui16_tmp = ui16_adc_torque;
-        ui16_adc_pedal_torque_offset_init = filter(ui16_tmp, ui16_adc_pedal_torque_offset_init, 2);
+        ui16_adc_pedal_torque_offset_init = filter(ui16_tmp, ui16_adc_pedal_torque_offset_init, 3);
         toffset_cycle_counter++;
 		
 		// check the offset calibration
@@ -2861,7 +2861,7 @@ static void uart_send_package(void)
 		#elif ENABLE_850C
 			ui8_tx_buffer[3] = ui8_battery_current_filtered_x10;
 			// battery power filtered x 10 for display data
-			ui16_battery_power_filtered_x10 = filter(ui16_battery_power_x10, ui16_battery_power_filtered_x10, 8);
+			ui16_battery_power_filtered_x10 = filter(ui16_battery_power_x10, ui16_battery_power_filtered_x10, 13);
 			ui8_tx_buffer[4] = (uint8_t) (ui16_battery_power_filtered_x10 / 100);
 		#else
 			ui8_tx_buffer[3] = 0x46;
@@ -3056,7 +3056,7 @@ static void uart_send_package(void)
 				  break;
 				case 4:
 					// battery power filtered x 10 for display data
-					ui16_battery_power_filtered_x10 = filter(ui16_battery_power_x10, ui16_battery_power_filtered_x10, 8);
+					ui16_battery_power_filtered_x10 = filter(ui16_battery_power_x10, ui16_battery_power_filtered_x10, 13);
 					#if UNITS_TYPE == MILES
 					ui16_display_data = ui16_display_data_factor / (ui16_battery_power_filtered_x10);
 					#else
@@ -3083,7 +3083,7 @@ static void uart_send_package(void)
 				  break;
 				case 8:
 					// human power filtered x 10 for display data
-					ui16_human_power_filtered_x10 = filter(ui16_human_power_x10, ui16_human_power_filtered_x10, 8);
+					ui16_human_power_filtered_x10 = filter(ui16_human_power_x10, ui16_human_power_filtered_x10, 13);
 					ui16_display_data = ui16_display_data_factor / (ui16_human_power_filtered_x10 / 10);
 				  break;
 				case 9:
@@ -3269,7 +3269,7 @@ static void check_battery_soc(void)
 	ui16_battery_voltage_x10 = (ui16_battery_voltage_filtered_x1000) / 100;
 	
 	// filter battery voltage x10
-	ui16_battery_voltage_filtered_x10 = filter(ui16_battery_voltage_x10, ui16_battery_voltage_filtered_x10, 2);
+	ui16_battery_voltage_filtered_x10 = filter(ui16_battery_voltage_x10, ui16_battery_voltage_filtered_x10, 3);
 	
 	// save no load voltage x10 if current is < adc current min for 2 seconds
 	if (ui8_adc_battery_current_filtered < 2) {
@@ -3283,7 +3283,7 @@ static void check_battery_soc(void)
 	}
 
 	// filter battery voltage soc x10
-	ui16_battery_voltage_soc_filtered_x10 = filter(ui16_battery_no_load_voltage_filtered_x10, ui16_battery_voltage_soc_filtered_x10, 2);
+	ui16_battery_voltage_soc_filtered_x10 = filter(ui16_battery_no_load_voltage_filtered_x10, ui16_battery_voltage_soc_filtered_x10, 3);
 
 	#if ENABLE_VLCD6 || ENABLE_XH18
 	if (ui16_battery_voltage_soc_filtered_x10 > BATTERY_SOC_VOLTS_6_X10) { ui8_battery_state_of_charge = 7; }		// overvoltage
