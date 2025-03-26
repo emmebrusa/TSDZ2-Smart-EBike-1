@@ -3387,13 +3387,8 @@ static void check_battery_soc(void)
 			
 			// check soc percentage
 			if (m_configuration_variables.ui8_soc_percent_calculation == SOC_CALC_AUTO) {
-				
-				uint8_t ui8_battery_soc_auto_reset_low_x10 = BATTERY_SOC_PERCENT_THRESHOLD_X10;
-				if (ui16_battery_SOC_percentage_x10 < BATTERY_SOC_PERCENT_THRESHOLD_X10) {
-					ui8_battery_soc_auto_reset_low_x10 = ui16_battery_SOC_percentage_x10;
-				}
-				
-				if ((ui16_actual_battery_SOC_x10 < (ui16_battery_SOC_percentage_x10 - ui8_battery_soc_auto_reset_low_x10))
+							
+				if (((ui16_actual_battery_SOC_x10 + BATTERY_SOC_PERCENT_THRESHOLD_X10) < ui16_battery_SOC_percentage_x10)
 				  || (ui16_actual_battery_SOC_x10 > (ui16_battery_SOC_percentage_x10 + BATTERY_SOC_PERCENT_THRESHOLD_X10))) {
 					ui16_battery_SOC_percentage_x10 = ui16_actual_battery_SOC_x10;
 					
