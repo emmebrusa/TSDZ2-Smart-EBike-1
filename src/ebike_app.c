@@ -2044,7 +2044,6 @@ static void uart_receive_package(void)
 	uint8_t ui8_assist_level_mask;
 	static uint8_t no_rx_counter = 0;
 	static uint8_t ui8_lights_counter = 0;
-	static uint8_t ui8_walk_assist_debounce_flag = 0;
 	static uint8_t ui8_walk_assist_debounce_counter = 0;
 	static uint8_t ui8_walk_assist_button_pressed = 0;
 	
@@ -2583,6 +2582,7 @@ static void uart_receive_package(void)
 					}
 					else {
 	#if WALK_ASSIST_DEBOUNCE_ENABLED && ENABLE_BRAKE_SENSOR
+						static uint8_t ui8_walk_assist_debounce_flag = 0;
 						if (ui8_walk_assist_flag) {
 							if (!ui8_walk_assist_debounce_flag) {
 								// set walk assist debounce flag
