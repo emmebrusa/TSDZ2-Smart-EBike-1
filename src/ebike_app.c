@@ -82,6 +82,11 @@ volatile uint32_t ui32_wh_offset_x10 = 0;
 static uint32_t ui32_wh_since_power_on_x10 = 0;
 volatile uint16_t ui16_battery_SOC_percentage_x10 = 0;
 static uint8_t ui8_battery_state_of_charge = 0;
+// table tested with Panasonic NCR18650GA, voltage reset Wh = 4.15 x num.cells, voltage cut-off = 2.90 x num.cells
+static uint8_t ui8_battery_soc_used[100] = { 1, 1, 2, 3, 4, 5, 6, 8, 10, 12, 13, 15, 17, 19, 21, 23, 25, 26, 28,
+	29, 31, 33, 34, 36, 38, 39, 41, 42, 44, 46, 47, 49, 51, 52, 53, 54, 55, 57, 58, 59, 61, 62, 63, 65, 66,	67,
+	69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 85, 86, 87, 87, 88, 88, 89, 89, 90, 90,
+	91,	91, 91, 92, 92, 92, 93, 93, 93, 94, 94, 94, 95, 95, 95, 96, 96, 96, 97, 97, 97, 98, 98, 98, 99, 99, 99 };
 
 // power control
 static uint8_t ui8_duty_cycle_ramp_up_inverse_step = PWM_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_DEFAULT;
@@ -274,7 +279,6 @@ static void apply_torque_sensor_calibration(void);
 static void calc_watt_hours_used(void);
 static void check_battery_soc(void);
 uint16_t read_battery_soc(void);
-uint16_t calc_battery_soc_x10(uint16_t ui16_battery_soc_offset_x10, uint16_t ui16_battery_soc_step_x10, uint16_t ui16_cell_volts_max_x100, uint16_t ui16_cell_volts_min_x100);
 
 
 void ebike_app_init(void)
@@ -3580,44 +3584,11 @@ uint16_t read_battery_soc(void)
 {
 	uint16_t ui16_battery_SOC_calc_x10 = 0;
 	
-#if ENABLE_VLCD6 || ENABLE_XH18
-	switch (ui8_battery_state_of_charge) {
-		case 0:	ui16_battery_SOC_calc_x10 = 10; break;  // undervoltage
-		case 1:	ui16_battery_SOC_calc_x10 = calc_battery_soc_x10(1, 250, LI_ION_CELL_VOLTS_1_X100, LI_ION_CELL_VOLTS_0_X100); break; // blink - empty
-		case 2:	ui16_battery_SOC_calc_x10 = calc_battery_soc_x10(250, 250, LI_ION_CELL_VOLTS_2_X100, LI_ION_CELL_VOLTS_1_X100); break; // 1 bars
-		case 3:	ui16_battery_SOC_calc_x10 = calc_battery_soc_x10(500, 250, LI_ION_CELL_VOLTS_3_X100, LI_ION_CELL_VOLTS_2_X100); break; // 2 bars
-		case 4:	ui16_battery_SOC_calc_x10 = calc_battery_soc_x10(750, 250, LI_ION_CELL_VOLTS_4_X100, LI_ION_CELL_VOLTS_3_X100); break; // 3 bars
-		case 5:	ui16_battery_SOC_calc_x10 = 1000; break; // 4 bars - full
-		case 6:	ui16_battery_SOC_calc_x10 = 1000; break; // 4 bars - SOC reset
-		case 7:	ui16_battery_SOC_calc_x10 = 1000; break; // overvoltage
-	}
-#else // ENABLE_VLCD5 or ENABLE_850C or ENABLE_EKD01
-	switch (ui8_battery_state_of_charge) {
-		case 0:	ui16_battery_SOC_calc_x10 = 10; break;  // undervoltage
-		case 1:	ui16_battery_SOC_calc_x10 = calc_battery_soc_x10(1, 167, LI_ION_CELL_VOLTS_1_X100, LI_ION_CELL_VOLTS_0_X100); break; // blink - empty
-		case 2:	ui16_battery_SOC_calc_x10 = calc_battery_soc_x10(167, 167, LI_ION_CELL_VOLTS_2_X100, LI_ION_CELL_VOLTS_1_X100); break; // 1 bars
-		case 3:	ui16_battery_SOC_calc_x10 = calc_battery_soc_x10(334, 167, LI_ION_CELL_VOLTS_3_X100, LI_ION_CELL_VOLTS_2_X100); break; // 2 bars
-		case 4:	ui16_battery_SOC_calc_x10 = calc_battery_soc_x10(500, 167, LI_ION_CELL_VOLTS_4_X100, LI_ION_CELL_VOLTS_3_X100); break; // 3 bars
-		case 5:	ui16_battery_SOC_calc_x10 = calc_battery_soc_x10(667, 167, LI_ION_CELL_VOLTS_5_X100, LI_ION_CELL_VOLTS_4_X100); break; // 4 bars
-		case 6:	ui16_battery_SOC_calc_x10 = calc_battery_soc_x10(834, 167, LI_ION_CELL_VOLTS_6_X100, LI_ION_CELL_VOLTS_5_X100); break; // 5 bars
-		case 7:	ui16_battery_SOC_calc_x10 = 1000; break; // 6 bars - full
-		case 8:	ui16_battery_SOC_calc_x10 = 1000; break; // 6 bars - SOC reset
-		case 9:	ui16_battery_SOC_calc_x10 = 1000; break; // overvoltage
-	}	
-#endif
+	uint8_t ui8_battery_soc_index = (uint8_t) ((uint16_t) (100
+		- ((ui16_battery_voltage_soc_filtered_x10 - BATTERY_LOW_VOLTAGE_CUT_OFF_X10) * 100U)
+		/ (BATTERY_VOLTAGE_RESET_SOC_PERCENT_X10 - BATTERY_LOW_VOLTAGE_CUT_OFF_X10)));
+	
+	ui16_battery_SOC_calc_x10 = (uint16_t)((100 - ui8_battery_soc_used[ui8_battery_soc_index]) * 10U);
 	
 	return ui16_battery_SOC_calc_x10;
-}
-
-
-// calculate battery soc percentage x10
-uint16_t calc_battery_soc_x10(uint16_t ui16_battery_soc_offset_x10, uint16_t ui16_battery_soc_step_x10, uint16_t ui16_cell_volts_max_x100, uint16_t ui16_cell_volts_min_x100)
-{
-#define CELL_VOLTS_CALIBRATION				8
-	
-	uint16_t ui16_cell_voltage_soc_x100 = ui16_battery_voltage_soc_filtered_x10 * 10 / BATTERY_CELLS_NUMBER;
-	
-	uint16_t ui16_battery_soc_calc_temp_x10 = (ui16_battery_soc_offset_x10 + (ui16_battery_soc_step_x10 * (ui16_cell_voltage_soc_x100 - ui16_cell_volts_min_x100) / (ui16_cell_volts_max_x100 - ui16_cell_volts_min_x100 + CELL_VOLTS_CALIBRATION)));
-	
-	return ui16_battery_soc_calc_temp_x10;
 }
