@@ -1004,7 +1004,11 @@ static void apply_hybrid_assist(void)
 		if (ui16_adc_pedal_torque_delta > 0U) {
 			// get the torque assist factor
 			uint8_t ui8_torque_assist_factor = ui8_riding_mode_parameter_array[TORQUE_ASSIST_MODE - 1][ui8_assist_level];
-		
+#if ASSIST_LEVEL_5_MODE
+			if (ui8_assist_level_5_flag) {
+				ui8_torque_assist_factor = (uint8_t)((uint16_t)((ui8_torque_assist_factor * ASSIST_LEVEL_5_PERCENT) / 100U));
+			}
+#endif		
 			// calculate torque assist target current
 			ui16_adc_battery_current_target_torque_assist = (ui16_adc_pedal_torque_delta * ui8_torque_assist_factor) / TORQUE_ASSIST_FACTOR_DENOMINATOR;
 		}
@@ -1152,7 +1156,12 @@ static void apply_cruise(void)
 			i16_control_output = 0;
 			
 			// set cruise speed target
-			ui16_wheel_speed_target_x10 = (uint16_t) (ui8_riding_mode_parameter_array[CRUISE_MODE - 1][ui8_assist_level] * (uint8_t)10);
+			ui16_wheel_speed_target_x10 = (uint16_t) (ui8_riding_mode_parameter_array[CRUISE_MODE - 1][ui8_assist_level] * 10U);
+#if ASSIST_LEVEL_5_MODE
+			if (ui8_assist_level_5_flag) {
+				ui16_wheel_speed_target_x10 = (uint8_t)((uint16_t)((ui16_wheel_speed_target_x10 * ASSIST_LEVEL_5_PERCENT) / 100U));
+			}
+#endif
 		}
 		
 		// calculate error
@@ -1214,6 +1223,11 @@ static void apply_cruise(void)
 				
 		// applies cadence assist up to cruise speed threshold
 		ui8_riding_mode_parameter = ui8_riding_mode_parameter_array[CADENCE_ASSIST_MODE - 1][ui8_assist_level];
+#if ASSIST_LEVEL_5_MODE
+			if (ui8_assist_level_5_flag) {
+				ui8_riding_mode_parameter = (uint8_t)((uint16_t)((ui8_riding_mode_parameter * ASSIST_LEVEL_5_PERCENT) / 100U));
+			}
+#endif
 		apply_cadence_assist();
 	}
 #endif
@@ -2152,13 +2166,12 @@ static void uart_receive_package(void)
 				case ASSIST_PEDAL_LEVEL4: ui8_assist_level = TURBO; break;
 #if ASSIST_LEVEL_5_MODE
 				case ASSIST_PEDAL_LEVEL5:
-	#if ASSIST_LEVEL_5_MODE == BEFORE_ECO
-					ui8_assist_level = ECO;
-					ui8_assist_level_5_flag = 1;
-	#elif ASSIST_LEVEL_5_MODE == AFTER_TURBO
+	#if ASSIST_LEVEL_5_MODE == AFTER_TURBO
 					ui8_assist_level = TURBO;
-					ui8_assist_level_5_flag = 1;
+	#else // BEFORE_ECO
+					ui8_assist_level = ECO;
 	#endif
+					ui8_assist_level_5_flag = 1;
 					break;
 #endif
 			}
@@ -2797,7 +2810,7 @@ static void uart_receive_package(void)
 			ui8_riding_mode_parameter = ui8_riding_mode_parameter_array[m_configuration_variables.ui8_riding_mode - 1][ui8_assist_level];
 #if ASSIST_LEVEL_5_MODE
 			if (ui8_assist_level_5_flag) {
-				ui8_riding_mode_parameter = (uint8_t)(((uint16_t)(ui8_riding_mode_parameter * (uint8_t)ASSIST_LEVEL_5_PERCENT)) / 100U);
+				ui8_riding_mode_parameter = (uint8_t)((uint16_t)((ui8_riding_mode_parameter * ASSIST_LEVEL_5_PERCENT) / 100U));
 			}
 #endif
 			// automatic data display at lights on
