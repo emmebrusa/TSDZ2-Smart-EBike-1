@@ -1711,7 +1711,7 @@ static void check_system(void)
 // E09 ERROR_MOTOR_CHECK (E08 blinking for XH18)
 // E09 shared with ERROR_WRITE_EEPROM
 #define MOTOR_CHECK_TIME_GOES_ALONE_TRESHOLD         	60 // 60 * 100ms = 6.0 seconds
-#define MOTOR_CHECK_ERPS_THRESHOLD                  	20 // 20 ERPS
+#define MOTOR_CHECK_ERPS_THRESHOLD                  	30 // 30 ERPS
 static uint8_t ui8_riding_torque_mode = 0;
 static uint8_t ui8_motor_check_goes_alone_timer = 0U;
 	
@@ -2114,7 +2114,7 @@ static void uart_receive_package(void)
 	uint8_t ui8_i;
 	uint8_t ui8_rx_check_code;
 	uint8_t ui8_assist_level_mask;
-	static uint8_t no_rx_counter = 0;
+	static uint8_t ui8_no_rx_counter = 0;
 	static uint8_t ui8_lights_counter = 0;
 	static uint8_t ui8_walk_assist_button_pressed = 0;
 	static uint8_t ui8_walk_assist_button_released = 0;
@@ -2127,7 +2127,7 @@ static void uart_receive_package(void)
 	ui8_walk_assist_debounce_counter++;
 #endif
 	// increment the comms safety counter
-    no_rx_counter++;
+    ui8_no_rx_counter++;
 	// increment lights_counter
 	ui8_lights_counter++;
 	// increment display menu counter
@@ -2145,7 +2145,7 @@ static void uart_receive_package(void)
 		// see if check code is ok...
 		if (ui8_rx_check_code == ui8_rx_buffer[RX_CHECK_CODE]) {
 			// Reset the safety counter when a valid message from the LCD is received
-            no_rx_counter = 0;
+            ui8_no_rx_counter = 0;
 			
 			// mask lights button from display
 			ui8_lights_button_flag = ui8_rx_buffer[1] & 0x01;
@@ -2932,7 +2932,7 @@ static void uart_receive_package(void)
 		ui8_received_package_flag = 0;
 		
 		// assist level = OFF if connection with the LCD is lost for more than 0,3 sec (safety)
-		if (no_rx_counter > 3) {
+		if (ui8_no_rx_counter > 3) {
 			ui8_assist_level = OFF;
 		}
 		// enable UART2 receive interrupt as we are now ready to receive a new package
