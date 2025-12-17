@@ -70,9 +70,8 @@ static uint8_t ui8_optional_ADC_function = OPTIONAL_ADC_FUNCTION;
 static uint8_t ui8_walk_assist_level = 0;
 
 // battery
+static uint16_t ui16_battery_voltage_x10 = 0;
 static uint16_t ui16_battery_voltage_filtered_x10 = 0;
-static uint16_t ui16_battery_voltage_calibrated_x10 = 0;
-volatile uint16_t ui16_battery_voltage_soc_filtered_x10 = 0;
 static uint16_t ui16_battery_power_x10 = 0;															  
 static uint16_t ui16_battery_power_filtered_x10 = 0;
 static uint16_t ui16_actual_battery_capacity = (uint16_t)(((uint32_t) TARGET_MAX_BATTERY_CAPACITY * ACTUAL_BATTERY_CAPACITY_PERCENT) / 100);
@@ -2190,10 +2189,8 @@ static void uart_receive_package(void)
 				 &&((m_configuration_variables.ui8_set_parameter_enabled)
 				  ||(ui8_assist_level == OFF)))
 				   &&(!ui8_torque_sensor_calibration_flag)) {
-					// set startup flag
-					if (!ui8_startup_flag) {
-						ui8_startup_flag = 1;
-					}
+					// to set parameters even before 5 seconds from power on
+					ui8_startup_flag = 1;
 					
 					// lights 5s on
 					ui8_lights_on_5s = 1;
@@ -2683,6 +2680,10 @@ static void uart_receive_package(void)
 					// walk assist button pressed within 5 seconds of power on
 					if ((ui8_walk_assist_button_pressed)&&(!ui8_startup_flag)) {
 						ui16_battery_SOC_percentage_x10 = read_battery_soc();
+						if (!ui8_battery_SOC_reset_flag) {
+							ui8_battery_SOC_reset_flag = 1;
+							ui8_startup_counter = 0;
+						}	
 						// calculate watt-hours x10
 						ui32_wh_offset_x10 = ((uint32_t)(1000 - ui16_battery_SOC_percentage_x10) * ui16_actual_battery_capacity) / 100;
 						// for display soc %
@@ -3198,9 +3199,8 @@ static void uart_send_package(void)
 #endif
 						break;
 					case 2:
-						// battery voltage calibrated x10 for display data
-						ui16_battery_voltage_calibrated_x10 = (ui16_battery_voltage_soc_filtered_x10 * ACTUAL_BATTERY_VOLTAGE_PERCENT) / 100U;
-						ui16_display_data = ui16_display_data_factor / ui16_battery_voltage_calibrated_x10;
+						// battery voltage soc filtered and calibrated x10
+						ui16_display_data = ui16_display_data_factor / ui16_battery_voltage_filtered_x10;
 						break;
 					default:
 						ui16_display_data = 0;
@@ -3243,9 +3243,8 @@ static void uart_send_package(void)
 #endif
 				  break;
 				case 2:
-					// battery voltage calibrated x10 for display data
-					ui16_battery_voltage_calibrated_x10 = (ui16_battery_voltage_soc_filtered_x10 * ACTUAL_BATTERY_VOLTAGE_PERCENT) / 100;
-					ui16_display_data = ui16_display_data_factor / ui16_battery_voltage_calibrated_x10;
+					// battery voltage soc filtered and calibrated x10
+					ui16_display_data = ui16_display_data_factor / ui16_battery_voltage_filtered_x10;
 				  break;
 				case 3:
 					ui16_display_data = ui16_display_data_factor / ui8_battery_current_filtered_x10;
@@ -3298,6 +3297,10 @@ static void uart_send_package(void)
 				case 12:
 					ui16_duty_cycle_percent = (uint16_t) ((ui8_g_duty_cycle * (uint8_t)100) / PWM_DUTY_CYCLE_MAX) - 1;
 					ui16_display_data = (ui16_display_data_factor / ui16_duty_cycle_percent) * 10U;
+				  break;
+				case 13: 
+					// battery voltage not filtered x10
+					ui16_display_data = ui16_display_data_factor / ui16_battery_voltage_x10;
 				  break;
 				default:
 				  break;
@@ -3470,73 +3473,56 @@ static void calc_watt_hours_used(void)
 
 static void check_battery_soc(void)
 {
-#define BATTERY_SOC_COUNTER_THRESHOLD			100 // 10 seconds
-	static uint8_t ui8_battery_state_of_charge_temp = 0;
-	static uint8_t ui8_battery_state_of_charge_counter = 0;
-	uint16_t ui16_battery_voltage_x10;
 	uint16_t ui16_battery_SOC_used_x10;
 	uint16_t ui16_actual_battery_SOC_x10;
 	uint16_t ui16_fluctuate_battery_voltage_x10;
+	uint16_t ui16_battery_voltage_calibrated_x10;
 	
-	// battery voltage x10
-	ui16_battery_voltage_x10 = (ui16_battery_voltage_filtered_x1000) / 100;
-	
-	// filter battery voltage x10
-	ui16_battery_voltage_filtered_x10 = filter(ui16_battery_voltage_x10, ui16_battery_voltage_filtered_x10, 4);
-	
-	// calculate flutuate voltage, that depends on the current and battery pack resistance
+	// calculate fluctuate voltage, that depends on the current and battery pack resistance
 	ui16_fluctuate_battery_voltage_x10 = (uint16_t) ((((uint32_t) ui16_battery_pack_resistance_x1000)
 			* ((uint32_t) ui8_battery_current_filtered_x10))
 			/ ((uint32_t) 1000U));
 	
-	// the fluctuate voltage is added to the filtered voltage.
-	ui16_battery_voltage_soc_filtered_x10 =	 ui16_battery_voltage_filtered_x10 + ui16_fluctuate_battery_voltage_x10;
-
+	// battery voltage x10
+	ui16_battery_voltage_x10 = (ui16_battery_voltage_filtered_x1000) / 100;
+	
+	// the fluctuate voltage is added to the battery voltage x10
+	ui16_battery_voltage_x10 += ui16_fluctuate_battery_voltage_x10;
+	
+	// battery voltage calibrated x10
+	ui16_battery_voltage_calibrated_x10 = (ui16_battery_voltage_x10 * ACTUAL_BATTERY_VOLTAGE_PERCENT) / 100U;
+	
+	// battery voltage filtered x10
+	ui16_battery_voltage_filtered_x10 = filter(ui16_battery_voltage_calibrated_x10, ui16_battery_voltage_filtered_x10, 4);
+	
 #if ENABLE_VLCD6 || ENABLE_XH18
-	if (ui16_battery_voltage_soc_filtered_x10 > BATTERY_SOC_VOLTS_6_X10) { ui8_battery_state_of_charge = 7; }		// overvoltage
-	else if (ui16_battery_voltage_soc_filtered_x10 > BATTERY_SOC_VOLTS_5_X10) { ui8_battery_state_of_charge = 6; }	// 4 bars -> SOC reset
-	else if (ui16_battery_voltage_soc_filtered_x10 > BATTERY_SOC_VOLTS_4_X10) { ui8_battery_state_of_charge = 5; }	// 4 bars -> full
-	else if (ui16_battery_voltage_soc_filtered_x10 > BATTERY_SOC_VOLTS_3_X10) { ui8_battery_state_of_charge = 4; }	// 3 bars
-	else if (ui16_battery_voltage_soc_filtered_x10 > BATTERY_SOC_VOLTS_2_X10) { ui8_battery_state_of_charge = 3; }	// 2 bars
-	else if (ui16_battery_voltage_soc_filtered_x10 > BATTERY_SOC_VOLTS_1_X10) { ui8_battery_state_of_charge = 2; }	// 1 bar
-	else if (ui16_battery_voltage_soc_filtered_x10 > BATTERY_SOC_VOLTS_0_X10) { ui8_battery_state_of_charge = 1; }	// blink -> empty
+	if (ui16_battery_voltage_filtered_x10 > BATTERY_SOC_VOLTS_6_X10) { ui8_battery_state_of_charge = 7; }		// overvoltage
+	else if (ui16_battery_voltage_filtered_x10 > BATTERY_SOC_VOLTS_5_X10) { ui8_battery_state_of_charge = 6; }	// 4 bars -> SOC reset
+	else if (ui16_battery_voltage_filtered_x10 > BATTERY_SOC_VOLTS_4_X10) { ui8_battery_state_of_charge = 5; }	// 4 bars -> full
+	else if (ui16_battery_voltage_filtered_x10 > BATTERY_SOC_VOLTS_3_X10) { ui8_battery_state_of_charge = 4; }	// 3 bars
+	else if (ui16_battery_voltage_filtered_x10 > BATTERY_SOC_VOLTS_2_X10) { ui8_battery_state_of_charge = 3; }	// 2 bars
+	else if (ui16_battery_voltage_filtered_x10 > BATTERY_SOC_VOLTS_1_X10) { ui8_battery_state_of_charge = 2; }	// 1 bar
+	else if (ui16_battery_voltage_filtered_x10 > BATTERY_SOC_VOLTS_0_X10) { ui8_battery_state_of_charge = 1; }	// blink -> empty
 	else { ui8_battery_state_of_charge = 0; } // undervoltage
 #else // ENABLE_VLCD5 || ENABLE_850C || ENABLE_EKD01
-	if (ui16_battery_voltage_soc_filtered_x10 > BATTERY_SOC_VOLTS_8_X10) { ui8_battery_state_of_charge = 9; }		// overvoltage
-	else if (ui16_battery_voltage_soc_filtered_x10 > BATTERY_SOC_VOLTS_7_X10) { ui8_battery_state_of_charge = 8; }	// 6 bars -> SOC reset
-	else if (ui16_battery_voltage_soc_filtered_x10 > BATTERY_SOC_VOLTS_6_X10) { ui8_battery_state_of_charge = 7; }	// 6 bars -> full
-	else if (ui16_battery_voltage_soc_filtered_x10 > BATTERY_SOC_VOLTS_5_X10) { ui8_battery_state_of_charge = 6; }	// 5 bars
-	else if (ui16_battery_voltage_soc_filtered_x10 > BATTERY_SOC_VOLTS_4_X10) { ui8_battery_state_of_charge = 5; }	// 4 bars
-	else if (ui16_battery_voltage_soc_filtered_x10 > BATTERY_SOC_VOLTS_3_X10) { ui8_battery_state_of_charge = 4; }	// 3 bars
-	else if (ui16_battery_voltage_soc_filtered_x10 > BATTERY_SOC_VOLTS_2_X10) { ui8_battery_state_of_charge = 3; }	// 2 bars
-	else if (ui16_battery_voltage_soc_filtered_x10 > BATTERY_SOC_VOLTS_1_X10) { ui8_battery_state_of_charge = 2; }	// 1 bar
-	else if (ui16_battery_voltage_soc_filtered_x10 > BATTERY_SOC_VOLTS_0_X10) { ui8_battery_state_of_charge = 1; }	// blink -> empty
+	if (ui16_battery_voltage_filtered_x10 > BATTERY_SOC_VOLTS_8_X10) { ui8_battery_state_of_charge = 9; }		// overvoltage
+	else if (ui16_battery_voltage_filtered_x10 > BATTERY_SOC_VOLTS_7_X10) { ui8_battery_state_of_charge = 8; }	// 6 bars -> SOC reset
+	else if (ui16_battery_voltage_filtered_x10 > BATTERY_SOC_VOLTS_6_X10) { ui8_battery_state_of_charge = 7; }	// 6 bars -> full
+	else if (ui16_battery_voltage_filtered_x10 > BATTERY_SOC_VOLTS_5_X10) { ui8_battery_state_of_charge = 6; }	// 5 bars
+	else if (ui16_battery_voltage_filtered_x10 > BATTERY_SOC_VOLTS_4_X10) { ui8_battery_state_of_charge = 5; }	// 4 bars
+	else if (ui16_battery_voltage_filtered_x10 > BATTERY_SOC_VOLTS_3_X10) { ui8_battery_state_of_charge = 4; }	// 3 bars
+	else if (ui16_battery_voltage_filtered_x10 > BATTERY_SOC_VOLTS_2_X10) { ui8_battery_state_of_charge = 3; }	// 2 bars
+	else if (ui16_battery_voltage_filtered_x10 > BATTERY_SOC_VOLTS_1_X10) { ui8_battery_state_of_charge = 2; }	// 1 bar
+	else if (ui16_battery_voltage_filtered_x10 > BATTERY_SOC_VOLTS_0_X10) { ui8_battery_state_of_charge = 1; }	// blink -> empty
 	else { ui8_battery_state_of_charge = 0; } // undervoltage
 #endif
-	// To avoid SOC fluctuations when voltage value is equal to BATTERY_SOC_VOLTS_x
-	if (ui8_display_ready_flag) {
-		if (ui8_battery_state_of_charge_temp != ui8_battery_state_of_charge) {
-			ui8_battery_state_of_charge_counter++;
-		}
-		else {
-			ui8_battery_state_of_charge_counter = 0;
-		}
-		if (ui8_battery_state_of_charge_counter >= BATTERY_SOC_COUNTER_THRESHOLD) {
-			ui8_battery_state_of_charge_temp = ui8_battery_state_of_charge;
-		}
-		else {
-			ui8_battery_state_of_charge = ui8_battery_state_of_charge_temp;
-		}
-	}
-	else {
-		ui8_battery_state_of_charge_temp = ui8_battery_state_of_charge;
-	}
 	
-	// calculate and set remaining percentage x10
+	// calculate and set remaining soc percentage x10
+	// if SOC calculation is set to volts
 	if (m_configuration_variables.ui8_soc_percent_calculation == SOC_CALC_VOLTS) {
 			ui16_battery_SOC_percentage_x10 = read_battery_soc();
 	}
-	else { // Auto or Wh
+	else { // SOC calculation set to auto or Wh
 		// calculate percentage battery capacity used x10
 		ui16_battery_SOC_used_x10 = (uint16_t)(((uint32_t) ui32_wh_x10 * 100) / ui16_actual_battery_capacity);
 		
@@ -3551,33 +3537,31 @@ static void check_battery_soc(void)
 	if ((ui8_display_ready_flag)&&(!ui8_startup_flag)) {
 		if (ui8_startup_counter < DELAY_MENU_ON) {
 			ui8_startup_counter++;
-			
-			// if the battery is fully charged
-			if ((!ui8_battery_SOC_reset_flag)
-				&&(ui16_battery_voltage_filtered_x10 > BATTERY_VOLTAGE_RESET_SOC_PERCENT_X10))	{
-					ui16_battery_SOC_percentage_x10 = 1000;
-					ui32_wh_offset_x10 = 0;
-					ui8_battery_SOC_reset_flag = 1;
-			}
-			
-			// if SOC calculation is set to auto
-			if ((!ui8_battery_SOC_reset_flag)
-			  &&(ui8_startup_counter >= (DELAY_MENU_ON >> 1)))	{
-				// check soc percentage
-				if (m_configuration_variables.ui8_soc_percent_calculation == SOC_CALC_AUTO) {
-					ui16_actual_battery_SOC_x10 = read_battery_soc();
-					
-					if (((ui16_actual_battery_SOC_x10 + BATTERY_SOC_PERCENT_THRESHOLD_X10) < ui16_battery_SOC_percentage_x10)
-					  || (ui16_actual_battery_SOC_x10 > (ui16_battery_SOC_percentage_x10 + BATTERY_SOC_PERCENT_THRESHOLD_X10))) {
-						// reset soc percentage
-						ui16_battery_SOC_percentage_x10 = ui16_actual_battery_SOC_x10;
-						// calculate watt-hours x10
-						ui32_wh_offset_x10 = ((uint32_t)(1000 - ui16_battery_SOC_percentage_x10) * ui16_actual_battery_capacity) / 100;
+			// waiting for voltage filter
+			if (ui8_startup_counter >= (DELAY_MENU_ON >> 1)) {
+				if (!ui8_battery_SOC_reset_flag) {
+					// if the battery is fully charged
+					if (ui16_battery_voltage_filtered_x10 > BATTERY_VOLTAGE_RESET_SOC_PERCENT_X10) {
+						ui16_battery_SOC_percentage_x10 = 1000;
+						ui32_wh_offset_x10 = 0;
+						ui8_battery_SOC_reset_flag = 1;
 					}
-					//ui8_battery_SOC_reset_flag = 1;
-				}
-				else {
-					ui8_battery_SOC_reset_flag = 1;
+					// if SOC calculation is set to auto
+					else if (m_configuration_variables.ui8_soc_percent_calculation == SOC_CALC_AUTO) {
+						ui16_actual_battery_SOC_x10 = read_battery_soc();
+						// check soc percentage
+						if (((ui16_actual_battery_SOC_x10 + BATTERY_SOC_PERCENT_THRESHOLD_X10) < ui16_battery_SOC_percentage_x10)
+						  || (ui16_actual_battery_SOC_x10 > (ui16_battery_SOC_percentage_x10 + BATTERY_SOC_PERCENT_THRESHOLD_X10))) {
+							// reset soc percentage
+							ui16_battery_SOC_percentage_x10 = ui16_actual_battery_SOC_x10;
+							// calculate watt-hours x10
+							ui32_wh_offset_x10 = ((uint32_t)(1000 - ui16_battery_SOC_percentage_x10) * ui16_actual_battery_capacity) / 100;
+						}
+						ui8_battery_SOC_reset_flag = 1;
+					}
+					else {
+						ui8_battery_SOC_reset_flag = 1;
+					}
 				}
 			}
 		}
@@ -3598,7 +3582,7 @@ uint16_t read_battery_soc(void)
 	uint16_t ui16_battery_SOC_calc_x10 = 0;
 	
 	uint8_t ui8_battery_soc_index = (uint8_t) ((uint16_t) (100
-		- ((ui16_battery_voltage_soc_filtered_x10 - BATTERY_LOW_VOLTAGE_CUT_OFF_X10) * 100U)
+		- ((ui16_battery_voltage_filtered_x10 - BATTERY_LOW_VOLTAGE_CUT_OFF_X10) * 100U)
 		/ (BATTERY_VOLTAGE_RESET_SOC_PERCENT_X10 - BATTERY_LOW_VOLTAGE_CUT_OFF_X10)));
 	
 	ui16_battery_SOC_calc_x10 = (uint16_t)((100 - ui8_battery_soc_used[ui8_battery_soc_index]) * 10U);
