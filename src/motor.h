@@ -23,7 +23,6 @@ extern volatile uint8_t ui8_adc_battery_current_filtered;
 extern volatile uint8_t ui8_controller_adc_battery_current_target;
 extern volatile uint8_t ui8_g_duty_cycle;
 extern volatile uint8_t ui8_fw_hall_counter_offset;
-extern volatile uint8_t ui8_fw_hall_counter_offset_max;
 extern volatile uint8_t ui8_field_weakening_enabled;
 extern volatile uint16_t ui16_hall_counter_total;
 extern volatile uint8_t ui8_controller_duty_cycle_target;

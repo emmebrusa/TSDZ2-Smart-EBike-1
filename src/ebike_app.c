@@ -66,7 +66,6 @@ volatile uint8_t ui8_motor_enabled = 1;
 static uint8_t ui8_assist_without_pedal_rotation_threshold = ASSISTANCE_WITHOUT_PEDAL_ROTATION_THRESHOLD;
 static uint8_t ui8_lights_state = 0;
 static uint8_t ui8_lights_button_flag = 0;
-static uint8_t ui8_field_weakening_erps_delta = 0;
 static uint8_t ui8_optional_ADC_function = OPTIONAL_ADC_FUNCTION;
 static uint8_t ui8_walk_assist_level = 0;
 
@@ -437,7 +436,7 @@ void ebike_app_controller(void)
 	
     // Calculate filtered Battery Current (Ampx10)
 	ui8_battery_current_filtered_x10 = (uint8_t)(((uint16_t)(ui8_adc_battery_current_filtered * (uint8_t)BATTERY_CURRENT_PER_10_BIT_ADC_STEP_X100)) / 10U);
-		
+	
 	// send/receive data, ebike control lights, calc oem wheelspeed, 
 	// check system, check battery soc, every 4 cycles (25ms * 4)
 	static uint8_t ui8_counter;
@@ -460,7 +459,7 @@ void ebike_app_controller(void)
 			break;
 	}
 	
-		// get pedal torque
+	// get pedal torque
 	get_pedal_torque();
 	
 	// use received data and sensor input to control motor
@@ -488,14 +487,9 @@ static void ebike_control_motor(void)
 	// field weakening enabled
 #if FIELD_WEAKENING_ENABLED
 	if ((ui16_motor_speed_erps > MOTOR_SPEED_FIELD_WEAKENING_MIN)
-		&& (ui8_adc_battery_current_filtered < ui8_controller_adc_battery_current_target)
-		&& (ui8_adc_throttle_assist == 0U)) {
-			ui8_field_weakening_erps_delta = ui16_motor_speed_erps - MOTOR_SPEED_FIELD_WEAKENING_MIN;
-			ui8_fw_hall_counter_offset_max = ui8_field_weakening_erps_delta >> 5;
-			if (ui8_fw_hall_counter_offset_max > FW_HALL_COUNTER_OFFSET_MAX) {
-				ui8_fw_hall_counter_offset_max = FW_HALL_COUNTER_OFFSET_MAX;
-			}
-			ui8_field_weakening_enabled = 1;
+	  && (ui8_adc_battery_current_filtered < ui8_controller_adc_battery_current_target)
+	  && (ui8_adc_throttle_assist == 0U)) {
+		ui8_field_weakening_enabled = 1;
 	}
 	else {
 		ui8_field_weakening_enabled = 0;

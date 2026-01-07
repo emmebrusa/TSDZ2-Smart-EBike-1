@@ -83,7 +83,7 @@
 #define THROTTLE_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_DEFAULT	(uint8_t)(PWM_CYCLES_SECOND/116)
 #define THROTTLE_DUTY_CYCLE_RAMP_UP_INVERSE_STEP_MIN		(uint8_t)(PWM_CYCLES_SECOND/390)
 
-#define MOTOR_OVER_SPEED_ERPS								((PWM_CYCLES_SECOND/29) < 650 ?  (PWM_CYCLES_SECOND/29) : 650) // motor max speed | 29 points for the sinewave at max speed (less than PWM_CYCLES_SECOND/29)
+#define MOTOR_OVER_SPEED_ERPS								((PWM_CYCLES_SECOND/29) < 656 ?  (PWM_CYCLES_SECOND/29) : 656) // motor max speed | 29 points for the sinewave at max speed (less than PWM_CYCLES_SECOND/29)
 #define MOTOR_SPEED_FIELD_WEAKENING_MIN						490 // 90 rpm
 #define ERPS_SPEED_OF_MOTOR_REENABLING						320 // 60 rpm
 
@@ -141,7 +141,7 @@ HALL_COUNTER_OFFSET_UP:    29 -> 44
 
 #define HALL_COUNTER_OFFSET_DOWN                (HALL_COUNTER_FREQ/PWM_CYCLES_SECOND/2 + 17)
 #define HALL_COUNTER_OFFSET_UP                  (HALL_COUNTER_OFFSET_DOWN + 21)
-#define FW_HALL_COUNTER_OFFSET_MAX              5 // 5*4=20us max time offset
+#define FW_HALL_COUNTER_OFFSET_MAX              3 // 3*4=12us max time offset
 
 #define MOTOR_ROTOR_INTERPOLATION_MIN_ERPS      10U
  
@@ -192,7 +192,7 @@ HALL_COUNTER_OFFSET_UP:    29 -> 44
 * PEDAL_TORQUE_PER_10_BIT_ADC_STEP_ADV_X100) / PEDAL_TORQUE_PER_10_BIT_ADC_STEP_BASE_X100))
 
 // scale the torque assist target current
-#define TORQUE_ASSIST_FACTOR_DENOMINATOR			110
+#define TORQUE_ASSIST_FACTOR_DENOMINATOR			120
 
 // torque step mode
 #define TORQUE_STEP_DEFAULT							0 // not calibrated

@@ -62,7 +62,6 @@ volatile uint8_t ui8_g_duty_cycle = 0;
 volatile uint8_t ui8_controller_duty_cycle_target = 0;
 // Field Weakening Hall offset (added during interpolation)
 volatile uint8_t ui8_fw_hall_counter_offset = 0;
-volatile uint8_t ui8_fw_hall_counter_offset_max = 0;
 volatile uint8_t ui8_field_weakening_enabled = 0;
 
 // Duty cycle ramp up
@@ -845,7 +844,7 @@ void TIM1_CAP_COM_IRQHandler(void) __interrupt(TIM1_CAP_COM_IRQHANDLER)
             }
         }
 		else if ((ui8_field_weakening_enabled)
-				&& (ui8_g_duty_cycle == PWM_DUTY_CYCLE_MAX)) {
+		  && (ui8_g_duty_cycle == PWM_DUTY_CYCLE_MAX)) {
             // reset duty cycle ramp down counter (filter)
             ui8_counter_duty_cycle_ramp_down = 0;
 
@@ -853,7 +852,7 @@ void TIM1_CAP_COM_IRQHandler(void) __interrupt(TIM1_CAP_COM_IRQHANDLER)
                ui8_counter_duty_cycle_ramp_up = 0;
 
                // increment field weakening angle
-               if (ui8_fw_hall_counter_offset < ui8_fw_hall_counter_offset_max) {
+               if (ui8_fw_hall_counter_offset < FW_HALL_COUNTER_OFFSET_MAX) {
                    ui8_fw_hall_counter_offset++;
 			   }
             }
