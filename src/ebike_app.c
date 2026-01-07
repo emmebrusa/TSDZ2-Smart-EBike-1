@@ -54,6 +54,7 @@ static uint8_t ui8_display_riding_mode = 0;
 static uint8_t ui8_display_lights_configuration = 0;
 static uint8_t ui8_display_alternative_lights_configuration = 0;
 static uint8_t ui8_display_function_status[3][5];
+static uint8_t ui8_lights_configuration_1 = LIGHTS_CONFIGURATION_1;
 static uint8_t ui8_lights_configuration_2 = LIGHTS_CONFIGURATION_2;
 static uint8_t ui8_lights_configuration_3 = LIGHTS_CONFIGURATION_3;
 static uint8_t ui8_lights_configuration_temp = LIGHTS_CONFIGURATION_ON_STARTUP;
@@ -158,6 +159,7 @@ static uint8_t ui8_eMTB_based_on_power = eMTB_BASED_ON_POWER;
 
 // wheel speed sensor
 static uint16_t ui16_wheel_speed_x10 = 0;
+static uint8_t ui8_wheel_speed_max = WHEEL_MAX_SPEED;
 static uint8_t ui8_wheel_speed_max_array[2] = {WHEEL_MAX_SPEED,STREET_MODE_SPEED_LIMIT};
 
 // wheel speed display
@@ -203,9 +205,11 @@ static uint8_t ui8_smooth_start_counter_set = SMOOTH_START_RAMP_DEFAULT;
 static uint8_t ui8_smooth_start_counter_set_temp = SMOOTH_START_RAMP_DEFAULT;
 
 // startup assist
+static uint8_t ui8_startup_assist_enabled_temp = STARTUP_ASSIST_ENABLED;
 static uint8_t ui8_startup_assist_flag = 0;
+static uint8_t ui8_startup_assist_min_power = STARTUP_ASSIST_MIN_POWER;
 static uint8_t ui8_startup_assist_adc_battery_current_target = 0;
-static uint8_t ui8_startup_assist_speed_limit_enabled = STARTUP_ASSIST_SPEED_LIMIT_ENABLED;
+static uint8_t ui8_startup_assist_adc_battery_current_target_min = 0;
 
 // motor temperature control
 static uint16_t ui16_adc_motor_temperature_filtered = 0;
@@ -258,6 +262,7 @@ static void check_system(void);
 static void set_motor_ramp(void);
 static void apply_startup_boost(void);
 static void apply_smooth_start(void);
+static void apply_startup_assist(void);
 
 static void apply_power_assist(void);
 static void apply_torque_assist(void);
@@ -350,6 +355,8 @@ void ebike_app_init(void)
 	ui8_display_function_status[1][ECO] = m_configuration_variables.ui8_startup_boost_enabled;
 	// torque sensor adv on startup
 	ui8_display_function_status[2][ECO] = m_configuration_variables.ui8_torque_sensor_adv_enabled;
+	// startup assist enabled on startup
+	ui8_display_function_status[0][TURBO] = m_configuration_variables.ui8_startup_assist_enabled;
 	// assist without pedal rotation on startup
 	ui8_display_function_status[1][TURBO] = m_configuration_variables.ui8_assist_without_pedal_rotation_enabled;
 	// system error enabled on startup
@@ -710,6 +717,33 @@ static void apply_smooth_start(void)
 }
 
 
+// calculate startup assist current target
+static void apply_startup_assist(void)
+{
+	// calculates the minimum startup assist current
+	ui8_startup_assist_adc_battery_current_target_min = (uint8_t)((uint32_t)
+		((ui8_startup_assist_min_power * 100000)
+		/ ui16_battery_voltage_filtered_x1000)
+		/ BATTERY_CURRENT_PER_10_BIT_ADC_STEP_X100);
+			
+	// set startup assist battery current target
+	if (ui8_adc_battery_current_target > ui8_startup_assist_adc_battery_current_target) {
+		ui8_startup_assist_adc_battery_current_target = ui8_adc_battery_current_target;
+	}
+			
+	if ((ui8_startup_assist_adc_battery_current_target < ui8_startup_assist_adc_battery_current_target_min) 
+	  && (ui16_wheel_speed_x10 > 0U)) {
+		ui8_startup_assist_adc_battery_current_target = ui8_startup_assist_adc_battery_current_target_min;
+				
+		if (ui8_startup_assist_adc_battery_current_target > ui8_adc_battery_current_max) {
+			ui8_startup_assist_adc_battery_current_target = ui8_adc_battery_current_max;
+		}
+	}
+	
+	ui8_adc_battery_current_target = ui8_startup_assist_adc_battery_current_target;
+}
+
+
 static void apply_power_assist(void)
 {
 	uint8_t ui8_power_assist_multiplier_x50 = ui8_riding_mode_parameter;
@@ -767,19 +801,14 @@ static void apply_power_assist(void)
 		else {
 			ui8_adc_battery_current_target = (uint8_t)ui16_adc_battery_current_target;
 		}
-	
-#if STARTUP_ASSIST_ENABLED
-		// set startup assist battery current target
+		
+		// startup assist
 		if (ui8_startup_assist_flag) {
-			if (ui8_adc_battery_current_target > ui8_startup_assist_adc_battery_current_target) {
-				ui8_startup_assist_adc_battery_current_target = ui8_adc_battery_current_target;
-			}
-			ui8_adc_battery_current_target = ui8_startup_assist_adc_battery_current_target;
+			apply_startup_assist();
 		}
 		else {
 			ui8_startup_assist_adc_battery_current_target = 0;
 		}
-#endif
 	
 		// set duty cycle target
 		if (ui8_adc_battery_current_target) {
@@ -832,18 +861,13 @@ static void apply_torque_assist(void)
             ui8_adc_battery_current_target = (uint8_t)ui16_adc_battery_current_target_torque_assist;
         }
 		
-#if STARTUP_ASSIST_ENABLED
-		// set startup assist battery current target
+		// startup assist
 		if (ui8_startup_assist_flag) {
-			if (ui8_adc_battery_current_target > ui8_startup_assist_adc_battery_current_target) {
-				ui8_startup_assist_adc_battery_current_target = ui8_adc_battery_current_target;
-			}
-			ui8_adc_battery_current_target = ui8_startup_assist_adc_battery_current_target;
+			apply_startup_assist();
 		}
 		else {
 			ui8_startup_assist_adc_battery_current_target = 0;
 		}
-#endif
 		
 		// set duty cycle target
         if (ui8_adc_battery_current_target) {
@@ -951,18 +975,13 @@ static void apply_emtb_assist(void)
             ui8_adc_battery_current_target = (uint8_t)ui16_adc_battery_current_target_eMTB_assist;
         }
 		
-#if STARTUP_ASSIST_ENABLED
-		// set startup assist battery current target
+		// startup assist
 		if (ui8_startup_assist_flag) {
-			if (ui8_adc_battery_current_target > ui8_startup_assist_adc_battery_current_target) {
-				ui8_startup_assist_adc_battery_current_target = ui8_adc_battery_current_target;
-			}
-			ui8_adc_battery_current_target = ui8_startup_assist_adc_battery_current_target;
+			apply_startup_assist();
 		}
 		else {
 			ui8_startup_assist_adc_battery_current_target = 0;
 		}
-#endif
 		
         // set duty cycle target
         if (ui8_adc_battery_current_target) {
@@ -1048,18 +1067,13 @@ static void apply_hybrid_assist(void)
 			ui8_adc_battery_current_target = (uint8_t)ui16_adc_battery_current_target;
 		}
 		
-#if STARTUP_ASSIST_ENABLED
-		// set startup assist battery current target
+		// startup assist
 		if (ui8_startup_assist_flag) {
-			if (ui8_adc_battery_current_target > ui8_startup_assist_adc_battery_current_target) {
-				ui8_startup_assist_adc_battery_current_target = ui8_adc_battery_current_target;
-			}
-			ui8_adc_battery_current_target = ui8_startup_assist_adc_battery_current_target;
+			apply_startup_assist();
 		}
 		else {
 			ui8_startup_assist_adc_battery_current_target = 0;
 		}
-#endif
 		
 		// set duty cycle target
 		if (ui8_adc_battery_current_target) {
@@ -1384,7 +1398,7 @@ static void apply_throttle(void)
 			(uint8_t) ASSIST_THROTTLE_MIN_VALUE,
 			(uint8_t) ASSIST_THROTTLE_MAX_VALUE);
 	
-	// / set throttle assist
+	// set throttle assist
 	if (ui8_throttle_adc_map) {
 		ui8_adc_throttle_assist = ui8_throttle_adc_map;
 	}
@@ -1487,9 +1501,9 @@ static void apply_temperature_limiting(void)
 
 static void apply_speed_limit(void)
 {
-	if (m_configuration_variables.ui8_wheel_speed_max > 0U) {
-		uint16_t speed_limit_low  = (uint16_t)((uint8_t)(m_configuration_variables.ui8_wheel_speed_max - 2U) * (uint8_t)10U); // casting literal to uint8_t ensures usage of MUL X,A
-		uint16_t speed_limit_high = (uint16_t)((uint8_t)(m_configuration_variables.ui8_wheel_speed_max + 2U) * (uint8_t)10U);
+	if (ui8_wheel_speed_max > 0U) {
+		uint16_t speed_limit_low  = (uint16_t)((uint8_t)(ui8_wheel_speed_max - 2U) * (uint8_t)10U); // casting literal to uint8_t ensures usage of MUL X,A
+		uint16_t speed_limit_high = (uint16_t)((uint8_t)(ui8_wheel_speed_max + 2U) * (uint8_t)10U);
 		
         // set battery current target
         ui8_adc_battery_current_target = (uint8_t)map_ui16(ui16_wheel_speed_x10,
@@ -2246,11 +2260,23 @@ static void uart_receive_package(void)
 							
 							case TURBO:	
 								switch (ui8_menu_index) {
+									case 1:
+										if (ui8_lights_configuration_1 == 11) {
+											// display status
+											ui8_display_alternative_lights_configuration = 1;
+										}
+										break;
 									case 2:
-										if (ui8_lights_configuration_2 == 9) {
+										if (ui8_lights_configuration_1 == 11) {
+											// restore previous startup assist enabled
+											m_configuration_variables.ui8_startup_assist_enabled = ui8_startup_assist_enabled_temp;
+											ui8_display_function_status[0][TURBO] = m_configuration_variables.ui8_startup_assist_enabled;
+										}
+										else {
 											// restore previous lights configuration
 											m_configuration_variables.ui8_lights_configuration = ui8_lights_configuration_temp;
-											ui8_display_lights_configuration = m_configuration_variables.ui8_lights_configuration;
+										}
+										if (ui8_lights_configuration_2 == 9) {
 											// display status
 											ui8_display_alternative_lights_configuration = 1;
 										}
@@ -2264,7 +2290,6 @@ static void uart_receive_package(void)
 										else {
 											// restore previous lights configuration
 											m_configuration_variables.ui8_lights_configuration = ui8_lights_configuration_temp;
-											ui8_display_lights_configuration = m_configuration_variables.ui8_lights_configuration;
 										}
 										
 										if (ui8_lights_configuration_3 == 10) {
@@ -2272,7 +2297,9 @@ static void uart_receive_package(void)
 											ui8_display_alternative_lights_configuration = 1;
 										}
 										break;
-								}							
+										// display lights configuration
+										ui8_display_lights_configuration = m_configuration_variables.ui8_lights_configuration;
+								}
 								break;
 						}
 						
@@ -2447,21 +2474,31 @@ static void uart_receive_package(void)
 							// set lights mode
 							switch (ui8_menu_index) {
 								case 1:
-									// for restore lights configuration
-									ui8_lights_configuration_temp = m_configuration_variables.ui8_lights_configuration;
-									
-									if (m_configuration_variables.ui8_lights_configuration != LIGHTS_CONFIGURATION_ON_STARTUP) {
-										m_configuration_variables.ui8_lights_configuration = LIGHTS_CONFIGURATION_ON_STARTUP;
+									if (ui8_lights_configuration_1 == 11) {
+										// for restore startup assist enabled
+										ui8_startup_assist_enabled_temp = m_configuration_variables.ui8_startup_assist_enabled;
+										// change startup assist enabled
+										m_configuration_variables.ui8_startup_assist_enabled = !m_configuration_variables.ui8_startup_assist_enabled;
+										ui8_display_function_status[0][TURBO] = m_configuration_variables.ui8_startup_assist_enabled;
+										// display status
+										ui8_display_alternative_lights_configuration = 1;
 									}
 									else {
-										m_configuration_variables.ui8_lights_configuration = LIGHTS_CONFIGURATION_1;
+										// for restore lights configuration
+										ui8_lights_configuration_temp = m_configuration_variables.ui8_lights_configuration;
+									
+										if (m_configuration_variables.ui8_lights_configuration != LIGHTS_CONFIGURATION_ON_STARTUP) {
+											m_configuration_variables.ui8_lights_configuration = LIGHTS_CONFIGURATION_ON_STARTUP;
+										}
+										else {
+											m_configuration_variables.ui8_lights_configuration = LIGHTS_CONFIGURATION_1;
+										}
 									}
 									break;
 								case 2:
 									if (ui8_lights_configuration_2 == 9) {
 										// for restore assist without pedal rotation
 										ui8_assist_without_pedal_rotation_temp = m_configuration_variables.ui8_assist_without_pedal_rotation_enabled;
-									
 										// change assist without pedal rotation
 										m_configuration_variables.ui8_assist_without_pedal_rotation_enabled = !m_configuration_variables.ui8_assist_without_pedal_rotation_enabled;
 										ui8_display_function_status[1][TURBO] = m_configuration_variables.ui8_assist_without_pedal_rotation_enabled;
@@ -2469,10 +2506,15 @@ static void uart_receive_package(void)
 										ui8_display_alternative_lights_configuration = 1;
 									}
 									else {
-										m_configuration_variables.ui8_lights_configuration = LIGHTS_CONFIGURATION_2;
 										// for restore lights configuration
 										ui8_lights_configuration_temp = m_configuration_variables.ui8_lights_configuration;
 									
+										if (m_configuration_variables.ui8_lights_configuration != LIGHTS_CONFIGURATION_ON_STARTUP) {
+											m_configuration_variables.ui8_lights_configuration = LIGHTS_CONFIGURATION_ON_STARTUP;
+										}
+										else {
+											m_configuration_variables.ui8_lights_configuration = LIGHTS_CONFIGURATION_2;
+										}
 									}
 									break;
 								case 3:
@@ -2484,7 +2526,12 @@ static void uart_receive_package(void)
 										ui8_display_alternative_lights_configuration = 1;
 									}
 									else {
-										m_configuration_variables.ui8_lights_configuration = LIGHTS_CONFIGURATION_3;
+										if (m_configuration_variables.ui8_lights_configuration != LIGHTS_CONFIGURATION_ON_STARTUP) {
+											m_configuration_variables.ui8_lights_configuration = LIGHTS_CONFIGURATION_ON_STARTUP;
+										}
+										else {
+											m_configuration_variables.ui8_lights_configuration = LIGHTS_CONFIGURATION_3;
+										}
 									}
 									break;
 							}
@@ -2673,7 +2720,7 @@ static void uart_receive_package(void)
 						ui8_torque_sensor_calibration_counter++;
 					}
 					else {
-						ui8_torque_sensor_calibration_enabled  = 0;
+						ui8_torque_sensor_calibration_enabled = 0;
 					}
 
 					// manual setting battery SOC percentage x10 (actual charge)
@@ -2682,6 +2729,7 @@ static void uart_receive_package(void)
 						ui16_battery_SOC_percentage_x10 = read_battery_soc();
 						if (!ui8_battery_SOC_reset_flag) {
 							ui8_battery_SOC_reset_flag = 1;
+							// restart startup counter
 							ui8_startup_counter = 0;
 						}	
 						// calculate watt-hours x10
@@ -2716,23 +2764,21 @@ static void uart_receive_package(void)
 							ui8_cruise_button_flag = 0;
 						}
 					}
-					// startup assist mode and walk assist mode ******************
-#if ENABLE_XH18
-					else if (ui8_assist_level != OFF) {
-#else
-					else if ((ui8_assist_level > ECO)
-					  ||((ui8_assist_level != OFF)&&(!ui8_torque_sensor_calibration_enabled))) {
-#endif
-#if STARTUP_ASSIST_ENABLED
+					
+					// startup assist mode and walk assist mode
+					else if ((ui8_assist_level != OFF)
+					  &&((!ui8_torque_sensor_calibration_enabled)
+						||(!m_configuration_variables.ui8_set_parameter_enabled))) {
+						
 						// startup assist mode
-						if ((ui8_walk_assist_button_pressed)&&(ui8_startup_flag)
+						if ((m_configuration_variables.ui8_startup_assist_enabled)
+						  &&(ui8_walk_assist_button_pressed)&&(ui8_startup_flag)
 						  &&(!ui8_walk_assist_flag)&&(ui8_lights_flag)) {
 							ui8_startup_assist_flag = 1;
 						}
 						else {
 							ui8_startup_assist_flag = 0;
 						}
-#endif
 #if ENABLE_WALK_ASSIST
 						// walk assist mode
 						if ((ui8_walk_assist_button_pressed)&&(ui8_startup_flag)&&(!ui8_startup_assist_flag)
@@ -2906,16 +2952,19 @@ static void uart_receive_package(void)
 #endif
 			
 			// set speed limit in street, offroad, walk assist, startup assist, throttle 6km/h mode
-			if ((m_configuration_variables.ui8_riding_mode == WALK_ASSIST_MODE)
-				||((ui8_startup_assist_flag)&&(ui8_startup_assist_speed_limit_enabled))) {
-					m_configuration_variables.ui8_wheel_speed_max = WALK_ASSIST_THRESHOLD_SPEED;
+			if (m_configuration_variables.ui8_riding_mode == WALK_ASSIST_MODE) {
+				ui8_wheel_speed_max = WALK_ASSIST_THRESHOLD_SPEED;
+			}	
+			else if ((ui8_startup_assist_flag)
+			  && (m_configuration_variables.ui8_street_mode_enabled)) {
+				ui8_wheel_speed_max = WALK_ASSIST_THRESHOLD_SPEED;
 			}
 			else if ((ui8_throttle_mode_array[m_configuration_variables.ui8_street_mode_enabled] == W_O_P_6KM_H_ONLY)
-				&& (ui8_throttle_adc_map)) {
-					m_configuration_variables.ui8_wheel_speed_max = WALK_ASSIST_THRESHOLD_SPEED;
+			  && (ui8_throttle_adc_map)) {
+				ui8_wheel_speed_max = WALK_ASSIST_THRESHOLD_SPEED;
 			}
 			else {
-				m_configuration_variables.ui8_wheel_speed_max = ui8_wheel_speed_max_array[m_configuration_variables.ui8_street_mode_enabled];
+				ui8_wheel_speed_max = ui8_wheel_speed_max_array[m_configuration_variables.ui8_street_mode_enabled];
 			}
 			
 			// current limit with power limit
@@ -3207,7 +3256,7 @@ static void uart_send_package(void)
 						break;
 				}
 			}
-			else if ((ui8_menu_counter <= ui8_delay_display_function)&&(ui8_menu_index > 0U)&&((ui8_assist_level < 2)||(ui8_display_alternative_lights_configuration))) { // OFF & ECO & alternative lights configuration
+			else if ((ui8_menu_counter <= ui8_delay_display_function)&&(ui8_menu_index > 0U)&&((ui8_assist_level < TOUR)||(ui8_display_alternative_lights_configuration))) { // OFF & ECO & alternative lights configuration
 			  uint8_t index_temp = (ui8_display_function_status[ui8_menu_index - 1][ui8_assist_level]);
 			  switch (index_temp) {
 				case 0:

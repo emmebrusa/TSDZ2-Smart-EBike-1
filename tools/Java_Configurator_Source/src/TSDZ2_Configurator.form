@@ -142,34 +142,46 @@
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <EmptySpace pref="14" max="32767" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                       <Component id="jPanel6" min="-2" pref="293" max="-2" attributes="0"/>
-                      <EmptySpace pref="18" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jPanel5" min="-2" max="-2" attributes="0"/>
-                          <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
+                          <Group type="102" attributes="0">
+                              <EmptySpace type="separate" max="32767" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="jPanel5" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="32767" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="CB_STARTUP_ASSIST_SPEED_LIMIT_ENABLED" min="-2" pref="30" max="-2" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
+                          </Group>
                       </Group>
-                      <EmptySpace pref="14" max="32767" attributes="0"/>
                       <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
+                  <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="103" groupAlignment="1" attributes="0">
                           <Component id="jPanel6" alignment="0" max="32767" attributes="0"/>
-                          <Group type="102" alignment="1" attributes="0">
+                          <Group type="102" attributes="0">
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                      <Component id="jPanel5" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="1" attributes="0">
+                                  <Component id="CB_STARTUP_ASSIST_SPEED_LIMIT_ENABLED" min="-2" max="-2" attributes="0"/>
+                                  <Group type="103" alignment="1" groupAlignment="0" attributes="0">
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                          <Component id="jPanel5" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <Component id="jPanel2" alignment="1" min="-2" max="-2" attributes="0"/>
                                   </Group>
-                                  <Component id="jPanel2" alignment="1" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
@@ -187,12 +199,6 @@
                       <Group type="102" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="1" attributes="0">
-                                  <Component id="jLabel22" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
-                                  <Component id="TF_BOOST_CADENCE_STEP" min="-2" pref="48" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                              </Group>
                               <Group type="102" attributes="0">
                                   <Component id="jLabel20" min="-2" pref="169" max="-2" attributes="0"/>
                                   <EmptySpace max="32767" attributes="0"/>
@@ -241,30 +247,43 @@
                               </Group>
                               <Group type="102" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="jLabel10" alignment="0" min="-2" pref="207" max="-2" attributes="0"/>
-                                      <Component id="CB_STARTUP_BOOST_ON_START" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="CB_SMOOTH_START_ENABLED" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jLabel7" min="-2" max="-2" attributes="0"/>
-                                      <Component id="CB_FIELD_WEAKENING_ENABLED" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Group type="102" attributes="0">
+                                          <Component id="CB_STARTUP_ASSIST_ENABLED" min="-2" pref="230" max="-2" attributes="0"/>
+                                          <EmptySpace max="32767" attributes="0"/>
+                                          <Component id="TF_STARTUP_ASSIST_MIN_POWER" min="-2" pref="48" max="-2" attributes="0"/>
+                                      </Group>
                                       <Group type="102" alignment="0" attributes="0">
                                           <Component id="jLabel77" min="-2" pref="214" max="-2" attributes="0"/>
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                          <EmptySpace max="32767" attributes="0"/>
                                           <Component id="TF_SMOOTH_START_RAMP" min="-2" pref="48" max="-2" attributes="0"/>
                                       </Group>
                                       <Group type="102" attributes="0">
-                                          <Component id="jLabel33" min="-2" pref="115" max="-2" attributes="0"/>
-                                          <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
-                                          <Component id="RB_BOOST_AT_ZERO_CADENCE" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
-                                          <Component id="RB_BOOST_AT_ZERO_SPEED" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <Component id="CB_STARTUP_ASSIST_ENABLED" min="-2" pref="141" max="-2" attributes="0"/>
-                                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                          <Component id="CB_STARTUP_ASSIST_SPEED_LIMIT_ENABLED" min="-2" pref="139" max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="0" attributes="0">
+                                              <Component id="jLabel10" alignment="0" min="-2" pref="207" max="-2" attributes="0"/>
+                                              <Component id="CB_STARTUP_BOOST_ON_START" alignment="0" min="-2" max="-2" attributes="0"/>
+                                              <Component id="CB_SMOOTH_START_ENABLED" alignment="0" min="-2" max="-2" attributes="0"/>
+                                              <Component id="jLabel7" min="-2" max="-2" attributes="0"/>
+                                              <Component id="CB_FIELD_WEAKENING_ENABLED" alignment="0" min="-2" max="-2" attributes="0"/>
+                                              <Group type="102" alignment="0" attributes="0">
+                                                  <Component id="jLabel33" min="-2" max="-2" attributes="0"/>
+                                                  <EmptySpace max="-2" attributes="0"/>
+                                                  <Component id="RB_BOOST_AT_ZERO_CADENCE" min="-2" max="-2" attributes="0"/>
+                                                  <EmptySpace max="-2" attributes="0"/>
+                                                  <Component id="RB_BOOST_AT_ZERO_SPEED" min="-2" max="-2" attributes="0"/>
+                                                  <EmptySpace max="-2" attributes="0"/>
+                                                  <Component id="RB_BOOST_AT_ZERO_AUTO" min="-2" max="-2" attributes="0"/>
+                                              </Group>
+                                          </Group>
+                                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                       </Group>
                                   </Group>
                                   <EmptySpace max="32767" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="1" attributes="0">
+                                  <Component id="jLabel22" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
+                                  <Component id="TF_BOOST_CADENCE_STEP" min="-2" pref="48" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
@@ -326,10 +345,13 @@
                               <Component id="TF_BOOST_CADENCE_STEP" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="jLabel33" alignment="3" min="-2" pref="17" max="-2" attributes="0"/>
-                              <Component id="RB_BOOST_AT_ZERO_CADENCE" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="RB_BOOST_AT_ZERO_SPEED" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="RB_BOOST_AT_ZERO_AUTO" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jLabel33" alignment="3" min="-2" pref="17" max="-2" attributes="0"/>
+                                  <Component id="RB_BOOST_AT_ZERO_CADENCE" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="RB_BOOST_AT_ZERO_SPEED" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
                           </Group>
                           <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
                           <Component id="CB_SMOOTH_START_ENABLED" min="-2" max="-2" attributes="0"/>
@@ -338,10 +360,10 @@
                               <Component id="jLabel77" alignment="3" min="-2" pref="17" max="-2" attributes="0"/>
                               <Component id="TF_SMOOTH_START_RAMP" alignment="3" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="TF_STARTUP_ASSIST_MIN_POWER" alignment="3" max="-2" attributes="0"/>
                               <Component id="CB_STARTUP_ASSIST_ENABLED" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="CB_STARTUP_ASSIST_SPEED_LIMIT_ENABLED" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="32767" attributes="0"/>
                       </Group>
@@ -463,7 +485,7 @@
                     <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                       <ComponentRef name="buttonGroup9"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="cadence"/>
+                    <Property name="text" type="java.lang.String" value="cad."/>
                     <Property name="enabled" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                       <Connection code="CB_STARTUP_BOOST_ON_START.isSelected()" type="code"/>
                     </Property>
@@ -499,7 +521,7 @@
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="CB_STARTUP_ASSIST_ENABLED">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Startup assist enabled"/>
+                    <Property name="text" type="java.lang.String" value="Startup assist enabled  Min power (W)"/>
                     <Property name="toolTipText" type="java.lang.String" value="Not available with coaster brake enabled"/>
                   </Properties>
                   <Events>
@@ -600,12 +622,23 @@
                     <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;Motor power limit in offroad mode&lt;br&gt;&#xa;Max value depends on the rated&lt;br&gt;&#xa;motor power and the battery capacity&#xa;&lt;/html&gt;"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JCheckBox" name="CB_STARTUP_ASSIST_SPEED_LIMIT_ENABLED">
+                <Component class="javax.swing.JTextField" name="TF_STARTUP_ASSIST_MIN_POWER">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Speed limit enabled"/>
-                    <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;When enabled, Startup assist uses&lt;br&gt;&#xa;the same speed limit as set for Walk assist.&#xa;&lt;/html&gt;"/>
+                    <Property name="text" type="java.lang.String" value="100"/>
+                    <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;Max value 255&lt;br&gt;&#xa;Recommended range 50 to 150&#xa;&lt;/html&gt;"/>
                     <Property name="enabled" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                       <Connection code="CB_STARTUP_ASSIST_ENABLED.isSelected()" type="code"/>
+                    </Property>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JRadioButton" name="RB_BOOST_AT_ZERO_AUTO">
+                  <Properties>
+                    <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                      <ComponentRef name="buttonGroup9"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="auto"/>
+                    <Property name="enabled" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                      <Connection code="CB_STARTUP_BOOST_ON_START.isSelected()" type="code"/>
                     </Property>
                   </Properties>
                 </Component>
@@ -1368,6 +1401,15 @@
                 </Component>
               </SubComponents>
             </Container>
+            <Component class="javax.swing.JCheckBox" name="CB_STARTUP_ASSIST_SPEED_LIMIT_ENABLED">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Speed limit enabled"/>
+                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;When enabled, Startup assist uses&lt;br&gt;&#xa;the same speed limit as set for Walk assist.&#xa;&lt;/html&gt;"/>
+                <Property name="enabled" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="CB_STARTUP_ASSIST_ENABLED.isSelected()" type="code"/>
+                </Property>
+              </Properties>
+            </Component>
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="jPanel4">
@@ -2523,10 +2565,7 @@
                 <Component class="javax.swing.JTextField" name="TF_LIGHT_MODE_1">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="6"/>
-                    <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;With lights button ON&lt;br&gt;&#xa;0 - lights ON&lt;br&gt;&#xa;1 - lights FLASHING&lt;br&gt;&#xa;2 - lights ON and BRAKE-FLASHING when braking&lt;br&gt;&#xa;3 - lights FLASHING and ON when braking&lt;br&gt;&#xa;4 - lights FLASHING and BRAKE-FLASHING when braking&lt;br&gt;&#xa;5 - lights ON and ON when braking, even with the light button OFF&lt;br&gt;&#xa;6 - lights ON and BRAKE-FLASHING when braking, even with the light button OFF&lt;br&gt;&#xa;7 - lights FLASHING and ON when braking, even with the light button OFF&lt;br&gt;&#xa;8 - lights FLASHING and BRAKE-FLASHING when braking, even with the light button OFF&#xa;&lt;/html&gt;"/>
-                    <Property name="enabled" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="CB_LIGHTS.isSelected()" type="code"/>
-                    </Property>
+                    <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;With lights button ON&lt;br&gt;&#xa;0 - lights ON&lt;br&gt;&#xa;1 - lights FLASHING&lt;br&gt;&#xa;2 - lights ON and BRAKE-FLASHING when braking&lt;br&gt;&#xa;3 - lights FLASHING and ON when braking&lt;br&gt;&#xa;4 - lights FLASHING and BRAKE-FLASHING when braking&lt;br&gt;&#xa;5 - lights ON and ON when braking, even with the light button OFF&lt;br&gt;&#xa;6 - lights ON and BRAKE-FLASHING when braking, even with the light button OFF&lt;br&gt;&#xa;7 - lights FLASHING and ON when braking, even with the light button OFF&lt;br&gt;&#xa;8 - lights FLASHING and BRAKE-FLASHING when braking, even with the light button OFF&lt;br&gt;&#xa;or alternative option settings&lt;br&gt;&#xa;11 - startup assist&#xa;&lt;/html&gt;"/>
                   </Properties>
                   <Events>
                     <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="TF_LIGHT_MODE_1KeyReleased"/>
@@ -2542,9 +2581,6 @@
                   <Properties>
                     <Property name="text" type="java.lang.String" value="7"/>
                     <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;With lights button ON&lt;br&gt;&#xa;0 - lights ON&lt;br&gt;&#xa;1 - lights FLASHING&lt;br&gt;&#xa;2 - lights ON and BRAKE-FLASHING when braking&lt;br&gt;&#xa;3 - lights FLASHING and ON when braking&lt;br&gt;&#xa;4 - lights FLASHING and BRAKE-FLASHING when braking&lt;br&gt;&#xa;5 - lights ON and ON when braking, even with the light button OFF&lt;br&gt;&#xa;6 - lights ON and BRAKE-FLASHING when braking, even with the light button OFF&lt;br&gt;&#xa;7 - lights FLASHING and ON when braking, even with the light button OFF&lt;br&gt;&#xa;8 - lights FLASHING and BRAKE-FLASHING when braking, even with the light button OFF&lt;br&gt;&#xa;or alternative option settings&lt;br&gt;&#xa;9 - assistance without pedal rotation&#xa;&lt;/html&gt;"/>
-                    <Property name="enabled" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="CB_LIGHTS.isSelected()" type="code"/>
-                    </Property>
                   </Properties>
                   <Events>
                     <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="TF_LIGHT_MODE_2KeyReleased"/>
@@ -2554,9 +2590,6 @@
                   <Properties>
                     <Property name="text" type="java.lang.String" value="1"/>
                     <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;With lights button ON&lt;br&gt;&#xa;0 - lights ON&lt;br&gt;&#xa;1 - lights FLASHING&lt;br&gt;&#xa;2 - lights ON and BRAKE-FLASHING when braking&lt;br&gt;&#xa;3 - lights FLASHING and ON when braking&lt;br&gt;&#xa;4 - lights FLASHING and BRAKE-FLASHING when braking&lt;br&gt;&#xa;5 - lights ON and ON when braking, even with the light button OFF&lt;br&gt;&#xa;6 - lights ON and BRAKE-FLASHING when braking, even with the light button OFF&lt;br&gt;&#xa;7 - lights FLASHING and ON when braking, even with the light button OFF&lt;br&gt;&#xa;8 - lights FLASHING and BRAKE-FLASHING when braking, even with the light button OFF&lt;br&gt;&#xa;or alternative option settings&lt;br&gt;&#xa;10 - assistance with sensors error&#xa;&lt;/html&gt;"/>
-                    <Property name="enabled" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="CB_LIGHTS.isSelected()" type="code"/>
-                    </Property>
                   </Properties>
                   <Events>
                     <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="TF_LIGHT_MODE_3KeyReleased"/>
@@ -3340,7 +3373,7 @@
                 <Component class="javax.swing.JTextField" name="TF_DATA_1">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="1"/>
-                    <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;0 - motor temperature (&#xb0;C)&lt;br&gt;&#xa;  1 - battery SOC remaining (%)&lt;br&gt;&#xa;  2 - battery voltage (V)&lt;br&gt;&#xa;  3 - battery current (A)&lt;br&gt;&#xa;  4 - motor power (Watt/10)&lt;br&gt;&#xa;  5 - adc throttle (8 bit)&lt;br&gt;&#xa;  6 - adc torque sensor (10 bit)&lt;br&gt;&#xa;  7 - pedal cadence (rpm)&lt;br&gt;&#xa;  8 - human power(W/10)&lt;br&gt;&#xa;  9 - pedal torque adc delta&lt;br&gt;&#xa;10 - consumed Wh/10&lt;br&gt;&#xa;11 - motor ERPS&lt;br&gt;&#xa;12 - duty cycle PWM %&#xa;&lt;/html&gt;"/>
+                    <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;0 - motor temperature (&#xb0;C)&lt;br&gt;&#xa;  1 - battery SOC remaining (%)&lt;br&gt;&#xa;  2 - battery voltage filtered (V)&lt;br&gt;&#xa;  3 - battery current (A)&lt;br&gt;&#xa;  4 - motor power (Watt/10)&lt;br&gt;&#xa;  5 - adc throttle (8 bit)&lt;br&gt;&#xa;  6 - adc torque sensor (10 bit)&lt;br&gt;&#xa;  7 - pedal cadence (rpm)&lt;br&gt;&#xa;  8 - human power(W/10)&lt;br&gt;&#xa;  9 - pedal torque adc delta&lt;br&gt;&#xa;10 - consumed Wh/10&lt;br&gt;&#xa;11 - motor ERPS&lt;br&gt;&#xa;12 - duty cycle PWM %&lt;br&gt;&#xa;13 - battery voltage not filtered (V)&#xa;&lt;/html&gt;"/>
                   </Properties>
                   <Events>
                     <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="TF_DATA_1KeyReleased"/>
@@ -3349,7 +3382,7 @@
                 <Component class="javax.swing.JTextField" name="TF_DATA_2">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="2"/>
-                    <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;0 - motor temperature (&#xb0;C)&lt;br&gt;&#xa;  1 - battery SOC remaining (%)&lt;br&gt;&#xa;  2 - battery voltage (V)&lt;br&gt;&#xa;  3 - battery current (A)&lt;br&gt;&#xa;  4 - motor power (Watt/10)&lt;br&gt;&#xa;  5 - adc throttle (8 bit)&lt;br&gt;&#xa;  6 - adc torque sensor (10 bit)&lt;br&gt;&#xa;  7 - pedal cadence (rpm)&lt;br&gt;&#xa;  8 - human power(W/10)&lt;br&gt;&#xa;  9 - pedal torque adc delta&lt;br&gt;&#xa;10 - consumed Wh/10&lt;br&gt;&#xa;11 - motor ERPS&lt;br&gt;&#xa;12 - duty cycle PWM %&#xa;&lt;/html&gt;"/>
+                    <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;0 - motor temperature (&#xb0;C)&lt;br&gt;&#xa;  1 - battery SOC remaining (%)&lt;br&gt;&#xa;  2 - battery voltage filtered (V)&lt;br&gt;&#xa;  3 - battery current (A)&lt;br&gt;&#xa;  4 - motor power (Watt/10)&lt;br&gt;&#xa;  5 - adc throttle (8 bit)&lt;br&gt;&#xa;  6 - adc torque sensor (10 bit)&lt;br&gt;&#xa;  7 - pedal cadence (rpm)&lt;br&gt;&#xa;  8 - human power(W/10)&lt;br&gt;&#xa;  9 - pedal torque adc delta&lt;br&gt;&#xa;10 - consumed Wh/10&lt;br&gt;&#xa;11 - motor ERPS&lt;br&gt;&#xa;12 - duty cycle PWM %&lt;br&gt;&#xa;13 - battery voltage not filtered (V)&#xa;&lt;/html&gt;"/>
                   </Properties>
                   <Events>
                     <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="TF_DATA_2KeyReleased"/>
@@ -3363,7 +3396,7 @@
                 <Component class="javax.swing.JTextField" name="TF_DATA_3">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="5"/>
-                    <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;0 - motor temperature (&#xb0;C)&lt;br&gt;&#xa;  1 - battery SOC remaining (%)&lt;br&gt;&#xa;  2 - battery voltage (V)&lt;br&gt;&#xa;  3 - battery current (A)&lt;br&gt;&#xa;  4 - motor power (Watt/10)&lt;br&gt;&#xa;  5 - adc throttle (8 bit)&lt;br&gt;&#xa;  6 - adc torque sensor (10 bit)&lt;br&gt;&#xa;  7 - pedal cadence (rpm)&lt;br&gt;&#xa;  8 - human power(W/10)&lt;br&gt;&#xa;  9 - pedal torque adc delta&lt;br&gt;&#xa;10 - consumed Wh/10&lt;br&gt;&#xa;11 - motor ERPS&lt;br&gt;&#xa;12 - duty cycle PWM %&#xa;&lt;/html&gt;"/>
+                    <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;0 - motor temperature (&#xb0;C)&lt;br&gt;&#xa;  1 - battery SOC remaining (%)&lt;br&gt;&#xa;  2 - battery voltage filtered (V)&lt;br&gt;&#xa;  3 - battery current (A)&lt;br&gt;&#xa;  4 - motor power (Watt/10)&lt;br&gt;&#xa;  5 - adc throttle (8 bit)&lt;br&gt;&#xa;  6 - adc torque sensor (10 bit)&lt;br&gt;&#xa;  7 - pedal cadence (rpm)&lt;br&gt;&#xa;  8 - human power(W/10)&lt;br&gt;&#xa;  9 - pedal torque adc delta&lt;br&gt;&#xa;10 - consumed Wh/10&lt;br&gt;&#xa;11 - motor ERPS&lt;br&gt;&#xa;12 - duty cycle PWM %&lt;br&gt;&#xa;13 - battery voltage not filtered (V)&#xa;&lt;/html&gt;"/>
                   </Properties>
                   <Events>
                     <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="TF_DATA_3KeyReleased"/>
@@ -3382,7 +3415,7 @@
                 <Component class="javax.swing.JTextField" name="TF_DATA_4">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="4"/>
-                    <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;0 - motor temperature (&#xb0;C)&lt;br&gt;&#xa;  1 - battery SOC remaining (%)&lt;br&gt;&#xa;  2 - battery voltage (V)&lt;br&gt;&#xa;  3 - battery current (A)&lt;br&gt;&#xa;  4 - motor power (Watt/10)&lt;br&gt;&#xa;  5 - adc throttle (8 bit)&lt;br&gt;&#xa;  6 - adc torque sensor (10 bit)&lt;br&gt;&#xa;  7 - pedal cadence (rpm)&lt;br&gt;&#xa;  8 - human power(W/10)&lt;br&gt;&#xa;  9 - pedal torque adc delta&lt;br&gt;&#xa;10 - consumed Wh/10&lt;br&gt;&#xa;11 - motor ERPS&lt;br&gt;&#xa;12 - duty cycle PWM %&#xa;&lt;/html&gt;"/>
+                    <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;0 - motor temperature (&#xb0;C)&lt;br&gt;&#xa;  1 - battery SOC remaining (%)&lt;br&gt;&#xa;  2 - battery voltage filtered (V)&lt;br&gt;&#xa;  3 - battery current (A)&lt;br&gt;&#xa;  4 - motor power (Watt/10)&lt;br&gt;&#xa;  5 - adc throttle (8 bit)&lt;br&gt;&#xa;  6 - adc torque sensor (10 bit)&lt;br&gt;&#xa;  7 - pedal cadence (rpm)&lt;br&gt;&#xa;  8 - human power(W/10)&lt;br&gt;&#xa;  9 - pedal torque adc delta&lt;br&gt;&#xa;10 - consumed Wh/10&lt;br&gt;&#xa;11 - motor ERPS&lt;br&gt;&#xa;12 - duty cycle PWM %&lt;br&gt;&#xa;13 - battery voltage not filtered (V)&#xa;&lt;/html&gt;"/>
                   </Properties>
                   <Events>
                     <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="TF_DATA_4KeyReleased"/>
@@ -3391,7 +3424,7 @@
                 <Component class="javax.swing.JTextField" name="TF_DATA_5">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="7"/>
-                    <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;0 - motor temperature (&#xb0;C)&lt;br&gt;&#xa;  1 - battery SOC remaining (%)&lt;br&gt;&#xa;  2 - battery voltage (V)&lt;br&gt;&#xa;  3 - battery current (A)&lt;br&gt;&#xa;  4 - motor power (Watt/10)&lt;br&gt;&#xa;  5 - adc throttle (8 bit)&lt;br&gt;&#xa;  6 - adc torque sensor (10 bit)&lt;br&gt;&#xa;  7 - pedal cadence (rpm)&lt;br&gt;&#xa;  8 - human power(W/10)&lt;br&gt;&#xa;  9 - pedal torque adc delta&lt;br&gt;&#xa;10 - consumed Wh/10&lt;br&gt;&#xa;11 - motor ERPS&lt;br&gt;&#xa;12 - duty cycle PWM %&#xa;&lt;/html&gt;"/>
+                    <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;0 - motor temperature (&#xb0;C)&lt;br&gt;&#xa;  1 - battery SOC remaining (%)&lt;br&gt;&#xa;  2 - battery voltage filtered (V)&lt;br&gt;&#xa;  3 - battery current (A)&lt;br&gt;&#xa;  4 - motor power (Watt/10)&lt;br&gt;&#xa;  5 - adc throttle (8 bit)&lt;br&gt;&#xa;  6 - adc torque sensor (10 bit)&lt;br&gt;&#xa;  7 - pedal cadence (rpm)&lt;br&gt;&#xa;  8 - human power(W/10)&lt;br&gt;&#xa;  9 - pedal torque adc delta&lt;br&gt;&#xa;10 - consumed Wh/10&lt;br&gt;&#xa;11 - motor ERPS&lt;br&gt;&#xa;12 - duty cycle PWM %&lt;br&gt;&#xa;13 - battery voltage not filtered (V)&#xa;&lt;/html&gt;"/>
                   </Properties>
                   <Events>
                     <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="TF_DATA_5KeyReleased"/>
@@ -3410,7 +3443,7 @@
                 <Component class="javax.swing.JTextField" name="TF_DATA_6">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="0"/>
-                    <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;0 - motor temperature (&#xb0;C)&lt;br&gt;&#xa;  1 - battery SOC remaining (%)&lt;br&gt;&#xa;  2 - battery voltage (V)&lt;br&gt;&#xa;  3 - battery current (A)&lt;br&gt;&#xa;  4 - motor power (Watt/10)&lt;br&gt;&#xa;  5 - adc throttle (8 bit)&lt;br&gt;&#xa;  6 - adc torque sensor (10 bit)&lt;br&gt;&#xa;  7 - pedal cadence (rpm)&lt;br&gt;&#xa;  8 - human power(W/10)&lt;br&gt;&#xa;  9 - pedal torque adc delta&lt;br&gt;&#xa;10 - consumed Wh/10&lt;br&gt;&#xa;11 - motor ERPS&lt;br&gt;&#xa;12 - duty cycle PWM %&#xa;&lt;/html&gt;"/>
+                    <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;0 - motor temperature (&#xb0;C)&lt;br&gt;&#xa;  1 - battery SOC remaining (%)&lt;br&gt;&#xa;  2 - battery voltage filtered (V)&lt;br&gt;&#xa;  3 - battery current (A)&lt;br&gt;&#xa;  4 - motor power (Watt/10)&lt;br&gt;&#xa;  5 - adc throttle (8 bit)&lt;br&gt;&#xa;  6 - adc torque sensor (10 bit)&lt;br&gt;&#xa;  7 - pedal cadence (rpm)&lt;br&gt;&#xa;  8 - human power(W/10)&lt;br&gt;&#xa;  9 - pedal torque adc delta&lt;br&gt;&#xa;10 - consumed Wh/10&lt;br&gt;&#xa;11 - motor ERPS&lt;br&gt;&#xa;12 - duty cycle PWM %&lt;br&gt;&#xa;13 - battery voltage not filtered (V)&#xa;&lt;/html&gt;"/>
                   </Properties>
                   <Events>
                     <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="TF_DATA_6KeyReleased"/>

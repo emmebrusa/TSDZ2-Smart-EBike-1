@@ -89,7 +89,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
     
     
     String[] displayDataArray = {"motor temperature", "battery SOC rem. %", "battery voltage", "battery current", "motor power", "adc throttle 8b", "adc torque sensor 10b", "pedal cadence rpm", "human power", "adc pedal torque delta", "consumed Wh", "motor ERPS", "duty cycle PWM %"};
-    String[] lightModeArray = {"<br>lights ON", "<br>lights FLASHING", "lights ON and BRAKE-FLASHING brak.", "lights FLASHING and ON when braking", "lights FLASHING BRAKE-FLASHING brak.", "lights ON and ON always braking", "lights ON and BRAKE-FLASHING alw.br.", "lights FLASHING and ON always braking", "lights FLASHING BRAKE-FLASHING alw.br.", "assist without pedal rotation", "assist with sensors error", "field weakening"};
+    String[] lightModeArray = {"<br>lights ON", "<br>lights FLASHING", "lights ON and BRAKE-FLASHING brak.", "lights FLASHING and ON when braking", "lights FLASHING BRAKE-FLASHING brak.", "lights ON and ON always braking", "lights ON and BRAKE-FLASHING alw.br.", "lights FLASHING and ON always braking", "lights FLASHING BRAKE-FLASHING alw.br.", "assist without pedal rotation", "assist with sensors error", "startup assist"};
 
     public int[] intAdcPedalTorqueAngleAdjArray = {160, 138, 120, 107, 96, 88, 80, 74, 70, 66, 63, 59, 56, 52, 50, 47, 44, 42, 39, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16 };
 
@@ -421,10 +421,10 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
             
             strLine = in.readLine();
             if (strLine != null) {
-                CB_STARTUP_ASSIST_SPEED_LIMIT_ENABLED.setSelected(Boolean.parseBoolean(strLine));
+                RB_BOOST_AT_ZERO_AUTO.setSelected(Boolean.parseBoolean(in.readLine()));
             }
             else {
-                CB_STARTUP_ASSIST_SPEED_LIMIT_ENABLED.setSelected(true);
+                RB_BOOST_AT_ZERO_AUTO.setSelected(false);
             }
             
             strLine = in.readLine();
@@ -435,11 +435,19 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
                 TF_BATT_PACK_RESISTANCE.setText("200");
             }
             
+            strLine = in.readLine();
+            if (strLine != null) {
+                TF_STARTUP_ASSIST_MIN_POWER.setText(strLine);
+            }
+            else {
+                TF_STARTUP_ASSIST_MIN_POWER.setText("100");
+            }
+            
         } catch (NumberFormatException nfe) {
             JOptionPane.showMessageDialog(null, "Corrupt .ini file or invalid data", "TSDZ2 Patameter Configurator", JOptionPane.INFORMATION_MESSAGE);
         }
 
-                if ((!RB_BOOST_AT_ZERO_CADENCE.isSelected()) && (!RB_BOOST_AT_ZERO_SPEED.isSelected())) {
+                if ((!RB_BOOST_AT_ZERO_CADENCE.isSelected()) && (!RB_BOOST_AT_ZERO_SPEED.isSelected()) && (!RB_BOOST_AT_ZERO_AUTO.isSelected())) {
                     RB_BOOST_AT_ZERO_CADENCE.setSelected(true); }
 
                 TF_TORQ_PER_ADC_STEP.setText(String.valueOf(intTorqueAdcStep));
@@ -607,6 +615,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
                 TF_MOTOR_BLOCK_CURR.setVisible(false);
                 TF_MOTOR_BLOCK_ERPS.setVisible(false);
                 TF_MOTOR_BLOCK_TIME.setVisible(false);
+                CB_STARTUP_ASSIST_SPEED_LIMIT_ENABLED .setVisible(false);
 
                 jLabelData1.setText("Data 1 - " + displayDataArray[Integer.parseInt(TF_DATA_1.getText())]);
                 jLabelData2.setText("Data 2 - " + displayDataArray[Integer.parseInt(TF_DATA_2.getText())]);
@@ -739,7 +748,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
     public TSDZ2_Configurator() {
         initComponents();
         
-        this.setTitle("Parameter Configurator 5.7 for Open Source Firmware TSDZ2 v20.1C.6 and TSDZ8");
+        this.setTitle("Parameter Configurator 5.8 for Open Source Firmware TSDZ2 v20.1C.6 and TSDZ8");
         this.setLocationRelativeTo(null);
 
         // update lists
@@ -1276,7 +1285,9 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
                      if (RB_BOOST_AT_ZERO_SPEED.isSelected()) {  // 10E STARTUP_BOOST_AT_ZERO 1
                          mWriter.println(mstrensHexLine(1));
                      }
-                         
+                     if (RB_BOOST_AT_ZERO_AUTO.isSelected()) {  // 10E STARTUP_BOOST_AT_ZERO 2
+                         mWriter.println(mstrensHexLine(2));
+                     }
                      if (JCB_DISPLAY_TYPE.getSelectedIndex() == C850) { // 110 ENABLE_850C 1
                          mWriter.println(mstrensHexLine(1));
                      }
@@ -1366,7 +1377,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
                    }
                     
                     mWriter.println(mstrensHexLine(JCB_ASSIST_LEVEL_5_MODE.getSelectedIndex()));     // 130 0=DISABLED 1=BEFORE_ECO 2=AFTER_TURBO
-                    
+                    // NOT USED
                     if (CB_STARTUP_ASSIST_SPEED_LIMIT_ENABLED.isSelected()) { // 132 STARTUP_ASSIST_SPEED_LIMIT_ENABLED 1";
                          mWriter.println(mstrensHexLine(1));
                     }
@@ -1375,7 +1386,9 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
                     }
                     
                     
-                    mWriter.println(mstrensHexLine(Integer.parseInt(TF_BATT_PACK_RESISTANCE.getText())));
+                    mWriter.println(mstrensHexLine(Integer.parseInt(TF_BATT_PACK_RESISTANCE.getText()))); // 134
+                    
+                    mWriter.println(mstrensHexLine(Integer.parseInt(TF_STARTUP_ASSIST_MIN_POWER.getText())));  // 136
                     
                     mWriter.println(":00000001FF");   // End of hex file
                  } catch (IOException ioe) {
@@ -2332,7 +2345,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
                         break;
                 }
                 iWriter.println(JCB_ASSIST_LEVEL_5_MODE.getSelectedIndex());
-                
+                /* NOT USED
                 if (CB_STARTUP_ASSIST_SPEED_LIMIT_ENABLED.isSelected()) {
                     text_to_save = "#define STARTUP_ASSIST_SPEED_LIMIT_ENABLED 1";
                     pWriter.println(text_to_save);
@@ -2342,9 +2355,19 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
                     pWriter.println(text_to_save);
                 }
                 iWriter.println(CB_STARTUP_ASSIST_SPEED_LIMIT_ENABLED.isSelected());
+                */
+                if (RB_BOOST_AT_ZERO_AUTO.isSelected()) {
+                    text_to_save = "#define STARTUP_BOOST_AT_ZERO 2";
+                    pWriter.println(text_to_save);
+                }
+                iWriter.println(RB_BOOST_AT_ZERO_AUTO.isSelected());
                 
                 text_to_save = "#define BATTERY_PACK_RESISTANCE " + TF_BATT_PACK_RESISTANCE.getText();
                 iWriter.println(TF_BATT_PACK_RESISTANCE.getText());
+                pWriter.println(text_to_save);
+                
+                text_to_save = "#define STARTUP_ASSIST_MIN_POWER " + TF_STARTUP_ASSIST_MIN_POWER.getText();
+                iWriter.println(TF_STARTUP_ASSIST_MIN_POWER.getText());
                 pWriter.println(text_to_save);
                 
                 pWriter.println("\r\n#endif /* CONFIG_H_ */");
@@ -2472,7 +2495,8 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
         JCB_MOTOR_TYPE = new javax.swing.JComboBox<>();
         jLabel10 = new javax.swing.JLabel();
         TF_BATT_POW_MAX = new javax.swing.JTextField();
-        CB_STARTUP_ASSIST_SPEED_LIMIT_ENABLED = new javax.swing.JCheckBox();
+        TF_STARTUP_ASSIST_MIN_POWER = new javax.swing.JTextField();
+        RB_BOOST_AT_ZERO_AUTO = new javax.swing.JRadioButton();
         jPanel3 = new javax.swing.JPanel();
         jLabel18 = new javax.swing.JLabel();
         jLabel21 = new javax.swing.JLabel();
@@ -2528,6 +2552,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
         CB_MAX_SPEED_DISPLAY = new javax.swing.JCheckBox();
         jLabel79 = new javax.swing.JLabel();
         JCB_ASSIST_MODE_ON_STARTUP = new javax.swing.JComboBox<>();
+        CB_STARTUP_ASSIST_SPEED_LIMIT_ENABLED = new javax.swing.JCheckBox();
         jPanel4 = new javax.swing.JPanel();
         jPanel9 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
@@ -2794,7 +2819,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
         jLabel33.setText("Startup boost at zero");
 
         buttonGroup9.add(RB_BOOST_AT_ZERO_CADENCE);
-        RB_BOOST_AT_ZERO_CADENCE.setText("cadence");
+        RB_BOOST_AT_ZERO_CADENCE.setText("cad.");
         RB_BOOST_AT_ZERO_CADENCE.setEnabled(CB_STARTUP_BOOST_ON_START.isSelected());
 
         buttonGroup9.add(RB_BOOST_AT_ZERO_SPEED);
@@ -2816,7 +2841,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
             }
         });
 
-        CB_STARTUP_ASSIST_ENABLED.setText("Startup assist enabled");
+        CB_STARTUP_ASSIST_ENABLED.setText("Startup assist enabled  Min power (W)");
         CB_STARTUP_ASSIST_ENABLED.setToolTipText("Not available with coaster brake enabled");
         CB_STARTUP_ASSIST_ENABLED.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -2872,9 +2897,13 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
         TF_BATT_POW_MAX.setText("500");
         TF_BATT_POW_MAX.setToolTipText("<html>Motor power limit in offroad mode<br>\nMax value depends on the rated<br>\nmotor power and the battery capacity\n</html>");
 
-        CB_STARTUP_ASSIST_SPEED_LIMIT_ENABLED.setText("Speed limit enabled");
-        CB_STARTUP_ASSIST_SPEED_LIMIT_ENABLED.setToolTipText("<html>When enabled, Startup assist uses<br>\nthe same speed limit as set for Walk assist.\n</html>");
-        CB_STARTUP_ASSIST_SPEED_LIMIT_ENABLED.setEnabled(CB_STARTUP_ASSIST_ENABLED.isSelected());
+        TF_STARTUP_ASSIST_MIN_POWER.setText("100");
+        TF_STARTUP_ASSIST_MIN_POWER.setToolTipText("<html>Max value 255<br>\nRecommended range 50 to 150\n</html>");
+        TF_STARTUP_ASSIST_MIN_POWER.setEnabled(CB_STARTUP_ASSIST_ENABLED.isSelected());
+
+        buttonGroup9.add(RB_BOOST_AT_ZERO_AUTO);
+        RB_BOOST_AT_ZERO_AUTO.setText("auto");
+        RB_BOOST_AT_ZERO_AUTO.setEnabled(CB_STARTUP_BOOST_ON_START.isSelected());
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -2883,11 +2912,6 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                        .addComponent(jLabel22)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(TF_BOOST_CADENCE_STEP, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -2926,26 +2950,36 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
                         .addGap(18, 18, 18))
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 207, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(CB_STARTUP_BOOST_ON_START)
-                            .addComponent(CB_SMOOTH_START_ENABLED)
-                            .addComponent(jLabel7)
-                            .addComponent(CB_FIELD_WEAKENING_ENABLED)
+                            .addGroup(jPanel6Layout.createSequentialGroup()
+                                .addComponent(CB_STARTUP_ASSIST_ENABLED, javax.swing.GroupLayout.PREFERRED_SIZE, 230, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(TF_STARTUP_ASSIST_MIN_POWER, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel6Layout.createSequentialGroup()
                                 .addComponent(jLabel77, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(TF_SMOOTH_START_RAMP, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel6Layout.createSequentialGroup()
-                                .addComponent(jLabel33, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(16, 16, 16)
-                                .addComponent(RB_BOOST_AT_ZERO_CADENCE)
-                                .addGap(6, 6, 6)
-                                .addComponent(RB_BOOST_AT_ZERO_SPEED))
-                            .addGroup(jPanel6Layout.createSequentialGroup()
-                                .addComponent(CB_STARTUP_ASSIST_ENABLED, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(CB_STARTUP_ASSIST_SPEED_LIMIT_ENABLED, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 207, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(CB_STARTUP_BOOST_ON_START)
+                                    .addComponent(CB_SMOOTH_START_ENABLED)
+                                    .addComponent(jLabel7)
+                                    .addComponent(CB_FIELD_WEAKENING_ENABLED)
+                                    .addGroup(jPanel6Layout.createSequentialGroup()
+                                        .addComponent(jLabel33)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(RB_BOOST_AT_ZERO_CADENCE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(RB_BOOST_AT_ZERO_SPEED)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(RB_BOOST_AT_ZERO_AUTO)))
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel22)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(TF_BOOST_CADENCE_STEP, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2994,20 +3028,22 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
                     .addComponent(jLabel22, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(TF_BOOST_CADENCE_STEP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(5, 5, 5)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel33, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(RB_BOOST_AT_ZERO_CADENCE)
-                    .addComponent(RB_BOOST_AT_ZERO_SPEED))
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(RB_BOOST_AT_ZERO_AUTO, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel33, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(RB_BOOST_AT_ZERO_CADENCE)
+                        .addComponent(RB_BOOST_AT_ZERO_SPEED)))
                 .addGap(8, 8, 8)
                 .addComponent(CB_SMOOTH_START_ENABLED)
                 .addGap(3, 3, 3)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel77, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(TF_SMOOTH_START_RAMP, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(5, 5, 5)
+                .addGap(2, 2, 2)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(CB_STARTUP_ASSIST_ENABLED)
-                    .addComponent(CB_STARTUP_ASSIST_SPEED_LIMIT_ENABLED))
+                    .addComponent(TF_STARTUP_ASSIST_MIN_POWER, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(CB_STARTUP_ASSIST_ENABLED))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -3471,35 +3507,47 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
                 .addContainerGap(82, Short.MAX_VALUE))
         );
 
+        CB_STARTUP_ASSIST_SPEED_LIMIT_ENABLED.setText("Speed limit enabled");
+        CB_STARTUP_ASSIST_SPEED_LIMIT_ENABLED.setToolTipText("<html>When enabled, Startup assist uses<br>\nthe same speed limit as set for Walk assist.\n</html>");
+        CB_STARTUP_ASSIST_SPEED_LIMIT_ENABLED.setEnabled(CB_STARTUP_ASSIST_ENABLED.isSelected());
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(14, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, 293, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(18, 18, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(CB_STARTUP_ASSIST_SPEED_LIMIT_ENABLED, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(20, 20, 20))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(CB_STARTUP_ASSIST_SPEED_LIMIT_ENABLED)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(jPanel1Layout.createSequentialGroup()
+                                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addGap(45, 45, 45))
         );
 
@@ -4155,8 +4203,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
         jLabelLights1.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
         TF_LIGHT_MODE_1.setText("6");
-        TF_LIGHT_MODE_1.setToolTipText("<html>With lights button ON<br>\n0 - lights ON<br>\n1 - lights FLASHING<br>\n2 - lights ON and BRAKE-FLASHING when braking<br>\n3 - lights FLASHING and ON when braking<br>\n4 - lights FLASHING and BRAKE-FLASHING when braking<br>\n5 - lights ON and ON when braking, even with the light button OFF<br>\n6 - lights ON and BRAKE-FLASHING when braking, even with the light button OFF<br>\n7 - lights FLASHING and ON when braking, even with the light button OFF<br>\n8 - lights FLASHING and BRAKE-FLASHING when braking, even with the light button OFF\n</html>");
-        TF_LIGHT_MODE_1.setEnabled(CB_LIGHTS.isSelected());
+        TF_LIGHT_MODE_1.setToolTipText("<html>With lights button ON<br>\n0 - lights ON<br>\n1 - lights FLASHING<br>\n2 - lights ON and BRAKE-FLASHING when braking<br>\n3 - lights FLASHING and ON when braking<br>\n4 - lights FLASHING and BRAKE-FLASHING when braking<br>\n5 - lights ON and ON when braking, even with the light button OFF<br>\n6 - lights ON and BRAKE-FLASHING when braking, even with the light button OFF<br>\n7 - lights FLASHING and ON when braking, even with the light button OFF<br>\n8 - lights FLASHING and BRAKE-FLASHING when braking, even with the light button OFF<br>\nor alternative option settings<br>\n11 - startup assist\n</html>");
         TF_LIGHT_MODE_1.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 TF_LIGHT_MODE_1KeyReleased(evt);
@@ -4168,7 +4215,6 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
 
         TF_LIGHT_MODE_2.setText("7");
         TF_LIGHT_MODE_2.setToolTipText("<html>With lights button ON<br>\n0 - lights ON<br>\n1 - lights FLASHING<br>\n2 - lights ON and BRAKE-FLASHING when braking<br>\n3 - lights FLASHING and ON when braking<br>\n4 - lights FLASHING and BRAKE-FLASHING when braking<br>\n5 - lights ON and ON when braking, even with the light button OFF<br>\n6 - lights ON and BRAKE-FLASHING when braking, even with the light button OFF<br>\n7 - lights FLASHING and ON when braking, even with the light button OFF<br>\n8 - lights FLASHING and BRAKE-FLASHING when braking, even with the light button OFF<br>\nor alternative option settings<br>\n9 - assistance without pedal rotation\n</html>");
-        TF_LIGHT_MODE_2.setEnabled(CB_LIGHTS.isSelected());
         TF_LIGHT_MODE_2.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 TF_LIGHT_MODE_2KeyReleased(evt);
@@ -4177,7 +4223,6 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
 
         TF_LIGHT_MODE_3.setText("1");
         TF_LIGHT_MODE_3.setToolTipText("<html>With lights button ON<br>\n0 - lights ON<br>\n1 - lights FLASHING<br>\n2 - lights ON and BRAKE-FLASHING when braking<br>\n3 - lights FLASHING and ON when braking<br>\n4 - lights FLASHING and BRAKE-FLASHING when braking<br>\n5 - lights ON and ON when braking, even with the light button OFF<br>\n6 - lights ON and BRAKE-FLASHING when braking, even with the light button OFF<br>\n7 - lights FLASHING and ON when braking, even with the light button OFF<br>\n8 - lights FLASHING and BRAKE-FLASHING when braking, even with the light button OFF<br>\nor alternative option settings<br>\n10 - assistance with sensors error\n</html>");
-        TF_LIGHT_MODE_3.setEnabled(CB_LIGHTS.isSelected());
         TF_LIGHT_MODE_3.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 TF_LIGHT_MODE_3KeyReleased(evt);
@@ -4611,7 +4656,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
         jLabelData1.setText("Data 1");
 
         TF_DATA_1.setText("1");
-        TF_DATA_1.setToolTipText("<html>0 - motor temperature (°C)<br>\n  1 - battery SOC remaining (%)<br>\n  2 - battery voltage (V)<br>\n  3 - battery current (A)<br>\n  4 - motor power (Watt/10)<br>\n  5 - adc throttle (8 bit)<br>\n  6 - adc torque sensor (10 bit)<br>\n  7 - pedal cadence (rpm)<br>\n  8 - human power(W/10)<br>\n  9 - pedal torque adc delta<br>\n10 - consumed Wh/10<br>\n11 - motor ERPS<br>\n12 - duty cycle PWM %\n</html>");
+        TF_DATA_1.setToolTipText("<html>0 - motor temperature (°C)<br>\n  1 - battery SOC remaining (%)<br>\n  2 - battery voltage filtered (V)<br>\n  3 - battery current (A)<br>\n  4 - motor power (Watt/10)<br>\n  5 - adc throttle (8 bit)<br>\n  6 - adc torque sensor (10 bit)<br>\n  7 - pedal cadence (rpm)<br>\n  8 - human power(W/10)<br>\n  9 - pedal torque adc delta<br>\n10 - consumed Wh/10<br>\n11 - motor ERPS<br>\n12 - duty cycle PWM %<br>\n13 - battery voltage not filtered (V)\n</html>");
         TF_DATA_1.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 TF_DATA_1KeyReleased(evt);
@@ -4619,7 +4664,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
         });
 
         TF_DATA_2.setText("2");
-        TF_DATA_2.setToolTipText("<html>0 - motor temperature (°C)<br>\n  1 - battery SOC remaining (%)<br>\n  2 - battery voltage (V)<br>\n  3 - battery current (A)<br>\n  4 - motor power (Watt/10)<br>\n  5 - adc throttle (8 bit)<br>\n  6 - adc torque sensor (10 bit)<br>\n  7 - pedal cadence (rpm)<br>\n  8 - human power(W/10)<br>\n  9 - pedal torque adc delta<br>\n10 - consumed Wh/10<br>\n11 - motor ERPS<br>\n12 - duty cycle PWM %\n</html>");
+        TF_DATA_2.setToolTipText("<html>0 - motor temperature (°C)<br>\n  1 - battery SOC remaining (%)<br>\n  2 - battery voltage filtered (V)<br>\n  3 - battery current (A)<br>\n  4 - motor power (Watt/10)<br>\n  5 - adc throttle (8 bit)<br>\n  6 - adc torque sensor (10 bit)<br>\n  7 - pedal cadence (rpm)<br>\n  8 - human power(W/10)<br>\n  9 - pedal torque adc delta<br>\n10 - consumed Wh/10<br>\n11 - motor ERPS<br>\n12 - duty cycle PWM %<br>\n13 - battery voltage not filtered (V)\n</html>");
         TF_DATA_2.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 TF_DATA_2KeyReleased(evt);
@@ -4629,7 +4674,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
         jLabelData2.setText("Data 2");
 
         TF_DATA_3.setText("5");
-        TF_DATA_3.setToolTipText("<html>0 - motor temperature (°C)<br>\n  1 - battery SOC remaining (%)<br>\n  2 - battery voltage (V)<br>\n  3 - battery current (A)<br>\n  4 - motor power (Watt/10)<br>\n  5 - adc throttle (8 bit)<br>\n  6 - adc torque sensor (10 bit)<br>\n  7 - pedal cadence (rpm)<br>\n  8 - human power(W/10)<br>\n  9 - pedal torque adc delta<br>\n10 - consumed Wh/10<br>\n11 - motor ERPS<br>\n12 - duty cycle PWM %\n</html>");
+        TF_DATA_3.setToolTipText("<html>0 - motor temperature (°C)<br>\n  1 - battery SOC remaining (%)<br>\n  2 - battery voltage filtered (V)<br>\n  3 - battery current (A)<br>\n  4 - motor power (Watt/10)<br>\n  5 - adc throttle (8 bit)<br>\n  6 - adc torque sensor (10 bit)<br>\n  7 - pedal cadence (rpm)<br>\n  8 - human power(W/10)<br>\n  9 - pedal torque adc delta<br>\n10 - consumed Wh/10<br>\n11 - motor ERPS<br>\n12 - duty cycle PWM %<br>\n13 - battery voltage not filtered (V)\n</html>");
         TF_DATA_3.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 TF_DATA_3KeyReleased(evt);
@@ -4641,7 +4686,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
         jLabelData4.setText("Data 4");
 
         TF_DATA_4.setText("4");
-        TF_DATA_4.setToolTipText("<html>0 - motor temperature (°C)<br>\n  1 - battery SOC remaining (%)<br>\n  2 - battery voltage (V)<br>\n  3 - battery current (A)<br>\n  4 - motor power (Watt/10)<br>\n  5 - adc throttle (8 bit)<br>\n  6 - adc torque sensor (10 bit)<br>\n  7 - pedal cadence (rpm)<br>\n  8 - human power(W/10)<br>\n  9 - pedal torque adc delta<br>\n10 - consumed Wh/10<br>\n11 - motor ERPS<br>\n12 - duty cycle PWM %\n</html>");
+        TF_DATA_4.setToolTipText("<html>0 - motor temperature (°C)<br>\n  1 - battery SOC remaining (%)<br>\n  2 - battery voltage filtered (V)<br>\n  3 - battery current (A)<br>\n  4 - motor power (Watt/10)<br>\n  5 - adc throttle (8 bit)<br>\n  6 - adc torque sensor (10 bit)<br>\n  7 - pedal cadence (rpm)<br>\n  8 - human power(W/10)<br>\n  9 - pedal torque adc delta<br>\n10 - consumed Wh/10<br>\n11 - motor ERPS<br>\n12 - duty cycle PWM %<br>\n13 - battery voltage not filtered (V)\n</html>");
         TF_DATA_4.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 TF_DATA_4KeyReleased(evt);
@@ -4649,7 +4694,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
         });
 
         TF_DATA_5.setText("7");
-        TF_DATA_5.setToolTipText("<html>0 - motor temperature (°C)<br>\n  1 - battery SOC remaining (%)<br>\n  2 - battery voltage (V)<br>\n  3 - battery current (A)<br>\n  4 - motor power (Watt/10)<br>\n  5 - adc throttle (8 bit)<br>\n  6 - adc torque sensor (10 bit)<br>\n  7 - pedal cadence (rpm)<br>\n  8 - human power(W/10)<br>\n  9 - pedal torque adc delta<br>\n10 - consumed Wh/10<br>\n11 - motor ERPS<br>\n12 - duty cycle PWM %\n</html>");
+        TF_DATA_5.setToolTipText("<html>0 - motor temperature (°C)<br>\n  1 - battery SOC remaining (%)<br>\n  2 - battery voltage filtered (V)<br>\n  3 - battery current (A)<br>\n  4 - motor power (Watt/10)<br>\n  5 - adc throttle (8 bit)<br>\n  6 - adc torque sensor (10 bit)<br>\n  7 - pedal cadence (rpm)<br>\n  8 - human power(W/10)<br>\n  9 - pedal torque adc delta<br>\n10 - consumed Wh/10<br>\n11 - motor ERPS<br>\n12 - duty cycle PWM %<br>\n13 - battery voltage not filtered (V)\n</html>");
         TF_DATA_5.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 TF_DATA_5KeyReleased(evt);
@@ -4661,7 +4706,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
         jLabelData6.setText("Data 6");
 
         TF_DATA_6.setText("0");
-        TF_DATA_6.setToolTipText("<html>0 - motor temperature (°C)<br>\n  1 - battery SOC remaining (%)<br>\n  2 - battery voltage (V)<br>\n  3 - battery current (A)<br>\n  4 - motor power (Watt/10)<br>\n  5 - adc throttle (8 bit)<br>\n  6 - adc torque sensor (10 bit)<br>\n  7 - pedal cadence (rpm)<br>\n  8 - human power(W/10)<br>\n  9 - pedal torque adc delta<br>\n10 - consumed Wh/10<br>\n11 - motor ERPS<br>\n12 - duty cycle PWM %\n</html>");
+        TF_DATA_6.setToolTipText("<html>0 - motor temperature (°C)<br>\n  1 - battery SOC remaining (%)<br>\n  2 - battery voltage filtered (V)<br>\n  3 - battery current (A)<br>\n  4 - motor power (Watt/10)<br>\n  5 - adc throttle (8 bit)<br>\n  6 - adc torque sensor (10 bit)<br>\n  7 - pedal cadence (rpm)<br>\n  8 - human power(W/10)<br>\n  9 - pedal torque adc delta<br>\n10 - consumed Wh/10<br>\n11 - motor ERPS<br>\n12 - duty cycle PWM %<br>\n13 - battery voltage not filtered (V)\n</html>");
         TF_DATA_6.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 TF_DATA_6KeyReleased(evt);
@@ -5503,7 +5548,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
     private void TF_LIGHT_MODE_1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_TF_LIGHT_MODE_1KeyReleased
         try {
             int index = Integer.parseInt(TF_LIGHT_MODE_1.getText());
-            if ((index >= 0)&&(index <= 8)) {
+            if (((index >= 0)&&(index <= 8))||(index == 11)) {
                 jLabelLights1.setText("<html>Mode 1 - " + lightModeArray[Integer.parseInt(TF_LIGHT_MODE_1.getText())] + "</html>"); }
             else {
                 jLabelLights1.setText("Mode 1");	}
@@ -5933,6 +5978,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
         TF_BOOST_CADENCE_STEP.setEnabled(CB_STARTUP_BOOST_ON_START.isSelected());
         RB_BOOST_AT_ZERO_CADENCE.setEnabled(CB_STARTUP_BOOST_ON_START.isSelected());
         RB_BOOST_AT_ZERO_SPEED.setEnabled(CB_STARTUP_BOOST_ON_START.isSelected());
+        RB_BOOST_AT_ZERO_AUTO.setEnabled(CB_STARTUP_BOOST_ON_START.isSelected());
     }//GEN-LAST:event_CB_STARTUP_BOOST_ON_STARTStateChanged
 
     private void CB_SMOOTH_START_ENABLEDStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_CB_SMOOTH_START_ENABLEDStateChanged
@@ -5989,7 +6035,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
             CB_STARTUP_ASSIST_ENABLED.setSelected(false);
         }
         CB_STARTUP_ASSIST_ENABLED.setEnabled(!boolCoasterBrake);
-        
+        TF_STARTUP_ASSIST_MIN_POWER.setEnabled(CB_STARTUP_ASSIST_ENABLED.isSelected());
         CB_STARTUP_ASSIST_SPEED_LIMIT_ENABLED.setEnabled(CB_STARTUP_ASSIST_ENABLED.isSelected());
     }//GEN-LAST:event_CB_STARTUP_ASSIST_ENABLEDStateChanged
 
@@ -6283,6 +6329,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
     private javax.swing.JLabel Label_Parameter2;
     private javax.swing.JLabel Label_Parameter3;
     private javax.swing.JLabel Label_Parameter5;
+    private javax.swing.JRadioButton RB_BOOST_AT_ZERO_AUTO;
     private javax.swing.JRadioButton RB_BOOST_AT_ZERO_CADENCE;
     private javax.swing.JRadioButton RB_BOOST_AT_ZERO_SPEED;
     private javax.swing.JRadioButton RB_DISPLAY_ALWAY_ON;
@@ -6363,6 +6410,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
     private javax.swing.JTextField TF_POWER_ASS_3;
     private javax.swing.JTextField TF_POWER_ASS_4;
     private javax.swing.JTextField TF_SMOOTH_START_RAMP;
+    private javax.swing.JTextField TF_STARTUP_ASSIST_MIN_POWER;
     private javax.swing.JTextField TF_STREET_POWER_LIM;
     private javax.swing.JTextField TF_STREET_SPEED_LIM;
     private javax.swing.JTextField TF_TEMP_MAX_LIM;
