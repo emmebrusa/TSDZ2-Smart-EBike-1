@@ -21,8 +21,8 @@ static const uint8_t ui8_default_array[EEPROM_BYTES_STORED] =
   BATTERY_LOW_VOLTAGE_CUT_OFF_X10_1,			// 3 + EEPROM_BASE_ADDRESS
   WHEEL_PERIMETER_0,							// 4 + EEPROM_BASE_ADDRESS
   WHEEL_PERIMETER_1,							// 5 + EEPROM_BASE_ADDRESS
-  WHEEL_MAX_SPEED,								// 6 + EEPROM_BASE_ADDRESS
   // for oem display
+  STARTUP_ASSIST_ENABLED,						// 6 + EEPROM_BASE_ADDRESS
   TORQUE_SENSOR_ESTIMATED,						// 7 + EEPROM_BASE_ADDRESS
   PEDAL_TORQUE_PER_10_BIT_ADC_STEP_X100,		// 8 + EEPROM_BASE_ADDRESS
   MOTOR_ASSISTANCE_WITHOUT_PEDAL_ROTATION,		// 9 + EEPROM_BASE_ADDRESS
@@ -150,7 +150,7 @@ void EEPROM_controller(uint8_t ui8_operation, uint8_t ui8_byte_init)
       ui16_temp += (((uint16_t) ui8_temp << 8) & 0xff00);
       p_configuration_variables->ui16_wheel_perimeter = ui16_temp;
 
-      p_configuration_variables->ui8_wheel_speed_max = FLASH_ReadByte(ADDRESS_WHEEL_SPEED_MAX);
+      p_configuration_variables->ui8_startup_assist_enabled = FLASH_ReadByte(ADDRESS_STARTUP_ASSIST_ENABLED);
 
       p_configuration_variables->ui8_torque_sensor_estimated = FLASH_ReadByte(ADDRESS_TORQUE_SENSOR_ESTIMATED);
       
@@ -189,7 +189,7 @@ void EEPROM_controller(uint8_t ui8_operation, uint8_t ui8_byte_init)
       ui8_array[ADDRESS_WHEEL_PERIMETER_0 - EEPROM_BASE_ADDRESS] = p_configuration_variables->ui16_wheel_perimeter & 255;
       ui8_array[ADDRESS_WHEEL_PERIMETER_1 - EEPROM_BASE_ADDRESS] = (p_configuration_variables->ui16_wheel_perimeter >> 8) & 255;
       
-      ui8_array[ADDRESS_WHEEL_SPEED_MAX - EEPROM_BASE_ADDRESS] = p_configuration_variables->ui8_wheel_speed_max;
+      ui8_array[ADDRESS_STARTUP_ASSIST_ENABLED - EEPROM_BASE_ADDRESS] = p_configuration_variables->ui8_startup_assist_enabled;
       
       ui8_array[ADDRESS_TORQUE_SENSOR_ESTIMATED - EEPROM_BASE_ADDRESS] = p_configuration_variables->ui8_torque_sensor_estimated;
       
