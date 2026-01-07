@@ -1926,7 +1926,7 @@ static uint8_t ui8_motor_check_goes_alone_timer = 0U;
 	// check cadence sensor
 	if ((ui16_adc_pedal_torque_delta_no_boost > ADC_TORQUE_SENSOR_DELTA_THRESHOLD)
 	  &&(!ui8_startup_assist_flag)&&(ui8_riding_torque_mode)
-	  &&(ui8_pedal_cadence_RPM == 0U)) {
+	  &&(!ui8_brake_state)&&(ui8_pedal_cadence_RPM == 0U)) {
 		ui8_check_cadence_sensor_counter++;
 	}
 	else {
@@ -2437,9 +2437,10 @@ static void uart_receive_package(void)
 											ui8_display_alternative_lights_configuration = 1;
 										}
 										break;
-										// display lights configuration
-										ui8_display_lights_configuration = m_configuration_variables.ui8_lights_configuration;
 								}
+								// display lights configuration
+								ui8_display_lights_configuration = m_configuration_variables.ui8_lights_configuration;
+								
 								break;
 						}
 						
