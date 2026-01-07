@@ -687,6 +687,14 @@ static void apply_startup_boost(void)
 				ui8_startup_boost_flag = 0;
 			}
 			break;
+		case AUTO_BOOST:
+			ui8_startup_boost_flag = 1;
+			if ((ui8_torque_sensor_calibration_enabled)
+			  && (ui16_adc_pedal_torque_delta < 20)
+			  &&(ui16_wheel_speed_x10 > 0U)) {
+				ui8_startup_boost_flag = 0;
+			}
+			break;
 	}
 	// pedal torque delta & startup boost
 	if (ui8_startup_boost_flag) {

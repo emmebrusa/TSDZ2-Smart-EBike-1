@@ -14,6 +14,7 @@
 // startup boost mode
 #define CADENCE						0
 #define SPEED						1
+#define AUTO_BOOST					2
 
 // for oem display
 extern volatile uint8_t ui8_display_fault_code;
@@ -36,8 +37,8 @@ typedef struct _configuration_variables
   uint8_t ui8_battery_current_max;
   uint16_t ui16_battery_low_voltage_cut_off_x10;
   uint16_t ui16_wheel_perimeter;
-  uint8_t ui8_wheel_speed_max;
   // for oem display
+  uint8_t ui8_startup_assist_enabled;
   uint8_t ui8_torque_sensor_estimated;
   uint8_t ui8_pedal_torque_per_10_bit_ADC_step_est_x100;
   uint8_t ui8_assist_without_pedal_rotation_enabled;
