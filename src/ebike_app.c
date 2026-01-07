@@ -1422,7 +1422,7 @@ static void apply_throttle(void)
 			}
           break;
         case W_O_P_6KM_H_AND_PEDALING:
-			if ((ui16_wheel_speed_x10 > WALK_ASSIST_THRESHOLD_SPEED_X10)
+			if ((ui16_wheel_speed_x10 > (WALK_ASSIST_THRESHOLD_SPEED * 10U))
 			  &&(ui8_pedal_cadence_RPM == 0U)) {
 				ui8_adc_throttle_assist = 0;
 			}
