@@ -944,8 +944,8 @@ static void apply_emtb_assist(void)
 		ui8_pedal_cadence_RPM = 1;
 	}
 	
-	if (((ui16_adc_pedal_torque_delta)&&(ui8_pedal_cadence_RPM > 0U))
-	  ||(ui8_startup_assist_adc_battery_current_target)) {
+	if (((ui16_adc_pedal_torque_delta > 0U)&&(ui8_pedal_cadence_RPM > 0U))
+	  ||(ui8_startup_assist_adc_battery_current_target > 0U)) {
 		
 		// get the eMTB assist denominator torque based
 		uint16_t ui16_eMTB_assist_denominator = (508 - (ui8_riding_mode_parameter << 1));
@@ -961,8 +961,8 @@ static void apply_emtb_assist(void)
 		ui16_eMTB_assist_denominator += eMTB_ASSIST_DENOMINATOR_MIN;
 		
 		// eMTB pedal torque delta calculation (progressive)
-		uint16_t ui16_eMTB_adc_pedal_torque_delta = (uint16_t)((uint32_t)((ui16_adc_pedal_torque_delta * ui16_adc_pedal_torque_delta) + ui16_eMTB_assist_denominator)
-			/ ui16_eMTB_assist_denominator);
+		uint16_t ui16_eMTB_adc_pedal_torque_delta = (uint16_t)((uint32_t)(ui16_adc_pedal_torque_delta * ui16_adc_pedal_torque_delta)
+			/ ui16_eMTB_assist_denominator) + ADC_TORQUE_SENSOR_OFFSET_ADJ_EMTB;
 		
 		// set eMTB assist target current
 		uint16_t ui16_adc_battery_current_target_eMTB_assist = ui16_eMTB_adc_pedal_torque_delta;
