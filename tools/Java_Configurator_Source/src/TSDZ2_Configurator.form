@@ -142,25 +142,17 @@
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
+                      <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
+                      <Component id="jPanel6" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
-                      <Component id="jPanel6" min="-2" pref="293" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" attributes="0">
-                              <EmptySpace type="separate" max="32767" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jPanel5" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace type="separate" max="32767" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="CB_STARTUP_ASSIST_SPEED_LIMIT_ENABLED" min="-2" pref="30" max="-2" attributes="0"/>
-                              <EmptySpace max="32767" attributes="0"/>
-                          </Group>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="jPanel3" max="32767" attributes="0"/>
+                          <Component id="CB_STARTUP_ASSIST_SPEED_LIMIT_ENABLED" min="-2" pref="30" max="-2" attributes="0"/>
+                          <Component id="jPanel5" alignment="0" max="32767" attributes="0"/>
                       </Group>
+                      <EmptySpace max="32767" attributes="0"/>
                       <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -228,8 +220,8 @@
                                           <Group type="103" groupAlignment="0" attributes="0">
                                               <Component id="TF_BATT_POW_MAX" min="-2" pref="48" max="-2" attributes="0"/>
                                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                                  <Component id="TF_OVERCURRENT_DELAY" pref="48" max="32767" attributes="0"/>
-                                                  <Component id="TF_MOTOR_DEC" pref="48" max="32767" attributes="0"/>
+                                                  <Component id="TF_OVERCURRENT_DELAY" max="32767" attributes="0"/>
+                                                  <Component id="TF_MOTOR_DEC" max="32767" attributes="0"/>
                                                   <Component id="TF_MOTOR_ACC" pref="48" max="32767" attributes="0"/>
                                               </Group>
                                           </Group>
@@ -247,18 +239,14 @@
                               </Group>
                               <Group type="102" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" attributes="0">
-                                          <Component id="CB_STARTUP_ASSIST_ENABLED" min="-2" pref="230" max="-2" attributes="0"/>
-                                          <EmptySpace max="32767" attributes="0"/>
-                                          <Component id="TF_STARTUP_ASSIST_MIN_POWER" min="-2" pref="48" max="-2" attributes="0"/>
-                                      </Group>
                                       <Group type="102" alignment="0" attributes="0">
                                           <Component id="jLabel77" min="-2" pref="214" max="-2" attributes="0"/>
-                                          <EmptySpace max="32767" attributes="0"/>
+                                          <EmptySpace pref="18" max="32767" attributes="0"/>
                                           <Component id="TF_SMOOTH_START_RAMP" min="-2" pref="48" max="-2" attributes="0"/>
                                       </Group>
                                       <Group type="102" attributes="0">
                                           <Group type="103" groupAlignment="0" attributes="0">
+                                              <Component id="CB_STARTUP_ASSIST_ENABLED" min="-2" pref="230" max="-2" attributes="0"/>
                                               <Component id="jLabel10" alignment="0" min="-2" pref="207" max="-2" attributes="0"/>
                                               <Component id="CB_STARTUP_BOOST_ON_START" alignment="0" min="-2" max="-2" attributes="0"/>
                                               <Component id="CB_SMOOTH_START_ENABLED" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -361,10 +349,7 @@
                               <Component id="TF_SMOOTH_START_RAMP" alignment="3" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="TF_STARTUP_ASSIST_MIN_POWER" alignment="3" max="-2" attributes="0"/>
-                              <Component id="CB_STARTUP_ASSIST_ENABLED" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
+                          <Component id="CB_STARTUP_ASSIST_ENABLED" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="32767" attributes="0"/>
                       </Group>
                   </Group>
@@ -521,7 +506,7 @@
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="CB_STARTUP_ASSIST_ENABLED">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Startup assist enabled  Min power (W)"/>
+                    <Property name="text" type="java.lang.String" value="Startup assist enabled"/>
                     <Property name="toolTipText" type="java.lang.String" value="Not available with coaster brake enabled"/>
                   </Properties>
                   <Events>
@@ -620,15 +605,6 @@
                   <Properties>
                     <Property name="text" type="java.lang.String" value="500"/>
                     <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;Motor power limit in offroad mode&lt;br&gt;&#xa;Max value depends on the rated&lt;br&gt;&#xa;motor power and the battery capacity&#xa;&lt;/html&gt;"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JTextField" name="TF_STARTUP_ASSIST_MIN_POWER">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="100"/>
-                    <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;Max value 255&lt;br&gt;&#xa;Recommended range 50 to 150&#xa;&lt;/html&gt;"/>
-                    <Property name="enabled" type="boolean" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="CB_STARTUP_ASSIST_ENABLED.isSelected()" type="code"/>
-                    </Property>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JRadioButton" name="RB_BOOST_AT_ZERO_AUTO">
@@ -859,6 +835,11 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="1" attributes="0">
+                                  <Component id="Label_Parameter5" min="-2" pref="63" max="-2" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
+                                  <Component id="JCB_UNITS_TYPE" min="-2" pref="83" max="-2" attributes="0"/>
+                              </Group>
                               <Group type="102" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="jLabel16" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
@@ -873,17 +854,12 @@
                                           <Component id="RB_DISPLAY_ALWAY_ON" min="-2" pref="88" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
-                                  <EmptySpace min="0" pref="12" max="32767" attributes="0"/>
+                                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                               </Group>
-                              <Group type="102" alignment="1" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
                                   <Component id="Label_Parameter2" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="32767" attributes="0"/>
                                   <Component id="JCB_DISPLAY_TYPE" min="-2" pref="83" max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="1" attributes="0">
-                                  <Component id="Label_Parameter5" min="-2" pref="63" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
-                                  <Component id="JCB_UNITS_TYPE" min="-2" pref="83" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
@@ -1032,6 +1008,17 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" attributes="0">
+                                  <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                      <Component id="jLabelMaxSpeed" alignment="1" max="32767" attributes="0"/>
+                                      <Component id="jLabel14" alignment="0" pref="182" max="32767" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace max="32767" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="TF_MAX_SPEED" min="-2" pref="48" max="-2" attributes="0"/>
+                                      <Component id="TF_WHEEL_CIRCUMF" min="-2" pref="48" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
                               <Component id="jLabel39" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Group type="102" alignment="0" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
@@ -1080,29 +1067,16 @@
                                   </Group>
                               </Group>
                               <Component id="jLabel13" alignment="0" min="-2" pref="199" max="-2" attributes="0"/>
-                              <Component id="CB_MAX_SPEED_DISPLAY" min="-2" max="-2" attributes="0"/>
-                              <Group type="102" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
                                   <Group type="103" groupAlignment="1" max="-2" attributes="0">
                                       <Component id="jLabel79" max="32767" attributes="0"/>
-                                      <Component id="jLabelMaxSpeed" alignment="1" max="32767" attributes="0"/>
-                                      <Component id="jLabel14" alignment="0" pref="182" max="32767" attributes="0"/>
+                                      <Component id="CB_MAX_SPEED_DISPLAY" max="32767" attributes="0"/>
                                   </Group>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" attributes="0">
-                                          <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="JCB_ASSIST_MODE_ON_STARTUP" min="-2" pref="83" max="-2" attributes="0"/>
-                                      </Group>
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <EmptySpace max="32767" attributes="0"/>
-                                          <Group type="103" groupAlignment="0" attributes="0">
-                                              <Component id="TF_WHEEL_CIRCUMF" alignment="0" min="-2" pref="48" max="-2" attributes="0"/>
-                                              <Component id="TF_MAX_SPEED" alignment="0" min="-2" pref="48" max="-2" attributes="0"/>
-                                          </Group>
-                                      </Group>
-                                  </Group>
+                                  <EmptySpace max="32767" attributes="0"/>
+                                  <Component id="JCB_ASSIST_MODE_ON_STARTUP" min="-2" pref="83" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <EmptySpace pref="30" max="32767" attributes="0"/>
+                          <EmptySpace pref="39" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -1434,35 +1408,35 @@
                           <Component id="jPanel15" max="32767" attributes="0"/>
                           <Component id="jPanel9" max="32767" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="30" max="32767" attributes="0"/>
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="jPanel10" max="32767" attributes="0"/>
-                          <Component id="jPanel12" max="32767" attributes="0"/>
-                      </Group>
+                      <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
-                              <EmptySpace pref="20" max="32767" attributes="0"/>
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="jPanel13" max="32767" attributes="0"/>
-                                  <Component id="jPanel16" max="32767" attributes="0"/>
-                              </Group>
-                              <EmptySpace pref="26" max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jPanel17" min="-2" pref="216" max="-2" attributes="0"/>
-                                  <Component id="jPanel14" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jPanel10" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jPanel12" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace pref="42" max="32767" attributes="0"/>
+                              <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="jPanel13" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jPanel16" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" attributes="0">
+                                      <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
+                                      <Component id="jPanel14" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Component id="jPanel17" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
                           </Group>
-                          <Group type="102" alignment="1" attributes="0">
-                              <EmptySpace max="32767" attributes="0"/>
-                              <Component id="jLabel67" min="-2" pref="109" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-                              <Component id="JCB_ASSIST_LEVEL_5_MODE" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="TF_ASS_LEVELS_5_PERCENT" min="-2" pref="46" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="50" max="-2" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="-2" pref="263" max="-2" attributes="0"/>
+                              <Component id="jPanel7" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
+                      <EmptySpace pref="13" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -1475,30 +1449,29 @@
                               <Group type="103" groupAlignment="1" max="-2" attributes="0">
                                   <Component id="jPanel12" alignment="0" max="32767" attributes="0"/>
                                   <Component id="jPanel9" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="jPanel13" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="jPanel13" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="jPanel10" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jPanel15" alignment="1" max="32767" attributes="0"/>
-                                  <Component id="jPanel16" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="jPanel15" max="32767" attributes="0"/>
+                                  <Group type="102" attributes="0">
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="jPanel16" min="-2" max="-2" attributes="0"/>
+                                          <Component id="jPanel10" min="-2" max="-2" attributes="0"/>
+                                          <Component id="jPanel17" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
+                                      <Component id="jPanel7" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="32767" attributes="0"/>
+                                  </Group>
                               </Group>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="jPanel14" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="jPanel17" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="103" groupAlignment="3" attributes="0">
-                                      <Component id="jLabel67" alignment="3" min="-2" pref="24" max="-2" attributes="0"/>
-                                      <Component id="JCB_ASSIST_LEVEL_5_MODE" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <Component id="TF_ASS_LEVELS_5_PERCENT" alignment="0" min="-2" max="-2" attributes="0"/>
-                              </Group>
+                              <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace min="20" pref="67" max="32767" attributes="0"/>
+                      <EmptySpace min="-2" pref="49" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -1510,7 +1483,7 @@
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" attributes="0">
                                   <Component id="jLabel27" min="-2" max="-2" attributes="0"/>
@@ -1534,7 +1507,7 @@
                                   <Component id="TF_POWER_ASS_1" min="-2" pref="46" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -1628,31 +1601,26 @@
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="jLabel43" alignment="0" max="32767" attributes="0"/>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="jLabel44" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
-                                  <Component id="TF_TORQUE_ASS_1" min="-2" pref="46" max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="jLabel45" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
-                                  <Component id="TF_TORQUE_ASS_2" min="-2" pref="46" max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="jLabel46" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
-                                  <Component id="TF_TORQUE_ASS_3" min="-2" pref="46" max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="1" attributes="0">
-                                  <Component id="jLabel47" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="unrelated" max="32767" attributes="0"/>
-                                  <Component id="TF_TORQUE_ASS_4" min="-2" pref="46" max="-2" attributes="0"/>
+                              <Group type="102" attributes="0">
+                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                      <Component id="jLabel47" pref="120" max="32767" attributes="0"/>
+                                      <Component id="jLabel44" alignment="1" max="32767" attributes="0"/>
+                                      <Component id="jLabel46" alignment="1" max="32767" attributes="0"/>
+                                      <Component id="jLabel45" alignment="1" pref="120" max="32767" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="TF_TORQUE_ASS_2" alignment="1" min="-2" pref="46" max="-2" attributes="0"/>
+                                      <Component id="TF_TORQUE_ASS_3" alignment="1" min="-2" pref="46" max="-2" attributes="0"/>
+                                      <Component id="TF_TORQUE_ASS_1" alignment="1" min="-2" pref="46" max="-2" attributes="0"/>
+                                      <Component id="TF_TORQUE_ASS_4" alignment="1" min="-2" pref="46" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -1746,7 +1714,7 @@
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" attributes="0">
                                   <Component id="jLabel48" max="32767" attributes="0"/>
@@ -1759,7 +1727,7 @@
                                       <Component id="jLabel49" alignment="0" min="-2" max="-2" attributes="0"/>
                                       <Component id="jLabel50" alignment="0" min="-2" max="-2" attributes="0"/>
                                   </Group>
-                                  <EmptySpace max="32767" attributes="0"/>
+                                  <EmptySpace type="separate" max="32767" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="TF_CADENCE_ASS_1" alignment="0" min="-2" pref="46" max="-2" attributes="0"/>
                                       <Component id="TF_CADENCE_ASS_2" alignment="0" min="-2" pref="46" max="-2" attributes="0"/>
@@ -1861,41 +1829,33 @@
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="jLabel53" alignment="0" max="32767" attributes="0"/>
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <Component id="jLabel54" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace max="32767" attributes="0"/>
-                                          <Component id="TF_EMTB_ASS_1" min="-2" pref="46" max="-2" attributes="0"/>
-                                      </Group>
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <Component id="jLabel55" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace max="32767" attributes="0"/>
-                                          <Component id="TF_EMTB_ASS_2" min="-2" pref="46" max="-2" attributes="0"/>
-                                      </Group>
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <Component id="jLabel56" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace max="32767" attributes="0"/>
-                                          <Component id="TF_EMTB_ASS_3" min="-2" pref="46" max="-2" attributes="0"/>
-                                      </Group>
-                                      <Group type="102" alignment="1" attributes="0">
-                                          <Component id="jLabel57" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace type="unrelated" max="32767" attributes="0"/>
-                                          <Component id="TF_EMTB_ASS_4" min="-2" pref="46" max="-2" attributes="0"/>
-                                      </Group>
+                                      <Component id="jLabel54" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="jLabel55" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="jLabel56" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="jLabel57" alignment="0" min="-2" max="-2" attributes="0"/>
                                   </Group>
-                                  <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
                               </Group>
-                              <Group type="102" attributes="0">
-                                  <Component id="jLabel78" min="-2" pref="81" max="-2" attributes="0"/>
-                                  <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
-                                  <Component id="RB_eMTB_POWER" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="RB_eMTB_TORQUE" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="10" max="32767" attributes="0"/>
+                              <Group type="102" alignment="1" attributes="0">
+                                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Group type="102" alignment="1" attributes="0">
+                                          <Component id="jLabel78" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
+                                          <Component id="RB_eMTB_POWER" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Component id="RB_eMTB_TORQUE" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <Component id="TF_EMTB_ASS_4" alignment="1" min="-2" pref="46" max="-2" attributes="0"/>
+                                      <Component id="TF_EMTB_ASS_3" alignment="1" min="-2" pref="46" max="-2" attributes="0"/>
+                                      <Component id="TF_EMTB_ASS_2" alignment="1" min="-2" pref="46" max="-2" attributes="0"/>
+                                      <Component id="TF_EMTB_ASS_1" alignment="1" min="-2" pref="46" max="-2" attributes="0"/>
+                                  </Group>
                               </Group>
                           </Group>
                       </Group>
@@ -2010,7 +1970,7 @@
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel78">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="eMTB based"/>
+                    <Property name="text" type="java.lang.String" value="Based on"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JRadioButton" name="RB_eMTB_TORQUE">
@@ -2029,7 +1989,7 @@
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
@@ -2040,7 +2000,7 @@
                                       </Group>
                                       <Component id="CB_WALK_ASSIST_ENABLED" min="-2" pref="150" max="-2" attributes="0"/>
                                   </Group>
-                                  <EmptySpace pref="11" max="32767" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
@@ -2058,18 +2018,18 @@
                                       <Component id="TF_WALK_ASS_SPEED_4" alignment="1" min="-2" pref="46" max="-2" attributes="0"/>
                                       <Component id="TF_WALK_ASS_SPEED_LIMIT" alignment="0" min="-2" pref="46" max="-2" attributes="0"/>
                                   </Group>
-                                  <EmptySpace max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                               </Group>
                               <Group type="102" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="CB_WALK_TIME_ENA" alignment="0" min="-2" max="-2" attributes="0"/>
                                       <Group type="102" alignment="0" attributes="0">
                                           <Component id="jLabel68" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                          <EmptySpace pref="58" max="32767" attributes="0"/>
                                           <Component id="TF_WALK_ASS_TIME" min="-2" pref="46" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
-                                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                  <EmptySpace pref="47" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
@@ -2116,7 +2076,7 @@
                               <Component id="jLabel68" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="TF_WALK_ASS_TIME" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace max="32767" attributes="0"/>
+                          <EmptySpace pref="62" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -2263,7 +2223,7 @@
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="jLabel69" min="-2" pref="125" max="-2" attributes="0"/>
@@ -2291,12 +2251,18 @@
                                   <EmptySpace max="32767" attributes="0"/>
                                   <Component id="TF_CRUISE_ASS_4" min="-2" pref="46" max="-2" attributes="0"/>
                               </Group>
-                              <Component id="CB_CRUISE_ENABLED" min="-2" pref="150" max="-2" attributes="0"/>
-                              <Component id="CB_CRUISE_WHITOUT_PEDALING" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Group type="102" attributes="0">
+                                  <Component id="CB_CRUISE_ENABLED" min="-2" pref="150" max="-2" attributes="0"/>
+                                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                              </Group>
                               <Group type="102" attributes="0">
                                   <Component id="jLabel74" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
                                   <Component id="TF_CRUISE_SPEED_ENA" min="-2" pref="46" max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="CB_CRUISE_WHITOUT_PEDALING" min="-2" pref="166" max="-2" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
@@ -2338,7 +2304,6 @@
                               <Component id="jLabel74" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="TF_CRUISE_SPEED_ENA" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="0" pref="14" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -2470,29 +2435,28 @@
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="jLabel76" alignment="0" max="32767" attributes="0"/>
                               <Group type="102" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="jLabelLights3" max="32767" attributes="0"/>
-                                      <Group type="103" alignment="0" groupAlignment="1" attributes="0">
-                                          <Component id="jLabelLights1" min="-2" pref="152" max="-2" attributes="0"/>
-                                          <Component id="jLabelLights2" min="-2" pref="152" max="-2" attributes="0"/>
+                                      <Component id="CB_LIGHTS" min="-2" pref="145" max="-2" attributes="0"/>
+                                      <Group type="102" attributes="0">
+                                          <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                              <Component id="jLabelLights3" min="-2" pref="160" max="-2" attributes="0"/>
+                                              <Component id="jLabelLights0" min="-2" pref="160" max="-2" attributes="0"/>
+                                              <Component id="jLabelLights1" alignment="1" min="-2" pref="160" max="-2" attributes="0"/>
+                                              <Component id="jLabelLights2" alignment="1" min="-2" pref="160" max="-2" attributes="0"/>
+                                          </Group>
+                                          <Group type="103" groupAlignment="0" attributes="0">
+                                              <Component id="TF_LIGHT_MODE_1" min="-2" pref="46" max="-2" attributes="0"/>
+                                              <Component id="TF_LIGHT_MODE_ON_START" min="-2" pref="46" max="-2" attributes="0"/>
+                                              <Component id="TF_LIGHT_MODE_2" alignment="0" min="-2" pref="46" max="-2" attributes="0"/>
+                                              <Component id="TF_LIGHT_MODE_3" alignment="1" min="-2" pref="46" max="-2" attributes="0"/>
+                                          </Group>
                                       </Group>
-                                      <Component id="CB_LIGHTS" min="-2" pref="150" max="-2" attributes="0"/>
-                                      <Component id="jLabelLights0" alignment="0" min="-2" pref="152" max="-2" attributes="0"/>
                                   </Group>
-                                  <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="103" alignment="0" groupAlignment="0" attributes="0">
-                                          <Component id="TF_LIGHT_MODE_1" alignment="1" min="-2" pref="46" max="-2" attributes="0"/>
-                                          <Component id="TF_LIGHT_MODE_2" alignment="1" min="-2" pref="46" max="-2" attributes="0"/>
-                                      </Group>
-                                      <Component id="TF_LIGHT_MODE_3" alignment="1" min="-2" pref="46" max="-2" attributes="0"/>
-                                      <Component id="TF_LIGHT_MODE_ON_START" alignment="0" min="-2" pref="46" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+                                  <EmptySpace min="0" pref="2" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
@@ -2504,27 +2468,32 @@
                           <Component id="jLabel76" min="-2" pref="24" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="CB_LIGHTS" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="jLabelLights0" alignment="3" min="-2" pref="34" max="-2" attributes="0"/>
                               <Component id="TF_LIGHT_MODE_ON_START" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabelLights0" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="jLabelLights1" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
+                              <Component id="jLabelLights1" alignment="3" min="-2" pref="34" max="-2" attributes="0"/>
                               <Component id="TF_LIGHT_MODE_1" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="jLabelLights2" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
-                              <Component id="TF_LIGHT_MODE_2" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" attributes="0">
+                                  <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
+                                  <Component id="TF_LIGHT_MODE_2" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
+                                  <Component id="jLabelLights2" min="-2" pref="34" max="-2" attributes="0"/>
+                              </Group>
                           </Group>
-                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="jLabelLights3" alignment="3" min="-2" pref="36" max="-2" attributes="0"/>
+                              <Component id="jLabelLights3" alignment="3" min="-2" pref="34" max="-2" attributes="0"/>
                               <Component id="TF_LIGHT_MODE_3" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -2617,22 +2586,14 @@
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jLabel80" max="32767" attributes="0"/>
-                              <Component id="JCB_THROTTLE_MODE_STREET" alignment="0" max="32767" attributes="0"/>
-                              <Component id="jLabel17" alignment="0" max="32767" attributes="0"/>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                                      <Component id="jLabelStreetSpeed" max="32767" attributes="0"/>
-                                      <Component id="jLabel34" max="32767" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace type="unrelated" max="32767" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="TF_STREET_POWER_LIM" alignment="1" min="-2" pref="46" max="-2" attributes="0"/>
-                                      <Component id="TF_STREET_SPEED_LIM" alignment="1" min="-2" pref="46" max="-2" attributes="0"/>
-                                  </Group>
+                              <Group type="102" attributes="0">
+                                  <Component id="JCB_THROTTLE_MODE_STREET" max="32767" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
                               </Group>
+                              <Component id="jLabel80" max="32767" attributes="0"/>
+                              <Component id="jLabel17" alignment="0" max="32767" attributes="0"/>
                               <Group type="102" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="CB_STREET_CRUISE" min="-2" max="-2" attributes="0"/>
@@ -2640,10 +2601,21 @@
                                       <Component id="CB_STREET_POWER_LIM" alignment="0" min="-2" max="-2" attributes="0"/>
                                       <Component id="CB_STREET_MODE_ON_START" alignment="0" min="-2" max="-2" attributes="0"/>
                                   </Group>
-                                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
+                              </Group>
+                              <Group type="102" attributes="0">
+                                  <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                      <Component id="jLabelStreetSpeed" max="32767" attributes="0"/>
+                                      <Component id="jLabel34" max="32767" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="TF_STREET_POWER_LIM" min="-2" pref="46" max="-2" attributes="0"/>
+                                      <Component id="TF_STREET_SPEED_LIM" min="-2" pref="46" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -2665,15 +2637,14 @@
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="CB_STREET_POWER_LIM" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="CB_STREET_CRUISE" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="CB_STREET_WALK" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="jLabel80" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
                           <Component id="JCB_THROTTLE_MODE_STREET" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="38" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -2744,7 +2715,7 @@
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="CB_STREET_MODE_ON_START">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="Street mode enabled on startup"/>
+                    <Property name="text" type="java.lang.String" value="Street mode en. on startup"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JComboBox" name="JCB_THROTTLE_MODE_STREET">
@@ -2777,42 +2748,74 @@
                 </Component>
               </SubComponents>
             </Container>
-            <Component class="javax.swing.JLabel" name="jLabel67">
-              <Properties>
-                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Tahoma" size="12" style="1"/>
-                </Property>
-                <Property name="text" type="java.lang.String" value="Assist level 5 (%)"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JTextField" name="TF_ASS_LEVELS_5_PERCENT">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="60"/>
-                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;Assist level 5&lt;br&gt;&#xa;If assist level 5 mode is before ECO, must be less than 100%&lt;br&gt;&#xa;percentage of assistance level of ECO&lt;br&gt;&#xa;&lt;br&gt;&#xa;If assist level 5 mode is after TURBO, must be greater than 100%&lt;br&gt;&#xa;percentage of assistance level of TURBO&#xa;&lt;/html&gt;"/>
-              </Properties>
-              <Events>
-                <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="TF_ASS_LEVELS_5_PERCENTFocusLost"/>
-                <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="TF_ASS_LEVELS_5_PERCENTKeyReleased"/>
-              </Events>
-            </Component>
-            <Component class="javax.swing.JComboBox" name="JCB_ASSIST_LEVEL_5_MODE">
-              <Properties>
-                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="3">
-                    <StringItem index="0" value="DISABLED"/>
-                    <StringItem index="1" value="BEFORE ECO"/>
-                    <StringItem index="2" value="AFTER TURBO"/>
-                  </StringArray>
-                </Property>
-                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;Assist level 5&lt;br&gt;&#xa;DISABLED, if not available&lt;br&gt;&#xa;BEFORE ECO, if the fifth level is before ECO&lt;br&gt;&#xa;AFTER TURBO, if the fifth level is after TURBO&#xa;&lt;/html&gt;"/>
-              </Properties>
-              <Events>
-                <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="JCB_ASSIST_LEVEL_5_MODEItemStateChanged"/>
-              </Events>
-              <AuxValues>
-                <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
-              </AuxValues>
-            </Component>
+            <Container class="javax.swing.JPanel" name="jPanel7">
+
+              <Layout>
+                <DimensionLayout dim="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="jLabel67" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace pref="18" max="32767" attributes="0"/>
+                          <Component id="JCB_ASSIST_LEVEL_5_MODE" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace pref="20" max="32767" attributes="0"/>
+                          <Component id="TF_ASS_LEVELS_5_PERCENT" min="-2" pref="46" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                </DimensionLayout>
+                <DimensionLayout dim="1">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="1" attributes="0">
+                          <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="jLabel67" alignment="3" min="-2" pref="24" max="-2" attributes="0"/>
+                              <Component id="JCB_ASSIST_LEVEL_5_MODE" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="TF_ASS_LEVELS_5_PERCENT" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                </DimensionLayout>
+              </Layout>
+              <SubComponents>
+                <Component class="javax.swing.JLabel" name="jLabel67">
+                  <Properties>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="Tahoma" size="12" style="1"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="Assist level 5 (%)"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JComboBox" name="JCB_ASSIST_LEVEL_5_MODE">
+                  <Properties>
+                    <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                      <StringArray count="3">
+                        <StringItem index="0" value="DISABLED"/>
+                        <StringItem index="1" value="BEFORE ECO"/>
+                        <StringItem index="2" value="AFTER TURBO"/>
+                      </StringArray>
+                    </Property>
+                    <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;Assist level 5&lt;br&gt;&#xa;DISABLED, if not available&lt;br&gt;&#xa;BEFORE ECO, if the fifth level is before ECO&lt;br&gt;&#xa;AFTER TURBO, if the fifth level is after TURBO&#xa;&lt;/html&gt;"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="JCB_ASSIST_LEVEL_5_MODEItemStateChanged"/>
+                  </Events>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                  </AuxValues>
+                </Component>
+                <Component class="javax.swing.JTextField" name="TF_ASS_LEVELS_5_PERCENT">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="60"/>
+                    <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;Assist level 5&lt;br&gt;&#xa;If assist level 5 mode is before ECO, must be less than 100%&lt;br&gt;&#xa;percentage of assistance level of ECO&lt;br&gt;&#xa;&lt;br&gt;&#xa;If assist level 5 mode is after TURBO, must be greater than 100%&lt;br&gt;&#xa;percentage of assistance level of TURBO&#xa;&lt;/html&gt;"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="TF_ASS_LEVELS_5_PERCENTFocusLost"/>
+                    <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="TF_ASS_LEVELS_5_PERCENTKeyReleased"/>
+                  </Events>
+                </Component>
+              </SubComponents>
+            </Container>
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="jPanel8">
@@ -4083,7 +4086,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="LB_VERSION">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Version (last commits)"/>
+        <Property name="text" type="java.lang.String" value="Version"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="LB_LAST_COMMIT">

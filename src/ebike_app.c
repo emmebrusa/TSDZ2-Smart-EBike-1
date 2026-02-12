@@ -207,7 +207,6 @@ static uint8_t ui8_smooth_start_counter_set_temp = SMOOTH_START_RAMP_DEFAULT;
 // startup assist
 static uint8_t ui8_startup_assist_enabled_temp = STARTUP_ASSIST_ENABLED;
 static uint8_t ui8_startup_assist_flag = 0;
-static uint8_t ui8_startup_assist_min_power = STARTUP_ASSIST_MIN_POWER;
 static uint8_t ui8_startup_assist_adc_battery_current_target = 0;
 static uint8_t ui8_startup_assist_adc_battery_current_target_min = 0;
 
@@ -723,24 +722,17 @@ static void apply_smooth_start(void)
 // calculate startup assist current target
 static void apply_startup_assist(void)
 {
-	// calculates the minimum startup assist current
-	ui8_startup_assist_adc_battery_current_target_min = (uint8_t)((uint32_t)
-		((ui8_startup_assist_min_power * 100000)
-		/ ui16_battery_voltage_filtered_x1000)
-		/ BATTERY_CURRENT_PER_10_BIT_ADC_STEP_X100);
-			
+static uint8_t ui8_current_to_compensate_human_power = 0;
+
 	// set startup assist battery current target
 	if (ui8_adc_battery_current_target > ui8_startup_assist_adc_battery_current_target) {
 		ui8_startup_assist_adc_battery_current_target = ui8_adc_battery_current_target;
+		ui8_current_to_compensate_human_power = (uint8_t)(ui16_human_power_x10 / ui16_battery_voltage_filtered_x10);
+		ui8_startup_assist_adc_battery_current_target += ui8_current_to_compensate_human_power;
 	}
-			
-	if ((ui8_startup_assist_adc_battery_current_target < ui8_startup_assist_adc_battery_current_target_min) 
-	  && (ui16_wheel_speed_x10 > 0U)) {
-		ui8_startup_assist_adc_battery_current_target = ui8_startup_assist_adc_battery_current_target_min;
-				
-		if (ui8_startup_assist_adc_battery_current_target > ui8_adc_battery_current_max) {
-			ui8_startup_assist_adc_battery_current_target = ui8_adc_battery_current_max;
-		}
+	
+	if (ui8_startup_assist_adc_battery_current_target > ui8_adc_battery_current_max) {
+		ui8_startup_assist_adc_battery_current_target = ui8_adc_battery_current_max;
 	}
 	
 	ui8_adc_battery_current_target = ui8_startup_assist_adc_battery_current_target;
