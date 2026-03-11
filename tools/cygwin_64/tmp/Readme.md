@@ -1,0 +1,1 @@
+Empty folder to avoid bash.exe warning.
