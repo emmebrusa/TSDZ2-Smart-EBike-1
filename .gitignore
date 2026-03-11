@@ -15,3 +15,5 @@ bin/
 releases/
 tests/sim/*
 !_tsdz2.cdef
+!cygwin_32/tmp/
+!cygwin_64/tmp/

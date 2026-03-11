@@ -936,7 +936,7 @@ static void apply_emtb_assist(void)
 	  ||(ui8_startup_assist_adc_battery_current_target > 0U)) {
 		
 		// get the eMTB assist denominator torque based
-		uint16_t ui16_eMTB_assist_denominator = (508 - (ui8_riding_mode_parameter << 1));
+		uint16_t ui16_eMTB_assist_denominator = (510 - (ui8_riding_mode_parameter << 1));
 		// get the eMTB assist denominator power based
 		if (ui8_eMTB_based_on_power) {
 			if (ui16_eMTB_assist_denominator >= ui8_pedal_cadence_RPM) {

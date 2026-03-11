@@ -1,6 +1,6 @@
 @ECHO OFF
 
-SET version=20.1C.6-4
+SET version=20.1C.6-5
 SET settings_date=%1
 
 SET release_folder=%~dp0releases

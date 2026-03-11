@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-version="20.1C.6-4"
+version="20.1C.6-5"
 settings_date=$1
 
 release_folder=$(pwd)/releases

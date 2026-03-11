@@ -1,6 +1,20 @@
 TSDZ2 Open Source Firmware
 for stock displays XH18 - VLCD5 - VLCD6
 
+List of changes v20.1C.6-update-5
+  1 - Changed battery capacity SOC% calculation (same as 860C).
+  2 - Fixed a bug in the fifth level in hybrid mode.
+  3 - Increased MOTOR_CHECK_ERPS_THRESHOLD (E09 error).
+  4 - Improved battery voltage calculation and SOC reset.
+  5 - Startup assist changed and can be enabled/disabled from display.
+  6 - Added auto mode to Startup boost.
+  7 - Added maximum value to check walk assist speed limit.
+  8 - Changed the start and stop cadence ticks.
+  9 - Reorganized torque sensor calibration procedure.
+ 10 - Decreased FW_HALL_COUNTER_OFFSET_MAX (Field weakening angle)
+ 11 - Improved E03 cadence sensor error.
+ 12 - Fixed the torque offset adj in eMTB mode.
+
 List of changes v20.1C.6-update-4
   1 - Fixed bug in overcurrent delay (E07 error).
   2 - Calculating SOC voltage with battery pack resistance.
