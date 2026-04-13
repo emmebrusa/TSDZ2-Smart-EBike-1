@@ -1430,13 +1430,13 @@
                                       <Component id="jPanel17" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
+                              <EmptySpace max="-2" attributes="0"/>
                           </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="-2" pref="263" max="-2" attributes="0"/>
-                              <Component id="jPanel7" min="-2" max="-2" attributes="0"/>
+                          <Group type="102" attributes="0">
+                              <Component id="jPanel7" max="32767" attributes="0"/>
+                              <EmptySpace min="-2" pref="56" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace pref="13" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -1456,13 +1456,20 @@
                                   <Component id="jPanel15" max="32767" attributes="0"/>
                                   <Group type="102" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="jPanel16" min="-2" max="-2" attributes="0"/>
-                                          <Component id="jPanel10" min="-2" max="-2" attributes="0"/>
-                                          <Component id="jPanel17" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Group type="102" attributes="0">
+                                              <Group type="103" groupAlignment="0" attributes="0">
+                                                  <Component id="jPanel16" min="-2" max="-2" attributes="0"/>
+                                                  <Component id="jPanel10" min="-2" max="-2" attributes="0"/>
+                                              </Group>
+                                              <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
+                                          </Group>
+                                          <Group type="102" alignment="1" attributes="0">
+                                              <Component id="jPanel17" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
+                                          </Group>
                                       </Group>
-                                      <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
                                       <Component id="jPanel7" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="32767" attributes="0"/>
+                                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
                           </Group>
@@ -2025,11 +2032,11 @@
                                       <Component id="CB_WALK_TIME_ENA" alignment="0" min="-2" max="-2" attributes="0"/>
                                       <Group type="102" alignment="0" attributes="0">
                                           <Component id="jLabel68" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace pref="58" max="32767" attributes="0"/>
+                                          <EmptySpace pref="36" max="32767" attributes="0"/>
                                           <Component id="TF_WALK_ASS_TIME" min="-2" pref="46" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
-                                  <EmptySpace pref="47" max="32767" attributes="0"/>
+                                  <EmptySpace pref="24" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
@@ -2754,10 +2761,18 @@
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
+                          <Component id="jLabelTorqueOnPower" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
+                          <Component id="JCB_TORQUE_BASED" min="-2" pref="79" max="-2" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
+                          <Component id="jLabelRefVoltage" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
+                          <Component id="TF_TORQUE_MODES_REF_VOLT" min="-2" pref="46" max="-2" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
                           <Component id="jLabel67" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="18" max="32767" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
                           <Component id="JCB_ASSIST_LEVEL_5_MODE" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="20" max="32767" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
                           <Component id="TF_ASS_LEVELS_5_PERCENT" min="-2" pref="46" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
@@ -2768,9 +2783,13 @@
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="jLabelTorqueOnPower" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
+                              <Component id="JCB_TORQUE_BASED" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel67" alignment="3" min="-2" pref="24" max="-2" attributes="0"/>
                               <Component id="JCB_ASSIST_LEVEL_5_MODE" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="TF_ASS_LEVELS_5_PERCENT" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="TF_TORQUE_MODES_REF_VOLT" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabelRefVoltage" alignment="3" min="-2" pref="13" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
                       </Group>
@@ -2778,6 +2797,31 @@
                 </DimensionLayout>
               </Layout>
               <SubComponents>
+                <Component class="javax.swing.JLabel" name="jLabelTorqueOnPower">
+                  <Properties>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="Tahoma" size="12" style="1"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="Torque, eMTB, Hybrid on"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JComboBox" name="JCB_TORQUE_BASED">
+                  <Properties>
+                    <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                      <StringArray count="2">
+                        <StringItem index="0" value="Current"/>
+                        <StringItem index="1" value="Power"/>
+                      </StringArray>
+                    </Property>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="JCB_TORQUE_BASEDItemStateChanged"/>
+                  </Events>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_SerializeTo" type="java.lang.String" value="TSDZ2_Configurator_JCB_TORQUE_BASED"/>
+                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+                  </AuxValues>
+                </Component>
                 <Component class="javax.swing.JLabel" name="jLabel67">
                   <Properties>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
@@ -2813,6 +2857,17 @@
                     <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="TF_ASS_LEVELS_5_PERCENTFocusLost"/>
                     <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="TF_ASS_LEVELS_5_PERCENTKeyReleased"/>
                   </Events>
+                </Component>
+                <Component class="javax.swing.JTextField" name="TF_TORQUE_MODES_REF_VOLT">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="36"/>
+                    <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;% Human power&lt;br&gt;&#xa;Max value 500&#xa;&lt;/html&gt;"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JLabel" name="jLabelRefVoltage">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Ref.Volt."/>
+                  </Properties>
                 </Component>
               </SubComponents>
             </Container>

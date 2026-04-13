@@ -157,6 +157,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
     public boolean boolUnitsKilometers;
     public boolean boolUnitsMiles;
     public boolean boolAlternativeMiles;
+    public boolean boolTorqueModesBasedOnPower;
     
     public static final int TSDZ2_48V = 0;
     public static final int TSDZ2_36V = 1;
@@ -436,7 +437,17 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
             else {
                 TF_BATT_PACK_RESISTANCE.setText("200");
             }
-                        
+            
+            strLine = in.readLine();
+            if (strLine != null) {
+                boolTorqueModesBasedOnPower = Boolean.parseBoolean(strLine);
+                TF_TORQUE_MODES_REF_VOLT.setText(in.readLine());
+            }
+            else {
+                boolTorqueModesBasedOnPower = false;
+                TF_TORQUE_MODES_REF_VOLT.setText("36");
+            }
+            
         } catch (NumberFormatException nfe) {
             JOptionPane.showMessageDialog(null, "Corrupt .ini file or invalid data", "TSDZ2 Patameter Configurator", JOptionPane.INFORMATION_MESSAGE);
         }
@@ -574,7 +585,16 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
                 else {
                     JCB_TEMP_SENSOR_TYPE.setSelectedIndex(LM35);
                 }
-                                
+                
+                if (boolTorqueModesBasedOnPower) {
+                    JCB_TORQUE_BASED.setSelectedIndex(BASED_ON_POWER);
+                    TF_TORQUE_MODES_REF_VOLT.setEnabled(true);
+                }    
+                else {
+                    JCB_TORQUE_BASED.setSelectedIndex(BASED_ON_CURRENT);
+                    TF_TORQUE_MODES_REF_VOLT.setEnabled(false);
+                }
+                
                 if (boolBrakeSensor) {
                     JCB_BRAKE_FEATURE.setSelectedIndex(BRAKE_SENSOR);
                 }
@@ -745,7 +765,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
     public TSDZ2_Configurator() {
         initComponents();
         
-        this.setTitle("Parameter Configurator 5.9 for Open Source Firmware TSDZ2 v20.1C.6 and TSDZ8");
+        this.setTitle("Parameter Configurator 6.0 for Open Source Firmware TSDZ2 v20.1C.6 and TSDZ8");
         this.setLocationRelativeTo(null);
 
         // update lists
@@ -1381,8 +1401,19 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
                     else {                                                   // 132 STARTUP_ASSIST_SPEED_LIMIT_ENABLED 0";
                         mWriter.println(mstrensHexLine(0));
                     }
-                                        
+                    
+                    
                     mWriter.println(mstrensHexLine(Integer.parseInt(TF_BATT_PACK_RESISTANCE.getText()))); // 134
+                    
+                    
+                    if (JCB_TORQUE_BASED.getSelectedIndex() == BASED_ON_CURRENT) {
+                         mWriter.println(mstrensHexLine(0));                // 136 BASED ON CURRENT 0
+                    }
+                    else {                                                  // 136 BASED_ON_POWER 1
+                         mWriter.println(mstrensHexLine(1));
+                    }
+                    
+                    mWriter.println(mstrensHexLine(Integer.parseInt(TF_TORQUE_MODES_REF_VOLT.getText())));  // 138
                     
                     mWriter.println(":00000001FF");   // End of hex file
                  } catch (IOException ioe) {
@@ -2359,6 +2390,20 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
                 text_to_save = "#define BATTERY_PACK_RESISTANCE " + TF_BATT_PACK_RESISTANCE.getText();
                 iWriter.println(TF_BATT_PACK_RESISTANCE.getText());
                 pWriter.println(text_to_save);
+                                
+                if (JCB_TORQUE_BASED.getSelectedIndex() == BASED_ON_CURRENT) {
+                    text_to_save = "#define TORQUE_MODES_BASED_ON_POWER 0";
+                    pWriter.println(text_to_save);
+                }
+                else {
+                    text_to_save = "#define TORQUE_MODES_BASED_ON_POWER 1";
+                    pWriter.println(text_to_save);
+                }
+                iWriter.println(boolTorqueModesBasedOnPower);
+                
+                text_to_save = "#define POWER_BASED_REFERENCE_VOLTAGE " + TF_TORQUE_MODES_REF_VOLT.getText();
+                iWriter.println(TF_TORQUE_MODES_REF_VOLT.getText());
+                pWriter.println(text_to_save);
                 
                 pWriter.println("\r\n#endif /* CONFIG_H_ */");
 
@@ -2642,9 +2687,13 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
         JCB_THROTTLE_MODE_STREET = new javax.swing.JComboBox<>();
         jLabel80 = new javax.swing.JLabel();
         jPanel7 = new javax.swing.JPanel();
+        jLabelTorqueOnPower = new javax.swing.JLabel();
+        JCB_TORQUE_BASED = new javax.swing.JComboBox<>();
         jLabel67 = new javax.swing.JLabel();
         JCB_ASSIST_LEVEL_5_MODE = new javax.swing.JComboBox<>();
         TF_ASS_LEVELS_5_PERCENT = new javax.swing.JTextField();
+        TF_TORQUE_MODES_REF_VOLT = new javax.swing.JTextField();
+        jLabelRefVoltage = new javax.swing.JLabel();
         jPanel8 = new javax.swing.JPanel();
         jPanel11 = new javax.swing.JPanel();
         jLabel35 = new javax.swing.JLabel();
@@ -3964,9 +4013,9 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
                             .addComponent(CB_WALK_TIME_ENA)
                             .addGroup(jPanel15Layout.createSequentialGroup()
                                 .addComponent(jLabel68)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
                                 .addComponent(TF_WALK_ASS_TIME, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap(47, Short.MAX_VALUE))))
+                        .addContainerGap(24, Short.MAX_VALUE))))
         );
         jPanel15Layout.setVerticalGroup(
             jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -4360,6 +4409,16 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
                 .addComponent(JCB_THROTTLE_MODE_STREET, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
+        jLabelTorqueOnPower.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabelTorqueOnPower.setText("Torque, eMTB, Hybrid on");
+
+        JCB_TORQUE_BASED.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Current", "Power" }));
+        JCB_TORQUE_BASED.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                JCB_TORQUE_BASEDItemStateChanged(evt);
+            }
+        });
+
         jLabel67.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel67.setText("Assist level 5 (%)");
 
@@ -4384,15 +4443,28 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
             }
         });
 
+        TF_TORQUE_MODES_REF_VOLT.setText("36");
+        TF_TORQUE_MODES_REF_VOLT.setToolTipText("<html>% Human power<br>\nMax value 500\n</html>");
+
+        jLabelRefVoltage.setText("Ref.Volt.");
+
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
+                .addComponent(jLabelTorqueOnPower)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(JCB_TORQUE_BASED, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabelRefVoltage)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(TF_TORQUE_MODES_REF_VOLT, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel67)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(JCB_ASSIST_LEVEL_5_MODE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(TF_ASS_LEVELS_5_PERCENT, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -4401,9 +4473,13 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
                 .addGap(0, 0, 0)
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabelTorqueOnPower, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(JCB_TORQUE_BASED, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel67, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(JCB_ASSIST_LEVEL_5_MODE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(TF_ASS_LEVELS_5_PERCENT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(TF_ASS_LEVELS_5_PERCENT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(TF_TORQUE_MODES_REF_VOLT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabelRefVoltage, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(8, 8, 8))
         );
 
@@ -4431,11 +4507,11 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
                                 .addComponent(jPanel14, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel4Layout.createSequentialGroup()
                                 .addGap(18, 18, 18)
-                                .addComponent(jPanel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(jPanel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap())
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(263, 263, 263)
-                        .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(13, Short.MAX_VALUE))
+                        .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(56, 56, 56))))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -4452,12 +4528,16 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
                             .addComponent(jPanel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(jPanel4Layout.createSequentialGroup()
                                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jPanel16, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jPanel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(4, 4, 4)
+                                    .addGroup(jPanel4Layout.createSequentialGroup()
+                                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jPanel16, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGap(16, 16, 16))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                                        .addComponent(jPanel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(4, 4, 4)))
                                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                .addGap(0, 0, Short.MAX_VALUE))))
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(jPanel14, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(10, 10, 10)))
@@ -6242,6 +6322,17 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_TF_TORQ_PER_ADC_STEP_ADVKeyReleased
 
+    private void JCB_TORQUE_BASEDItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_JCB_TORQUE_BASEDItemStateChanged
+        if (JCB_TORQUE_BASED.getSelectedIndex() == BASED_ON_CURRENT) {
+            boolTorqueModesBasedOnPower = false;
+            TF_TORQUE_MODES_REF_VOLT.setEnabled(false);
+        }
+        else {
+            boolTorqueModesBasedOnPower = true;
+            TF_TORQUE_MODES_REF_VOLT.setEnabled(true);
+        }
+    }//GEN-LAST:event_JCB_TORQUE_BASEDItemStateChanged
+
     /*
      * @param args the command line arguments
      */
@@ -6315,6 +6406,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> JCB_TEMP_SENSOR_TYPE;
     private javax.swing.JComboBox<String> JCB_THROTTLE_MODE;
     private javax.swing.JComboBox<String> JCB_THROTTLE_MODE_STREET;
+    private javax.swing.JComboBox<String> JCB_TORQUE_BASED;
     private javax.swing.JComboBox<String> JCB_UNITS_TYPE;
     private javax.swing.JLabel LB_LAST_COMMIT;
     private javax.swing.JLabel LB_VERSION;
@@ -6412,6 +6504,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
     private javax.swing.JTextField TF_TORQUE_ASS_2;
     private javax.swing.JTextField TF_TORQUE_ASS_3;
     private javax.swing.JTextField TF_TORQUE_ASS_4;
+    private javax.swing.JTextField TF_TORQUE_MODES_REF_VOLT;
     private javax.swing.JTextField TF_TORQ_ADC_ANGLE_ADJ;
     private javax.swing.JTextField TF_TORQ_ADC_OFFSET;
     private javax.swing.JTextField TF_TORQ_ADC_OFFSET_ADJ;
@@ -6551,10 +6644,12 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelMOTOR_BLOCK_ERPS;
     private javax.swing.JLabel jLabelMaxSpeed;
     private javax.swing.JLabel jLabelMotorFastStop;
+    private javax.swing.JLabel jLabelRefVoltage;
     private javax.swing.JLabel jLabelStreetSpeed;
     private javax.swing.JLabel jLabelTF_MOTOR_BLOCK_TIME;
     private javax.swing.JLabel jLabelTHROTTLE_ASSIST_MAX;
     private javax.swing.JLabel jLabelTHROTTLE_ASSIST_MIN;
+    private javax.swing.JLabel jLabelTorqueOnPower;
     private javax.swing.JLabel jLabelWalkSpeed;
     private javax.swing.JLabel jLabelWalkSpeedUnits;
     private javax.swing.JLabel jLabel_TORQ_ADC_MAX;

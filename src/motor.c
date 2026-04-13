@@ -1002,7 +1002,7 @@ void TIM1_CAP_COM_IRQHandler(void) __interrupt(TIM1_CAP_COM_IRQHANDLER)
 	struct_configuration_variables *p_configuration_variables;
     p_configuration_variables = get_configuration_variables();
 	
-	if ((ui16_adc_voltage < BATTERY_VOLTAGE_SHUTDOWN_10_BIT)
+	if ((ui16_adc_voltage < ADC_10_BIT_BATTERY_VOLTAGE_SHUTDOWN)
 		&&(!ui8_battery_SOC_saved_flag)
 		&&(ui8_battery_SOC_reset_flag))
 	{

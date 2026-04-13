@@ -205,6 +205,9 @@ HALL_COUNTER_OFFSET_UP:    29 -> 44
 // scale the torque assist target current
 #define TORQUE_ASSIST_FACTOR_DENOMINATOR			120
 
+// Reference voltage for torque modes, based on power
+#define POWER_BASED_REFERENCE_VOLTAGE_X10			(uint16_t)(POWER_BASED_REFERENCE_VOLTAGE * 10)
+
 // torque step mode
 #define TORQUE_STEP_DEFAULT							0 // not calibrated
 #define TORQUE_STEP_ADVANCED						1 // calibrated
@@ -267,9 +270,6 @@ HALL_COUNTER_OFFSET_UP:    29 -> 44
 
 // ADC battery voltage measurement
 #define BATTERY_VOLTAGE_PER_10_BIT_ADC_STEP_X1000		87  // conversion value verified with a cheap power meter
-
-// ADC battery voltage to be subtracted from the cut-off
-#define DIFFERENCE_CUT_OFF_SHUTDOWN_10_BIT				100  // not used
 
 /*---------------------------------------------------------
  NOTE: regarding ADC battery voltage measurement
@@ -346,7 +346,8 @@ HALL_COUNTER_OFFSET_UP:    29 -> 44
 
 // error codes
 #if ENABLE_EKD01
-#define ERROR_OVERVOLTAGE							1  // E01
+#define ERROR_UNDERVOLTAGE							1  // E01 shared
+#define ERROR_OVERVOLTAGE							1  // E01 shared
 #define ERROR_TORQUE_SENSOR							2  // E02
 #define ERROR_CADENCE_SENSOR						13 // E13 instead of E03
 #define ERROR_MOTOR_BLOCKED							4  // E04
@@ -357,6 +358,7 @@ HALL_COUNTER_OFFSET_UP:    29 -> 44
 #define ERROR_WRITE_EEPROM 							9  // E09 shared
 #define ERROR_MOTOR_CHECK 							9  // E09 shared
 #else
+#define ERROR_UNDERVOLTAGE							1 // E01 shared
 #define ERROR_OVERVOLTAGE							1 // E01 (E06 blinking for XH18)
 #define ERROR_TORQUE_SENSOR                       	2 // E02
 #define ERROR_CADENCE_SENSOR			          	3 // E03
@@ -399,17 +401,13 @@ HALL_COUNTER_OFFSET_UP:    29 -> 44
 // battery low voltage cut off
 #define BATTERY_LOW_VOLTAGE_CUT_OFF_X10_0		(uint8_t) ((uint16_t)(BATTERY_LOW_VOLTAGE_CUT_OFF * 10) & 0x00FF)
 #define BATTERY_LOW_VOLTAGE_CUT_OFF_X10_1		(uint8_t) (((uint16_t)(BATTERY_LOW_VOLTAGE_CUT_OFF * 10) >> 8) & 0x00FF)
-#define BATTERY_LOW_VOLTAGE_CUT_OFF_X10			(uint16_t) (BATTERY_LOW_VOLTAGE_CUT_OFF * 10)
-// battery voltage to be subtracted from the cut-off 8bit (9 volt)
-#define DIFFERENCE_CUT_OFF_SHUTDOWN_8_BIT			26
-// battery voltage for saving battery capacity at shutdown
-#define BATTERY_VOLTAGE_SHUTDOWN_8_BIT			(uint8_t) ((uint16_t)((BATTERY_LOW_VOLTAGE_CUT_OFF * 250 / BATTERY_VOLTAGE_PER_10_BIT_ADC_STEP_X1000)) - ((uint16_t) DIFFERENCE_CUT_OFF_SHUTDOWN_8_BIT))
-#define BATTERY_VOLTAGE_SHUTDOWN_10_BIT			(uint16_t) (BATTERY_VOLTAGE_SHUTDOWN_8_BIT << 2)
+// adc battery voltage for saving battery Soc% at shutdown
+#define ADC_10_BIT_BATTERY_VOLTAGE_SHUTDOWN		232 // 20 volt
 // battery voltage reset SOC percentage
 #define BATTERY_VOLTAGE_RESET_SOC_PERCENT_X10   (uint16_t)((float)LI_ION_CELL_RESET_SOC_PERCENT * (float)(BATTERY_CELLS_NUMBER * 10))
 // battery SOC eeprom value saved (8 bit)
 #define BATTERY_SOC								0
-// battery SOC % threshold x10 (volts calc)
+// battery SOC% threshold x10 (15% volt calc)
 #define BATTERY_SOC_PERCENT_THRESHOLD_X10		150
 // SOC calculation
 #define SOC_CALC_AUTO							0

@@ -1,6 +1,12 @@
 TSDZ2 Open Source Firmware
 for stock displays XH18 - VLCD5 - VLCD6
 
+List of changes v20.1C.6-update-6
+  1 - Set the minimum voltage to save Soc% at shutdown to 20 Volt.
+  2 - Added undervoltage error (E01 shared with overvoltage error).
+  3 - Increased motor blocked check time (E04).
+  4 - Constant power feature in torque-based modes.
+
 List of changes v20.1C.6-update-5
   1 - Changed battery capacity SOC% calculation (same as 860C).
   2 - Fixed a bug in the fifth level in hybrid mode.

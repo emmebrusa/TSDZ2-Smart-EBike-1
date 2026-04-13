@@ -204,7 +204,6 @@ static uint8_t ui8_smooth_start_counter_set_temp = SMOOTH_START_RAMP_DEFAULT;
 static uint8_t ui8_startup_assist_enabled_temp = STARTUP_ASSIST_ENABLED;
 static uint8_t ui8_startup_assist_flag = 0;
 static uint8_t ui8_startup_assist_adc_battery_current_target = 0;
-static uint8_t ui8_startup_assist_adc_battery_current_target_min = 0;
 
 // motor temperature control
 static uint16_t ui16_adc_motor_temperature_filtered = 0;
@@ -840,7 +839,12 @@ static void apply_torque_assist(void)
         // calculate torque assist target current
         uint16_t ui16_adc_battery_current_target_torque_assist = (ui16_adc_pedal_torque_delta
                 * ui8_torque_assist_factor) / TORQUE_ASSIST_FACTOR_DENOMINATOR;
-
+#if TORQUE_MODES_BASED_ON_POWER
+		ui16_adc_battery_current_target_torque_assist = (ui16_adc_battery_current_target_torque_assist
+			* POWER_BASED_REFERENCE_VOLTAGE_X10)
+			/ (ui16_battery_voltage_filtered_x10);
+#endif
+		
         // set motor acceleration / deceleration
 		set_motor_ramp();
 		
@@ -954,7 +958,11 @@ static void apply_emtb_assist(void)
 		
 		// set eMTB assist target current
 		uint16_t ui16_adc_battery_current_target_eMTB_assist = ui16_eMTB_adc_pedal_torque_delta;
-		
+#if TORQUE_MODES_BASED_ON_POWER
+		ui16_adc_battery_current_target_eMTB_assist = (ui16_adc_battery_current_target_eMTB_assist
+			* POWER_BASED_REFERENCE_VOLTAGE_X10)
+			/ (ui16_battery_voltage_filtered_x10);
+#endif
         // set motor acceleration / deceleration
 		set_motor_ramp();
 		
@@ -1020,6 +1028,11 @@ static void apply_hybrid_assist(void)
 #endif		
 			// calculate torque assist target current
 			ui16_adc_battery_current_target_torque_assist = (ui16_adc_pedal_torque_delta * ui8_torque_assist_factor) / TORQUE_ASSIST_FACTOR_DENOMINATOR;
+#if TORQUE_MODES_BASED_ON_POWER
+			ui16_adc_battery_current_target_torque_assist = (ui16_adc_battery_current_target_torque_assist
+				* POWER_BASED_REFERENCE_VOLTAGE_X10)
+				/ (ui16_battery_voltage_filtered_x10);
+#endif
 		}
 		else {
 			ui16_adc_battery_current_target_torque_assist = 0;
@@ -1958,7 +1971,7 @@ static uint8_t ui8_motor_check_goes_alone_timer = 0U;
 //#define MOTOR_BLOCKED_BATTERY_CURRENT_THRESHOLD_X10 30
 //#define MOTOR_BLOCKED_ERPS_THRESHOLD 20
 // old #define in CONFIG.H are not used, left for ini file compatibility
-#define MOTOR_BLOCKED_COUNTER_THRESHOLD_NEW				10  // 10 * 100ms = 1.0 seconds
+#define MOTOR_BLOCKED_COUNTER_THRESHOLD_NEW				20 // 20 * 100ms = 2.0 seconds
 #define MOTOR_BLOCKED_BATTERY_CURRENT_THRESHOLD_X10_NEW	30 // 30 = 3.0 amps
 #define MOTOR_BLOCKED_ERPS_THRESHOLD_NEW				20 // 20 ERPS
 
@@ -3087,6 +3100,12 @@ static void uart_send_package(void)
 			ui8_tx_buffer[4] = 0x46;
 #endif
 		
+		// fault undervoltage (shutdown voltage)
+		// E01 (E06 blinking for XH18) shared with ERROR_OVERVOLTAGE
+		if (ui8_battery_SOC_saved_flag) {
+			ui8_display_fault_code = ERROR_UNDERVOLTAGE;
+		}
+		
 		// fault temperature limit
 		// E06 ERROR_OVERTEMPERATURE
 #if (OPTIONAL_ADC_FUNCTION == TEMPERATURE_CONTROL) && ENABLE_TEMPERATURE_ERROR_MIN_LIMIT
@@ -3609,7 +3628,7 @@ static void check_battery_soc(void)
 }
 
 
-// read battery percentage x10 (actual charge)
+// read battery soc percentage x10 (actual charge)
 uint16_t read_battery_soc(void)
 {
 	uint16_t ui16_battery_SOC_calc_x10 = 0;
