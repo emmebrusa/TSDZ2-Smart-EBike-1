@@ -88,7 +88,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
     }
     
     
-    String[] displayDataArray = {"motor temperature", "battery SOC rem. %", "battery voltage", "battery current", "motor power", "adc throttle 8b", "adc torque sensor 10b", "pedal cadence rpm", "human power", "adc pedal torque delta", "consumed Wh", "motor ERPS", "duty cycle PWM %"};
+    String[] displayDataArray = {"motor temperature", "battery SOC rem. %", "battery voltage filtered", "battery current", "motor power", "adc throttle 8b", "adc torque sensor 10b", "pedal cadence rpm", "human power", "adc pedal torque delta", "consumed Wh", "motor ERPS", "duty cycle PWM %", "battery voltage not filt."};
     String[] lightModeArray = {"<br>lights ON", "<br>lights FLASHING", "lights ON and BRAKE-FLASHING brak.", "lights FLASHING and ON when braking", "lights FLASHING BRAKE-FLASHING brak.", "lights ON and ON always braking", "lights ON and BRAKE-FLASHING alw.br.", "lights FLASHING and ON always braking", "lights FLASHING BRAKE-FLASHING alw.br.", "assist without pedal rotation", "assist with sensors error", "startup assist"};
 
     public int[] intAdcPedalTorqueAngleAdjArray = {160, 138, 120, 107, 96, 88, 80, 74, 70, 66, 63, 59, 56, 52, 50, 47, 44, 42, 39, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16 };
@@ -5364,7 +5364,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
     private void TF_DATA_1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_TF_DATA_1KeyReleased
         try {
             int index = Integer.parseInt(TF_DATA_1.getText());
-            if ((index >= 0)&&(index <= 12)) {
+            if ((index >= 0)&&(index <= 13)) {
                 jLabelData1.setText("Data 1 - " + displayDataArray[index]); }
             else {
                 jLabelData1.setText("Data 1");	}
@@ -5377,7 +5377,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
     private void TF_DATA_2KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_TF_DATA_2KeyReleased
         try {
         int index = Integer.parseInt(TF_DATA_2.getText());
-        if ((index >= 0)&&(index <= 12)) {
+        if ((index >= 0)&&(index <= 13)) {
             jLabelData2.setText("Data 2 - " + displayDataArray[index]); }
         else {
             jLabelData2.setText("Data 2");	}
@@ -5390,7 +5390,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
     private void TF_DATA_3KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_TF_DATA_3KeyReleased
         try {
         int index = Integer.parseInt(TF_DATA_3.getText());
-        if ((index >= 0)&&(index <= 12)) {
+        if ((index >= 0)&&(index <= 13)) {
             jLabelData3.setText("Data 3 - " + displayDataArray[index]); }
         else {
             jLabelData3.setText("Data 3");	}
@@ -5403,7 +5403,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
     private void TF_DATA_4KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_TF_DATA_4KeyReleased
         try {
         int index = Integer.parseInt(TF_DATA_4.getText());
-        if ((index >= 0)&&(index <= 12)) {
+        if ((index >= 0)&&(index <= 13)) {
             jLabelData4.setText("Data 4 - " + displayDataArray[index]); }
         else {
             jLabelData4.setText("Data 4");	}
@@ -5416,7 +5416,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
     private void TF_DATA_5KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_TF_DATA_5KeyReleased
         try {
         int index = Integer.parseInt(TF_DATA_5.getText());
-        if ((index >= 0)&&(index <= 12)) {
+        if ((index >= 0)&&(index <= 13)) {
             jLabelData5.setText("Data 5 - " + displayDataArray[index]); }
         else {
             jLabelData5.setText("Data 5");	}
@@ -5429,7 +5429,7 @@ public class TSDZ2_Configurator extends javax.swing.JFrame {
     private void TF_DATA_6KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_TF_DATA_6KeyReleased
         try {
         int index = Integer.parseInt(TF_DATA_6.getText());
-        if ((index >= 0)&&(index <= 12)) {
+        if ((index >= 0)&&(index <= 13)) {
             jLabelData6.setText("Data 6 - " + displayDataArray[index]); }
         else {
             jLabelData6.setText("Data 6");	}
