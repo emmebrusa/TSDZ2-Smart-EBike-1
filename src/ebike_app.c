@@ -101,7 +101,7 @@ static uint8_t ui8_duty_cycle_ramp_up_inverse_step_default = PWM_DUTY_CYCLE_RAMP
 static uint8_t ui8_duty_cycle_ramp_down_inverse_step = PWM_DUTY_CYCLE_RAMP_DOWN_INVERSE_STEP_DEFAULT;
 static uint8_t ui8_duty_cycle_ramp_down_inverse_step_default = PWM_DUTY_CYCLE_RAMP_DOWN_INVERSE_STEP_DEFAULT;
 static uint16_t ui16_battery_voltage_filtered_x10 = 0;
-static uint16_t ui16_battery_pack_resistance_x1000 = BATTERY_PACK_RESISTANCE;
+static const uint16_t ui16_battery_pack_resistance_x1024 = (uint16_t)((uint32_t)BATTERY_PACK_RESISTANCE * 1024U / 1000U);
 static uint8_t ui8_battery_current_filtered_x10 = 0;
 static uint8_t ui8_adc_battery_current_max = ADC_10_BIT_BATTERY_CURRENT_MAX;
 static uint8_t ui8_adc_battery_current_target = 0;
@@ -438,6 +438,11 @@ void ebike_app_init(void)
 }
 
 
+#ifdef TIME_DEBUG
+static uint16_t ebike_calc_time[4];
+static uint16_t ebike_calc_time_max[4];
+#endif
+
 void ebike_app_controller(void)
 {
 	// calculate motor ERPS
@@ -464,23 +469,36 @@ void ebike_app_controller(void)
 	// send/receive data, ebike control lights, calc oem wheelspeed, 
 	// check system, check battery soc, every 4 cycles (25ms * 4)
 	
-	switch (ui8_counter++ & 0x03) {
+	uint8_t ui8_case_idx = ui8_counter++ & 0x03;
+
+#ifdef TIME_DEBUG
+	uint16_t tim3_prev = TIM3_GetCounter();
+	static uint16_t ebike_calc_delta[4];
+#endif
+
+	switch (ui8_case_idx) {
 		case 0: 
 			uart_receive_package();
-			break;
-		case 1:
-			ebike_control_lights();
-			calc_oem_wheel_speed();
 			calc_watt_hours_used();
 			break;
+		case 1:
+			calc_oem_wheel_speed();
+			break;
 		case 2:
-			uart_send_package();
+			check_battery_soc();
 			break;
 		case 3:
 			check_system();
-			check_battery_soc();
+			ebike_control_lights();
+			uart_send_package();
 			break;
 	}
+
+#ifdef TIME_DEBUG
+	ebike_calc_delta[ui8_case_idx] = (uint16_t)(TIM3_GetCounter() - tim3_prev);
+	ebike_calc_time[ui8_case_idx] = ebike_calc_delta[ui8_case_idx] * (uint8_t)(1000U/250U); //tim3 is 250khz
+	if (ebike_calc_time[ui8_case_idx] > ebike_calc_time_max[ui8_case_idx]) {ebike_calc_time_max[ui8_case_idx] = ebike_calc_time[ui8_case_idx];}
+#endif
 	
 	// get pedal torque
 	get_pedal_torque();
@@ -1845,10 +1863,10 @@ static void get_pedal_torque(void)
 	
 	// calculate human power x10
 	if ((ui8_torque_sensor_calibrated)&&(m_configuration_variables.ui8_torque_sensor_adv_enabled)) {
-		ui16_human_power_x10 = (uint16_t)(((uint32_t)ui16_adc_pedal_torque_delta * ui8_pedal_torque_per_10_bit_ADC_step_calc_x100 * ui8_pedal_cadence_RPM) / 96);
+		ui16_human_power_x10 = (uint16_t)(((((uint32_t)ui16_adc_pedal_torque_delta * ui8_pedal_torque_per_10_bit_ADC_step_calc_x100 * ui8_pedal_cadence_RPM) >> 5U) * 2698) >> 13U);
 	}
 	else {
-		ui16_human_power_x10 = (uint16_t)(((uint32_t)ui16_adc_pedal_torque_delta * ui8_pedal_torque_per_10_bit_ADC_step_x100 * ui8_pedal_cadence_RPM) / 96); // see note below
+		ui16_human_power_x10 = (uint16_t)(((((uint32_t)ui16_adc_pedal_torque_delta * ui8_pedal_torque_per_10_bit_ADC_step_x100 * ui8_pedal_cadence_RPM) >> 5U) * 2698) >> 13U);
 	}
 	
 	/*------------------------------------------------------------------------
@@ -1859,9 +1877,12 @@ static void get_pedal_torque(void)
     (2) Formula: power = torque * rotations per minute * 2 * pi / 60
     (3) Formula: power = torque * rotations per minute * 0.1047
     (4) Formula: power = torque * 100 * rotations per minute * 0.001047
-    (5) Formula: power = torque * 100 * rotations per minute / 955
-    (6) Formula: power * 10  =  torque * 100 * rotations per minute / 96
-    
+    (5) Formula: power_x10 = 10 * torque * 100 * rotations per minute / 955
+    (6) Formula: power_x10  =  torque * 100 * rotations per minute / 96
+	(7) Formula: power_x10  =  torque * 100 * rotations per minute / 32 / 3
+	(8) Formula: power_x10  =  torque * 100 * rotations per minute / 32 * 2698 / 8192  // avoids __divulong
+	(9) Formula: power_x10  =  (torque * 100 * rotations per minute >> 5) * 2698 >> 13
+
 	------------------------------------------------------------------------*/
 }
 
@@ -2210,7 +2231,7 @@ void ebike_control_lights(void)
 // This is the interrupt that happens when UART2 receives data. We need it to be the fastest possible and so
 // we do: receive every byte and assembly as a package, finally, signal that we have a package to process (on main slow loop)
 // and disable the interrupt. The interrupt should be enable again on main loop, after the package being processed
-void UART2_IRQHandler(void) __interrupt(UART2_IRQHANDLER)
+INTERRUPT_HANDLER(UART2_IRQHandler, UART2_IRQHANDLER)
 {
 	// Interrupt is received when Data is received or when overrun occured because UART2_IT_RXNE_OR interrupt is used
 	// test error flags : OverRun, Noise and Framing error flags
@@ -3349,6 +3370,9 @@ static void uart_send_package(void)
 					// battery voltage not filtered x10
 					ui16_display_data = ui16_display_data_factor / (ui16_battery_voltage_filtered_x10);
 				  break;
+				case 14:
+					ui16_display_data = (uint16_t) ui16_display_data_factor / (u8_isr_load_perc * (uint8_t)10U);
+				  break;
 				default:
 				  break;
 			  }
@@ -3440,11 +3464,8 @@ static void uart_send_package(void)
 		}
 		ui8_tx_buffer[TX_CHECK_CODE] = ui8_tx_check_code;
 
-		// send the full package to UART
-		for(ui8_i = 0; ui8_i < UART_TX_BUFFER_LEN; ui8_i++)
-		{
-			uart_put_char(ui8_tx_buffer[ui8_i]);
-		}
+		// send the full package to UART via interrupt
+		uart2_send_buffer_start();
 	}
 }
 
@@ -3512,7 +3533,7 @@ static void calc_watt_hours_used(void)
 	// consumed watt-hours
 	ui32_wh_sum_x10 += ui16_battery_power_x10;
 	// calculate watt-hours X10 since power on
-	ui32_wh_since_power_on_x10 = ui32_wh_sum_x10 / 32400; // 36000 -10% calibration to compensate for battery losses
+	ui32_wh_since_power_on_x10 = ui32_wh_sum_x10 / 32768; // 3600sec/hr x10 -9% calibration to compensate for battery losses - rounded to 2^15
 	// calculate watt-hours X10 since last full charge
 	ui32_wh_x10 = ui32_wh_offset_x10 + ui32_wh_since_power_on_x10;
 }
@@ -3527,9 +3548,9 @@ static void check_battery_soc(void)
 	uint16_t ui16_battery_voltage_calibrated_x10;
 	
 	// calculate fluctuate voltage, that depends on the current and battery pack resistance
-	ui16_fluctuate_battery_voltage_x10 = (uint16_t) ((((uint32_t) ui16_battery_pack_resistance_x1000)
+	ui16_fluctuate_battery_voltage_x10 = (uint16_t) ((((uint32_t) ui16_battery_pack_resistance_x1024)
 			* ((uint32_t) ui8_battery_current_filtered_x10))
-			/ ((uint32_t) 1000U));
+			/ ((uint32_t) 1024U));
 	
 	// the fluctuate voltage is added to the battery voltage x10
 	ui16_battery_voltage_x10 = ui16_battery_voltage_filtered_x10 + ui16_fluctuate_battery_voltage_x10;

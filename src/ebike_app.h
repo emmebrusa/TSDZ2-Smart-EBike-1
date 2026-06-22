@@ -11,6 +11,9 @@
 
 #include <stdint.h>
 
+// Task period for ebike_app_controller (ms) - defines the main control loop rate
+#define EBIKE_TASK_MS                                   25U
+
 // startup boost mode
 #define CADENCE						0
 #define SPEED						1

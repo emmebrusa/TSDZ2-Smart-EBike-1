@@ -21,7 +21,7 @@ on:
     - "setup.py"
 
 env:
-  SDCC_VERSION: 4.4.0
+  SDCC_VERSION: 4.5.0
 
 jobs:
   Build_Windows:
@@ -34,7 +34,7 @@ jobs:
       #     SSH_PASS: ${{ secrets.SSH_PASS }}
     - name: Install SDCC
       run: |
-        Invoke-WebRequest -UserAgent "Wget" -Uri https://sourceforge.net/projects/sdcc/files/sdcc-win64/$env:SDCC_VERSION/sdcc-$env:SDCC_VERSION-rc3-x64-setup.exe/download -OutFile sdcc_setup.exe
+        Invoke-WebRequest -UserAgent "Wget" -Uri https://sourceforge.net/projects/sdcc/files/sdcc-win64/$env:SDCC_VERSION/sdcc-$env:SDCC_VERSION-x64-setup.exe/download -OutFile sdcc_setup.exe
         Start-Process -wait -FilePath "sdcc_setup.exe" -ArgumentList "/S", "/D=C:\Program Files\SDCC"
         echo "Adding SDCC to PATH"
         Add-Content $env:GITHUB_PATH "C:\Program Files\SDCC\bin"
@@ -45,6 +45,8 @@ jobs:
         python-version: '3.x'
     # this mainly checks whether tests compile and work on windows. The actual test report runs on Ubuntu job
     - name: Check testing framework
+      env:
+        PYTHONUTF8: 1
       run: |
         pip install -e .
         rm tests/sim/_tsdz2.cdef # make sure cdef is generated from the source to check testing framework
@@ -53,7 +55,7 @@ jobs:
       run: |
         cd src
         make clean
-        make CFLAGS=--Werror -j4
+        make OBJCOPY="$pwd\..\tools\cygwin_64\bin\objcopy.exe" CFLAGS=--Werror -j4
     - uses: actions/upload-artifact@v4
       with:
         name: firmware_from_windows

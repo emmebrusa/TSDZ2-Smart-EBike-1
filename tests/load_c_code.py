@@ -8,7 +8,7 @@ import shutil
 import re
 import subprocess
 import cffi
-from pycparser import c_ast, parse_file, c_generator, plyparser
+from pycparser import c_ast, parse_file, c_generator, c_parser
 from distutils import ccompiler
 from typing import List
 import importlib
@@ -171,7 +171,7 @@ def load_code(module_name, coverage=False, force_recompile=False, strict=False):
                 fp.write(combined_source)
             try:
                 cdef = generate_cdef(module_name, combined_source_file_path)
-            except (subprocess.CalledProcessError, RuntimeError, plyparser.ParseError) as e:
+            except (subprocess.CalledProcessError, RuntimeError, c_parser.ParseError) as e:
                 print(f"{e}\n\033[93mFailed to generate cdef using your cpp standard headers!!!\nYou may have to edit it manually. Continuing...\033[0m")
                 with open(os.path.join(LIB_DIR, f"{module_name}.cdef"), "r", encoding="utf8") as fp:
                     cdef = fp.read()

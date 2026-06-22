@@ -11,7 +11,11 @@
 #include "uart.h"
 #include "stm8s.h"
 #include "interrupts.h"
+#include "main.h"
 
+extern volatile uint8_t ui8_tx_buffer[UART_TX_BUFFER_LEN];
+
+static volatile uint8_t ui8_tx_index;
 
 void uart2_init(void)
 {
@@ -28,6 +32,25 @@ void uart2_init(void)
 	
 	// Set UART2 IRQ priority to level 1 :0=lowest - 3=highest(default value)
     ITC_SetSoftwarePriority(UART2_IRQHANDLER, ITC_PRIORITYLEVEL_2);
+    ITC_SetSoftwarePriority(UART2_TX_IRQHANDLER, ITC_PRIORITYLEVEL_2);
+}
+
+// Fastest call rate to empty the buffer needs to be above: 9 bytes × 10 bits/byte ÷ 9600 bits/s = ~9.4ms 
+void uart2_send_buffer_start(void)
+{
+    ui8_tx_index = 0;
+    UART2_ITConfig(UART2_IT_TXE, ENABLE);
+}
+
+INTERRUPT_HANDLER(UART2_TX_IRQHandler, UART2_TX_IRQHANDLER)
+{
+    if (ui8_tx_index < UART_TX_BUFFER_LEN) {
+        UART2_SendData8(ui8_tx_buffer[ui8_tx_index]);
+        ui8_tx_index++;
+    }
+    else {
+        UART2_ITConfig(UART2_IT_TXE, DISABLE);
+    }
 }
 
 int uart_put_char(int c)

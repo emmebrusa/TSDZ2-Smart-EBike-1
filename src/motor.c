@@ -10,6 +10,7 @@
 #include "main.h"
 #include "motor.h"
 #include "interrupts.h"
+#include "stm8s.h"
 #include "stm8s_gpio.h"
 #include "stm8s_tim1.h"
 #include "ebike_app.h"
@@ -153,7 +154,7 @@ volatile uint8_t ui8_hall_60_ref_irq[2];
 //      - Hall A: bit 0
 //      - Hall B: bit 1
 //      - Hall C: bit 2
-void HALL_SENSOR_A_PORT_IRQHandler(void)  __interrupt(EXTI_HALL_A_IRQ) {
+INTERRUPT_HANDLER(HALL_SENSOR_A_PORT_IRQHandler, EXTI_HALL_A_IRQ) {
     ui8_hall_60_ref_irq[0] = TIM3->CNTRH;
     ui8_hall_60_ref_irq[1] = TIM3->CNTRL;
     ui8_hall_state_irq &= (unsigned char)~0x01;
@@ -161,7 +162,7 @@ void HALL_SENSOR_A_PORT_IRQHandler(void)  __interrupt(EXTI_HALL_A_IRQ) {
         ui8_hall_state_irq |= (unsigned char)0x01;
 }
 
-void HALL_SENSOR_B_PORT_IRQHandler(void) __interrupt(EXTI_HALL_B_IRQ)  {
+INTERRUPT_HANDLER(HALL_SENSOR_B_PORT_IRQHandler, EXTI_HALL_B_IRQ) {
     ui8_hall_60_ref_irq[0] = TIM3->CNTRH;
     ui8_hall_60_ref_irq[1] = TIM3->CNTRL;
     ui8_hall_state_irq &= (unsigned char)~0x02;
@@ -169,7 +170,7 @@ void HALL_SENSOR_B_PORT_IRQHandler(void) __interrupt(EXTI_HALL_B_IRQ)  {
         ui8_hall_state_irq |= (unsigned char)0x02;
 }
 
-void HALL_SENSOR_C_PORT_IRQHandler(void) __interrupt(EXTI_HALL_C_IRQ)  {
+INTERRUPT_HANDLER(HALL_SENSOR_C_PORT_IRQHandler, EXTI_HALL_C_IRQ) {
     ui8_hall_60_ref_irq[0] = TIM3->CNTRH;
     ui8_hall_60_ref_irq[1] = TIM3->CNTRL;
     ui8_hall_state_irq &= (unsigned char)~0x04;
@@ -217,7 +218,7 @@ static uint16_t ui16_c;
 
 static uint8_t ui8_temp;
 
-void TIM1_CAP_COM_IRQHandler(void) __interrupt(TIM1_CAP_COM_IRQHANDLER)
+INTERRUPT_HANDLER(TIM1_CAP_COM_IRQHandler, TIM1_CAP_COM_IRQHANDLER)
 {
     // bit 5 of TIM1->CR1 contains counter direction (0=up, 1=down)
     if (TIM1->CR1 & 0x10) {
