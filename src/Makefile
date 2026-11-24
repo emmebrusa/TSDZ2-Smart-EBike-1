@@ -78,7 +78,7 @@ $(PNAME): $(MAINSRC) $(RELS)
 	$(CC) $(INCLUDES) $(CFLAGS) $(DEBUG_FLAGS) $(LIBS) $(MAINSRC) $(RELS) -o$(ODIR)/$(PNAME).elf
 
 # 	$(SIZE) $(PNAME).elf	
-	$(OBJCOPY) -g $(ODIR)/$(PNAME).elf -O ihex $(ODIR)/$(PNAME).hex $(ELF_SECTIONS_TO_REMOVE)
+	$(OBJCOPY) -I elf32-big -g $(ODIR)/$(PNAME).elf -O ihex $(ODIR)/$(PNAME).hex $(ELF_SECTIONS_TO_REMOVE)
 
 #Rules for firmware sources
 %.rel: %.c $(HEADERS)
